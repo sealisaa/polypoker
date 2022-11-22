@@ -1,12 +1,12 @@
 package com.example.pokertest;
 
-public class HelloMessage {
+public class TextMessage {
     private String name;
 
-    public HelloMessage() {
+    public TextMessage() {
     }
 
-    public HelloMessage(String name) {
+    public TextMessage(String name) {
         this.name = name;
     }
 
