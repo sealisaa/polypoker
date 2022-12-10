@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Button.Apricot" parent="ThemeOverlay.AppCompat">
+        <item name="background">@drawable/button_border</item>
+        <item name="colorAccent">@color/apricot</item>
+    </style>
+</resources>
