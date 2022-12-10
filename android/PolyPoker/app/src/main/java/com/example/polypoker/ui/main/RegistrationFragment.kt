@@ -8,10 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.polypoker.R
 
-class MainFragment : Fragment() {
+class RegistrationFragment : Fragment() {
 
     companion object {
-        fun newInstance() = MainFragment()
+        fun newInstance() = RegistrationFragment()
     }
 
     private lateinit var viewModel: MainViewModel
@@ -20,7 +20,7 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.main_fragment, container, false)
+        return inflater.inflate(R.layout.registration_fragment, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
