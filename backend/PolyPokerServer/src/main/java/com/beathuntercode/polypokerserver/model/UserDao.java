@@ -3,7 +3,6 @@ package com.beathuntercode.polypokerserver.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Streamable;
@@ -26,7 +25,7 @@ public class UserDao {
     }
 
     public User getUserByLogin(String login) {
-        return repository.findById(login).get();
+        return repository.findOneUserByLogin(login);
     }
 
     public void delete(User user) {
