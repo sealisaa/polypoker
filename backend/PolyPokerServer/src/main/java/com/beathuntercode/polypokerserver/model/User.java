@@ -1,9 +1,11 @@
 package com.beathuntercode.polypokerserver.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 public class User {
@@ -17,7 +19,13 @@ public class User {
 
     private String name;
     private String surname;
+
+    /**
+     * user.login - Primary Key
+     */
+    @Column(unique = true)
     private String login;
+
     private String password;
 
 

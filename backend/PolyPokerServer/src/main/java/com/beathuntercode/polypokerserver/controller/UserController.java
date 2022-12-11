@@ -22,6 +22,11 @@ public class UserController {
         return userDao.getAllUsers();
     }
 
+    @GetMapping("/user/get-by-login")
+    public User getUserByLogin(@RequestBody String login) {
+        return userDao.getUserByLogin(login);
+    }
+
     @PostMapping("/user/save")
     public User saveUser(@RequestBody User user) {
         return userDao.save(user);
