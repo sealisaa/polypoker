@@ -1,4 +1,4 @@
-package com.beathuntercode.polypokerserver.model;
+package com.beathuntercode.polypokerserver.model.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,7 +11,8 @@ import jakarta.persistence.UniqueConstraint;
 public class User {
 
     /**
-        User.id auto-increment on new User add
+     *  user.id - primary key
+        user.id auto-increment on new User add
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +21,7 @@ public class User {
     private String name;
     private String surname;
 
-    /**
-     * user.login - Primary Key
-     */
-    @Column(unique = true)
+    @Column(unique = true, name = "LOGIN")
     private String login;
 
     private String password;
