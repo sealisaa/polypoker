@@ -33,4 +33,6 @@ public class UserController {
         return userDao.save(user);
     }
 
+    @PostMapping("/user/auth")
+    public boolean authorizeUser(@RequestBody User user) { return userDao.isUserAuthorized(user); }
 }

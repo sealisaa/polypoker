@@ -21,6 +21,9 @@ public class UserDao {
     @Autowired
     private UserStatisticRepository userStatisticRepository;
 
+
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
     public User save(User u) {
         UserStatistic userStatistic = new UserStatistic();
         userStatistic.setLogin(u.getLogin());
@@ -31,7 +34,6 @@ public class UserDao {
         userStatisticRepository.save(userStatistic);
 
         User user = new User();
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
         user.setLogin(u.getLogin());
         user.setPassword(encoder.encode(u.getPassword()));
@@ -54,5 +56,10 @@ public class UserDao {
     public void delete(User user) {
         userStatisticRepository.delete(userStatisticRepository.findOneUserStatisticByLogin(user.getLogin()));
         userRepository.delete(user);
+    }
+
+    public boolean isUserAuthorized(User user) {
+        User dbUser = getUserByLogin(user.getLogin());
+        return encoder.matches(user.getPassword(), dbUser.getPassword());
     }
 }
