@@ -14,14 +14,20 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.polypoker.R
+import com.example.polypoker.Utilities
 import com.example.polypoker.model.User
 import com.example.polypoker.retrofit.RetrofitService
 import com.example.polypoker.retrofit.UserApi
+import org.springframework.security.crypto.bcrypt.BCrypt
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import java.util.logging.Level
 import java.util.logging.Logger
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+
+
+
 
 class LogInFragment : Fragment() {
     companion object {
@@ -56,12 +62,18 @@ class LogInFragment : Fragment() {
             val login = loginEditText.text.toString()
             val password = passwordEditText.text.toString()
 
+            val user = User()
+            user.setLogin(login)
+            user.setPassword(password)
+
+            Utilities.USER_LOGIN = user.getLogin()
+
             val thisLogInFragment = this
-            userApi.getUserByLogin(login).enqueue(object : retrofit2.Callback<User> {
-                override fun onResponse(call: Call<User>, response: Response<User>) {
+            userApi.authorizeUser(user).enqueue(object : retrofit2.Callback<Boolean> {
+                override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
                     if (response.isSuccessful) {
-                        val user = response.body()
-                        if (user?.password.equals(password)) {
+                        val isAuthorized = response.body()
+                        if (isAuthorized!!) {
                             Toast.makeText(
                                 thisLogInFragment.context,
                                 "Успешный вход!",
@@ -86,7 +98,7 @@ class LogInFragment : Fragment() {
                     }
                 }
 
-                override fun onFailure(call: Call<User>, t: Throwable) {
+                override fun onFailure(call: Call<Boolean>, t: Throwable) {
                     Toast.makeText(
                         thisLogInFragment.context,
                         "Ошибка входа",

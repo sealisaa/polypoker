@@ -5,7 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import com.example.polypoker.R
+import com.example.polypoker.Utilities
+import com.example.polypoker.model.User
+import com.example.polypoker.model.UserStatistic
+import com.example.polypoker.retrofit.RetrofitService
+import com.example.polypoker.retrofit.UserApi
+import com.example.polypoker.retrofit.UserStatisticApi
+import retrofit2.Call
+import retrofit2.Response
+import java.util.logging.Level
+import java.util.logging.Logger
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +48,70 @@ class MainMenuFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.main_menu_fragment, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val retrofitService = RetrofitService()
+        val userStatisticApi = retrofitService.retrofit.create(UserStatisticApi::class.java)
+        val userApi = retrofitService.retrofit.create(UserApi::class.java)
+
+        val userNameSurnameTextView = view.findViewById<TextView>(R.id.userNameSurname)
+        val currentCoinsCountTextView = view.findViewById<TextView>(R.id.currentCoinsCountText)
+        val totalGamesPlayedTextView = view.findViewById<TextView>(R.id.totalGamesPlayedText)
+        val winGamesTextView = view.findViewById<TextView>(R.id.winGamesText)
+        val totalEarnTextView = view.findViewById<TextView>(R.id.totalEarnText)
+
+
+        val mainMenuFragment = this
+
+        userApi.getUserByLogin(Utilities.USER_LOGIN)
+            .enqueue(object: retrofit2.Callback<User> {
+                override fun onResponse(call: Call<User>, response: Response<User>) {
+                    if (response.isSuccessful) {
+                        val user = response.body()
+
+                        userNameSurnameTextView.text = "${user?.name} ${user?.surname}"
+                    }
+                }
+
+                override fun onFailure(call: Call<User>, t: Throwable) {
+                    Toast.makeText(
+                        mainMenuFragment.context,
+                        "Ошибка получения имени",
+                        Toast.LENGTH_LONG).show()
+                    Logger.getLogger(mainMenuFragment::class.java.name)
+                        .log(Level.SEVERE, "User NameSurname Error", t)
+                }
+            })
+
+        userStatisticApi.getUserStatistic(Utilities.USER_LOGIN)
+            .enqueue(object : retrofit2.Callback<UserStatistic> {
+                override fun onResponse(
+                    call: Call<UserStatistic>,
+                    response: Response<UserStatistic>
+                ) {
+                    if (response.isSuccessful) {
+                        val userStatistic = response.body()
+
+                        currentCoinsCountTextView.text = userStatistic?.currentCoinsCount.toString()
+                        totalGamesPlayedTextView.text = userStatistic?.totalGamesPlayed.toString()
+                        winGamesTextView.text = userStatistic?.winGames.toString()
+                        totalEarnTextView.text = userStatistic?.totalEarn.toString()
+                    }
+                }
+
+                override fun onFailure(call: Call<UserStatistic>, t: Throwable) {
+                    Toast.makeText(
+                        mainMenuFragment.context,
+                        "Ошибка получения статистики",
+                        Toast.LENGTH_LONG).show()
+                    Logger.getLogger(mainMenuFragment::class.java.name)
+                        .log(Level.SEVERE, "User Statistic Error", t)
+                }
+            })
+
     }
 
     companion object {

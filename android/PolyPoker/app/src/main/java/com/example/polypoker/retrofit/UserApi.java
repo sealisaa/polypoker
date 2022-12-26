@@ -22,4 +22,7 @@ public interface UserApi {
     @POST("/user/save")
     Call<User> save(@Body User user);
 
+    @POST("/user/auth")
+    Call<Boolean> authorizeUser(@Body User user);
+
 }
