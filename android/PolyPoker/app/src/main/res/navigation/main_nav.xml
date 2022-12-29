@@ -29,5 +29,13 @@
     <fragment
         android:id="@+id/mainMenuFragment"
         android:name="com.example.polypoker.ui.main.MainMenuFragment"
-        android:label="MainMenuFragment" />
+        android:label="MainMenuFragment" >
+        <action
+            android:id="@+id/action_mainMenuFragment_to_roomFragment"
+            app:destination="@id/roomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/roomFragment"
+        android:name="com.example.polypoker.ui.main.RoomFragment"
+        android:label="RoomFragment" />
 </navigation>

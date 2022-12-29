@@ -1,12 +1,18 @@
 package com.example.polypoker.ui.main
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.text.InputType
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.navigation.findNavController
 import com.example.polypoker.R
 import com.example.polypoker.Utilities
 import com.example.polypoker.model.User
@@ -30,6 +36,9 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class MainMenuFragment : Fragment() {
+
+    lateinit var userApi: UserApi
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -55,7 +64,7 @@ class MainMenuFragment : Fragment() {
 
         val retrofitService = RetrofitService()
         val userStatisticApi = retrofitService.retrofit.create(UserStatisticApi::class.java)
-        val userApi = retrofitService.retrofit.create(UserApi::class.java)
+        userApi = retrofitService.retrofit.create(UserApi::class.java)
 
         val userNameSurnameTextView = view.findViewById<TextView>(R.id.userNameSurname)
         val currentCoinsCountTextView = view.findViewById<TextView>(R.id.currentCoinsCountText)
@@ -112,6 +121,26 @@ class MainMenuFragment : Fragment() {
                 }
             })
 
+        view.findViewById<LinearLayout>(R.id.findGameLinearLayout).setOnClickListener {
+            val dialogBuilder = AlertDialog.Builder(activity)
+            dialogBuilder.setTitle("Введите код комнаты")
+
+            val roomCodeEditText = EditText(activity)
+            roomCodeEditText.inputType = InputType.TYPE_CLASS_NUMBER
+            dialogBuilder.setView(roomCodeEditText)
+            dialogBuilder.setPositiveButton("OK", object: DialogInterface.OnClickListener {
+                override fun onClick(dialogInterface: DialogInterface?, i: Int) {
+                    joinRoom()
+                }
+            })
+
+            dialogBuilder.show()
+
+            view.findNavController().navigate(
+                R.id.action_mainMenuFragment_to_roomFragment
+            )
+        }
+
     }
 
     companion object {
@@ -132,5 +161,9 @@ class MainMenuFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    private fun joinRoom() {
+
     }
 }

@@ -1,4 +1,4 @@
-package com.beathuntercode.polypokerserver.controller;
+package com.beathuntercode.polypokerserver.database.controller;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.beathuntercode.polypokerserver.model.user.User;
-import com.beathuntercode.polypokerserver.model.user.UserDao;
+import com.beathuntercode.polypokerserver.database.model.user.User;
+import com.beathuntercode.polypokerserver.database.model.user.UserDao;
 
 @RestController
 public class UserController {

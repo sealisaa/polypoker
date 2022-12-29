@@ -1,9 +1,7 @@
-package com.beathuntercode.polypokerserver.model.userstatistic;
+package com.beathuntercode.polypokerserver.database.model.userstatistic;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.beathuntercode.polypokerserver.model.user.User;
 
 @Service
 public class UserStatisticDao {

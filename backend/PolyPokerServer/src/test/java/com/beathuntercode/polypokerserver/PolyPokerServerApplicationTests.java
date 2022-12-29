@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.beathuntercode.polypokerserver.model.user.User;
-import com.beathuntercode.polypokerserver.model.user.UserDao;
+import com.beathuntercode.polypokerserver.database.model.user.User;
+import com.beathuntercode.polypokerserver.database.model.user.UserDao;
 
 @SpringBootTest
 class PolyPokerServerApplicationTests {

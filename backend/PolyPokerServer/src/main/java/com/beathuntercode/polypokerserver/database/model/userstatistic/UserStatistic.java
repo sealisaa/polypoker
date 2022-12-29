@@ -1,4 +1,4 @@
-package com.beathuntercode.polypokerserver.model.userstatistic;
+package com.beathuntercode.polypokerserver.database.model.userstatistic;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

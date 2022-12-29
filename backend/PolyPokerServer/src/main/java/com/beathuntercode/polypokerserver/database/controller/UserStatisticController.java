@@ -1,4 +1,4 @@
-package com.beathuntercode.polypokerserver.controller;
+package com.beathuntercode.polypokerserver.database.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.beathuntercode.polypokerserver.model.userstatistic.UserStatistic;
-import com.beathuntercode.polypokerserver.model.userstatistic.UserStatisticDao;
+import com.beathuntercode.polypokerserver.database.model.userstatistic.UserStatistic;
+import com.beathuntercode.polypokerserver.database.model.userstatistic.UserStatisticDao;
 
 @RestController
 public class UserStatisticController {

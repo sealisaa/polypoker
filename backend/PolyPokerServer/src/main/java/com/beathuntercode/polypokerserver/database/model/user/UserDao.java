@@ -1,4 +1,4 @@
-package com.beathuntercode.polypokerserver.model.user;
+package com.beathuntercode.polypokerserver.database.model.user;
 
 
 import java.util.ArrayList;
@@ -9,8 +9,8 @@ import org.springframework.data.util.Streamable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.beathuntercode.polypokerserver.model.userstatistic.UserStatistic;
-import com.beathuntercode.polypokerserver.model.userstatistic.UserStatisticRepository;
+import com.beathuntercode.polypokerserver.database.model.userstatistic.UserStatistic;
+import com.beathuntercode.polypokerserver.database.model.userstatistic.UserStatisticRepository;
 
 @Service
 public class UserDao {
