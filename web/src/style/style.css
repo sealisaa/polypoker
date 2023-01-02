@@ -1,0 +1,873 @@
+body {
+    background-color: #30355E;
+    font-family: 'Roboto', sans-serif;
+}
+
+.login {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login__header {
+    margin-top: 60px;
+}
+
+.login__main {
+    width: 600px;
+    height: 350px;
+    background-color: #212544;
+    border-radius: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+    position: relative;
+}
+
+.chip {
+    width: 150px;
+    height: 150px;
+    background-size: contain;
+    background: url("../img/chip-heart.svg") no-repeat center;
+    position: absolute;
+    top: 300px;
+    left: 275px;
+}
+
+.card1 {
+    width: 175px;
+    height: 175px;
+    background: url("../img/Q-card.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    top: 230px;
+    right: 270px;
+    rotate: 30deg;
+}
+
+.card2 {
+    width: 175px;
+    height: 175px;
+    background: url("../img/back.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: absolute;
+    top: 280px;
+    right: 270px;
+    z-index: -1;
+    rotate: 60deg;
+}
+
+h2 {
+    color: #ffffff;
+}
+
+.login__data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login__data input {
+    outline: none;
+    width: 400px;
+    border: solid 2px #8D92C7;
+    background-color: transparent;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    height: 40px;
+    padding-left: 20px;
+    margin: 15px;
+    border-radius: 20px;
+    color: #FFFFFF;
+}
+
+.login__data input:hover {
+    cursor: pointer;
+    color: #FFFFFF;
+}
+
+.login__data input:active {
+    color: #FFFFFF;
+}
+
+.login__data input::placeholder {
+    color: #FFFFFF;
+}
+
+.login__data input[type=password] {
+    background: url(../img/show.png) no-repeat;
+    background-size: 30px;
+    background-position: 95%, center;
+}
+
+.login__button {
+    border: none;
+    background-color: #F1B779;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    height: 40px;
+    padding-left: 80px;
+    padding-right: 80px;
+    border-radius: 20px;
+    color: #212544;
+    margin: 50px 15px 15px;
+}
+
+.login__settings {
+    width: 400px;
+    margin-left: -10px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.login__settings input[type=checkbox] {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #FFFFFF;
+    appearance: none;
+    border-radius: 20%;
+    margin-right: 10px;
+}
+
+span {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.35px;
+    color: #FFFFFF;
+}
+
+.login__settings a {
+    margin-right: -10px;
+    margin-left: auto;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.35px;
+    color: #8D92C7;
+}
+
+.login__create-account span {
+    margin-right: 20px;
+    color: #8D92C7;
+}
+
+.login__create-account a {
+    text-decoration: none;
+    color: #F1B779;
+}
+
+.login__create-account a:hover {
+    cursor: pointer;
+}
+
+button:hover {
+    cursor: pointer;
+}
+
+a:hover {
+    cursor: pointer;
+}
+
+input:hover {
+    cursor: pointer;
+}
+
+.register__main {
+    width: 100%;
+    height: 600px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.register__right {
+    width: 40%;
+    height: 450px;
+    background: url("../img/pic.svg") no-repeat center;
+    background-size: contain;
+}
+
+.register__left {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register__left input {
+    outline: none;
+    width: 400px;
+    border: none;
+    background-color: #212544;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    height: 40px;
+    padding-left: 20px;
+    margin: 15px;
+    border-radius: 20px;
+    color: #FFFFFF;
+}
+
+.register__left input:hover {
+    cursor: pointer;
+    color: #FFFFFF;
+}
+
+.register__left input::placeholder {
+    color: #FFFFFF;
+}
+
+/*.register__left input[type=password] {*/
+/*    background: url(../img/show.png), #6DB3F2;*/
+/*    background-size: 30px;*/
+/*    background-position: 95%, center;*/
+/*}*/
+
+.register__button {
+    border: none;
+    background-color: #F1B779;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    height: 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+    border-radius: 20px;
+    color: #212544;
+    margin: 25px 15px 15px;
+}
+
+.register__name {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.register__name input {
+    width: 170px;
+}
+
+.button-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    color: #212544;
+    text-decoration: none;
+}
+
+.lobby {
+    margin: 25px 50px;
+}
+
+.lobby__header {
+    width: 100%;
+    height: 75px;
+    display: flex;
+    align-items: center;
+}
+
+.lobby__avatar {
+    width: 75px;
+    height: 75px;
+    border-radius: 38px;
+    background-color: #8D92C7;
+    background-image: url("../img/avatar.svg");
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+
+.lobby__username {
+    margin-left: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    color: #FFFFFF;
+}
+
+.lobby__balance {
+    margin-left: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.lobby__balance-chip {
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+    background: url("../img/chip-heart.svg") no-repeat center;
+}
+
+.lobby__exit {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.lobby__exit-button {
+    width: 40px;
+    height: 40px;
+    background: url("../img/exit.svg") no-repeat center;
+    background-size: contain;
+    border: none;
+}
+
+.lobby__statistics {
+    margin-top: 25px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lobby__all-games, .lobby__win-games, .lobby__money-earned {
+    width: 400px;
+    height: 100%;
+    background-color: #3F4779;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lobby__all-games-pic, .lobby__win-games-pic, .lobby__money-earned-pic {
+    width: 125px;
+    height: 125px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.lobby__all-games-pic {
+    background-image: url("../img/machine.svg");
+}
+
+.lobby__win-games-pic {
+    background-image: url("../img/win.svg");
+}
+
+.lobby__money-earned-pic {
+    background-image: url("../img/money.svg");
+}
+
+.lobby__all-games-content, .lobby__win-games-content, .lobby__money-earned-content{
+    padding-left: 25px;
+}
+
+.lobby__all-games-content {
+    width: 150px;
+}
+
+.lobby__win-games-content {
+    width: 175px;
+}
+
+.lobby__money-earned-content {
+    width: 175px;
+}
+
+.lobby__all-games-count, .lobby__win-games-count, .lobby__money-earned-count {
+    font-family: 'Roboto', sans-serif;
+    font-size: 40px;
+    line-height: 48px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    color: #F1B779;
+}
+
+.lobby__all-games-text, .lobby__win-games-text, .lobby__money-earned-text {
+    font-family: 'Roboto', sans-serif;
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+}
+
+.lobby__actions {
+    margin-top: 25px;
+    height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lobby__donate, .lobby__find-game {
+    width: 615px;
+    height: 100%;
+    background-color: #3F4779;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.lobby__donate:hover, .lobby__find-game:hover {
+    background-color: #8D92C7;
+    cursor: pointer;
+}
+
+.lobby__donate-pic, .lobby__find-game-pic {
+    width: 175px;
+    height: 175px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.lobby__donate-text, .lobby__find-game-text {
+    margin-left: 40px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 36px;
+    line-height: 48px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    color: #FFFFFF;
+}
+
+.lobby__donate-pic {
+    background-image: url("../img/diamond.svg");
+}
+
+.lobby__find-game-pic {
+    background-image: url("../img/find-game.svg");
+}
+
+.game {
+    margin: 25px 50px;
+}
+
+.game__header {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.game__home-button {
+    width: 40px;
+    height: 40px;
+    background: url("../img/home.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
+}
+
+.game__menu-button {
+    width: 40px;
+    height: 40px;
+    background: url("../img/menu.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.game__main {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 25px;
+}
+
+.game__table {
+    width: 1000px;
+    height: 350px;
+    border-radius: 220px;
+    background-color: #3F4779;
+    position: relative;
+}
+
+.game__user1 {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.game__user2 {
+    position: absolute;
+    top: -80px;
+    left: 440px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.game__user3 {
+    position: absolute;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.game__user4 {
+    position: absolute;
+    bottom: -50px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.game__user5 {
+    position: absolute;
+    bottom: -130px;
+    left: 440px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.game__user6 {
+    position: absolute;
+    bottom: -50px;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.game__user-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    background-color: #8D92C7;
+    margin-bottom: 10px;
+}
+
+.game__user-avatar1 {
+    background-image: url("../img/Mattew.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 0 10px;
+}
+
+.game__user-avatar2 {
+    background-image: url("../img/Angela.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 0 -5px;
+}
+
+.game__user-avatar3 {
+    background-image: url("../img/Justin.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: -7px 10px;
+}
+
+.game__user-avatar4 {
+    background-image: url("../img/Kim.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+
+.game__user-avatar6 {
+    background-image: url("../img/Ed.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom;
+}
+
+.game__active-user-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    background-color: #F1B779;
+    margin-bottom: 10px;
+    background-image: url("../img/Mary.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: 10px;
+}
+
+.game__user-info {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.game__user-card {
+    width: 60px;
+    height: 85px;
+    border-radius: 5px;
+    background-color: #212544;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.game__user1-cards {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: -40px;
+    margin-left: 5px;
+}
+
+.game__user2-cards {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 15px;
+    margin-left: 5px;
+}
+
+.game__user3-cards {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: -40px;
+    margin-right: 5px;
+}
+
+.game__user4-cards {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 80px;
+    margin-left: 5px;
+}
+
+.game__user5-cards {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 15px;
+    margin-left: 5px;
+}
+
+.game__user6-cards {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 80px;
+    margin-right: 5px;
+}
+
+.game__active-user-card1 {
+    background-image: url("../img/5-card.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.game__active-user-card2 {
+    background-image: url("../img/9-card.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.game__user-login {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.game__user-balance {
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: #8D92C7;
+}
+
+.game__user-balance:before {
+    content: " ";
+    width: 20px;
+    height: 20px;
+    background: url("../img/balance-chip.svg");
+    display: block;
+    float: left;
+    margin-right: 5px;
+}
+
+.game__actions {
+    margin-top: 75px;
+    display: flex;
+    align-items: center;
+}
+
+.game__fold, .game__call, .game__raise {
+    border: none;
+    width: 125px;
+    height: 70px;
+    background-color: #212544;
+    border-radius: 20px;
+    margin-right: 25px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #8D92C7;
+}
+
+.game__fold:hover, .game__call:hover, .game__raise:hover {
+    background-color: #F1B779;
+    color: #212544;
+}
+
+.game__bank {
+    width: 250px;
+    height: 70px;
+    background-color: #212544;
+    border-radius: 20px;
+    margin-right: 0;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game__bank-value {
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #8D92C7;
+}
+
+.game__bank-chip {
+    width: 20px;
+    height: 20px;
+    background-image: url("../img/balance-chip.svg");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-right: 10px;
+}
+
+.game__cards {
+    position: absolute;
+    left: 255px;
+    top: 125px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.game__card1 {
+    width: 90px;
+    height: 125px;
+    background-color: #212544;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.game__card1-front {
+    border-radius: 5px;
+    background-image: url("../img/A-card.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.game__card2-front {
+    border-radius: 5px;
+    background-image: url("../img/Q-card.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.game__card3-front {
+    border-radius: 5px;
+    background-image: url("../img/10-card.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.game__card-back {
+    border-radius: 5px;
+    background-image: url("../img/back.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.game__card2 {
+    width: 90px;
+    height: 125px;
+    background-color: #212544;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.game__card3 {
+    width: 90px;
+    height: 125px;
+    background-color: #212544;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.game__card4 {
+    width: 90px;
+    height: 125px;
+    background-color: #212544;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.game__card5 {
+    width: 90px;
+    height: 125px;
+    background-color: #212544;
+    border-radius: 5px;
+}
+
+.flip-card {
+    position: relative;
+    perspective: 500px;
+}
+
+.flip-card.h:hover .back, .flip-card.h.flip .back{
+    transform: rotateY(180deg);
+}
+
+.flip-card.h:hover .front, .flip-card.h.flip .front{
+    transform: rotateY(0deg);
+}
+
+.flip-card.h .front{
+    transform: rotateY(-180deg);
+}
+
+.flip-card .back, .flip-card .front {
+    position:absolute;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    transition: all 0.5s ease-in;
+    padding: 10px;
+    backface-visibility: hidden;
+}
+
