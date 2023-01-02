@@ -9,5 +9,5 @@
 
 
 ## Как запустить у себя сервер
-1. С помощью IntelliJ IDEA откройте проект `PolyPokerServer`
+1. С помощью IntelliJ IDEA откройте проект `PolyPokerServer`: `./backend/PolyPokerServer`
 2. Запустите проект через зелёный треугольник
