@@ -5,7 +5,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
+import com.example.polypoker.MainActivity
 import com.example.polypoker.R
+import com.example.polypoker.retrofit.RetrofitService
+import com.example.polypoker.retrofit.RoomApi
+import com.example.polypoker.websocket.SocketConnectionManager
+import okhttp3.*
+import okio.ByteString
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,10 +27,16 @@ private const val ARG_PARAM2 = "param2"
  * Use the [RoomFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+
 class RoomFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+//    private lateinit var client: StompClient
+
+//    @Inject
+//    private lateinit var roomViewModel: RoomViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +51,55 @@ class RoomFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        val retrofitService = RetrofitService()
+        val roomApi: RoomApi = retrofitService.retrofit.create(RoomApi::class.java)
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                TODO("Not yet implemented")
+            }
+
+        }
+
+        val socketConnectionManager = SocketConnectionManager()
+        socketConnectionManager.init(requireContext(), requireActivity().application)
+
         return inflater.inflate(R.layout.room_fragment, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        hidePlayerSeat(
+            view.findViewById(R.id.player2Avatar), view.findViewById(R.id.player2Name),
+            view.findViewById(R.id.player2ChipsIcon), view.findViewById(R.id.player2DollarSign),
+            view.findViewById(R.id.player2Cash), view.findViewById(R.id.player2Card1),
+            view.findViewById(R.id.player2Card2))
+
+        hidePlayerSeat(
+            view.findViewById(R.id.player3Avatar), view.findViewById(R.id.player3Name),
+            view.findViewById(R.id.player3ChipsIcon), view.findViewById(R.id.player3DollarSign),
+            view.findViewById(R.id.player3Cash), view.findViewById(R.id.player3Card1),
+            view.findViewById(R.id.player3Card2))
+
+        hidePlayerSeat(
+            view.findViewById(R.id.player4Avatar), view.findViewById(R.id.player4Name),
+            view.findViewById(R.id.player4ChipsIcon), view.findViewById(R.id.player4DollarSign),
+            view.findViewById(R.id.player4Cash), view.findViewById(R.id.player4Card1),
+            view.findViewById(R.id.player4Card2))
+
+        hidePlayerSeat(
+            view.findViewById(R.id.player5Avatar), view.findViewById(R.id.player5Name),
+            view.findViewById(R.id.player5ChipsIcon), view.findViewById(R.id.player5DollarSign),
+            view.findViewById(R.id.player5Cash), view.findViewById(R.id.player5Card1),
+            view.findViewById(R.id.player5Card2))
+
+        hidePlayerSeat(
+            view.findViewById(R.id.player6Avatar), view.findViewById(R.id.player6Name),
+            view.findViewById(R.id.player6ChipsIcon), view.findViewById(R.id.player6DollarSign),
+            view.findViewById(R.id.player6Cash), view.findViewById(R.id.player6Card1),
+            view.findViewById(R.id.player6Card2))
+
     }
 
     companion object {
@@ -57,4 +121,17 @@ class RoomFragment : Fragment() {
                 }
             }
     }
+
+    fun hidePlayerSeat(playerAvatar: ImageView, playerName: TextView,
+                       playerChipIcon: ImageView, playerDollarSign: TextView, playerCash: TextView,
+                       playerCard1: ImageView, playerCard2: ImageView) {
+        playerAvatar.visibility = View.INVISIBLE
+        playerName.visibility = View.INVISIBLE
+        playerChipIcon.visibility = View.INVISIBLE
+        playerDollarSign.visibility = View.INVISIBLE
+        playerCash.visibility = View.INVISIBLE
+        playerCard1.visibility = View.INVISIBLE
+        playerCard2.visibility = View.INVISIBLE
+    }
+
 }

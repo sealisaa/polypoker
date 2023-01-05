@@ -139,7 +139,7 @@
             android:layout_width="30dp"
             android:layout_height="45dp"
             android:layout_marginBottom="23dp"
-            app:layout_constraintBottom_toTopOf="@+id/imageView17"
+            app:layout_constraintBottom_toTopOf="@+id/player3ChipsIcon"
             app:layout_constraintStart_toEndOf="@+id/player3Avatar"
             app:srcCompat="@drawable/ic_card_place" />
 
@@ -149,7 +149,7 @@
             android:layout_height="45dp"
             android:layout_marginStart="5dp"
             android:layout_marginBottom="23dp"
-            app:layout_constraintBottom_toTopOf="@+id/imageView18"
+            app:layout_constraintBottom_toTopOf="@+id/player5ChipsIcon"
             app:layout_constraintEnd_toStartOf="@+id/player5Avatar"
             app:layout_constraintStart_toEndOf="@+id/player5Card1"
             app:srcCompat="@drawable/ic_card_place" />
@@ -182,7 +182,7 @@
             android:layout_height="52dp"
             android:layout_marginEnd="7dp"
             android:layout_marginBottom="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/textView3"
+            app:layout_constraintBottom_toTopOf="@+id/player1Cash"
             app:layout_constraintEnd_toStartOf="@+id/player1Card2"
             app:layout_constraintHorizontal_bias="0.012"
             app:layout_constraintStart_toEndOf="@+id/player1Avatar"
@@ -194,7 +194,7 @@
             android:layout_height="52dp"
             android:layout_marginEnd="83dp"
             android:layout_marginBottom="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/textView3"
+            app:layout_constraintBottom_toTopOf="@+id/player1Cash"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_card_place" />
 
@@ -247,7 +247,7 @@
             android:layout_height="45dp"
             android:layout_marginStart="111dp"
             android:layout_marginBottom="23dp"
-            app:layout_constraintBottom_toTopOf="@+id/imageView18"
+            app:layout_constraintBottom_toTopOf="@+id/player5ChipsIcon"
             app:layout_constraintStart_toEndOf="@+id/player3Card2"
             app:srcCompat="@drawable/ic_card_place" />
 
@@ -259,7 +259,7 @@
             android:layout_marginEnd="14dp"
             android:layout_marginBottom="52dp"
             app:layout_constraintBottom_toTopOf="@+id/player1Card2"
-            app:layout_constraintEnd_toStartOf="@+id/imageView16"
+            app:layout_constraintEnd_toStartOf="@+id/player6ChipsIcon"
             app:layout_constraintStart_toEndOf="@+id/card5"
             app:srcCompat="@drawable/ic_card_place" />
 
@@ -324,13 +324,13 @@
             android:text="@string/you_text"
             android:textColor="@color/apricot"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/textView3"
+            app:layout_constraintBottom_toTopOf="@+id/player1Cash"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/player1Avatar" />
 
         <ImageView
-            android:id="@+id/imageView11"
+            android:id="@+id/player1ChipsIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
@@ -342,7 +342,7 @@
             app:srcCompat="@drawable/ic_poker_chips" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/player1DollarSign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
@@ -351,10 +351,10 @@
             android:textColor="@color/ultralight_purple"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageView11" />
+            app:layout_constraintStart_toEndOf="@+id/player1ChipsIcon" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/player1Cash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -365,7 +365,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/textView2" />
+            app:layout_constraintStart_toEndOf="@+id/player1DollarSign" />
 
         <TextView
             android:id="@+id/player2Name"
@@ -391,7 +391,7 @@
             app:layout_constraintTop_toBottomOf="@+id/player2Card1" />
 
         <ImageView
-            android:id="@+id/imageView15"
+            android:id="@+id/player2ChipsIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
@@ -402,7 +402,7 @@
             app:srcCompat="@drawable/ic_poker_chips" />
 
         <TextView
-            android:id="@+id/textView16"
+            android:id="@+id/player2DollarSign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="1dp"
@@ -412,7 +412,7 @@
             android:textColor="@color/ultralight_purple"
             android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@+id/player2Cash"
-            app:layout_constraintStart_toEndOf="@+id/imageView15"
+            app:layout_constraintStart_toEndOf="@+id/player2ChipsIcon"
             app:layout_constraintTop_toBottomOf="@+id/player2Name" />
 
         <TextView
@@ -438,7 +438,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/textView18"
+            android:id="@+id/player6DollarSign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
@@ -448,10 +448,10 @@
             android:textSize="13sp"
             app:layout_constraintBottom_toTopOf="@+id/player1Card2"
             app:layout_constraintEnd_toStartOf="@+id/player6Cash"
-            app:layout_constraintStart_toEndOf="@+id/imageView16" />
+            app:layout_constraintStart_toEndOf="@+id/player6ChipsIcon" />
 
         <ImageView
-            android:id="@+id/imageView16"
+            android:id="@+id/player6ChipsIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
@@ -486,7 +486,7 @@
             app:layout_constraintTop_toBottomOf="@+id/player3Card1" />
 
         <ImageView
-            android:id="@+id/imageView17"
+            android:id="@+id/player3ChipsIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
@@ -497,7 +497,7 @@
             app:srcCompat="@drawable/ic_poker_chips" />
 
         <TextView
-            android:id="@+id/textView20"
+            android:id="@+id/player3DollarSign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -506,7 +506,7 @@
             android:textColor="@color/ultralight_purple"
             android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@+id/player3Cash"
-            app:layout_constraintStart_toEndOf="@+id/imageView17"
+            app:layout_constraintStart_toEndOf="@+id/player3ChipsIcon"
             app:layout_constraintTop_toBottomOf="@+id/player3Name" />
 
         <TextView
@@ -532,7 +532,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView18"
+            android:id="@+id/player5ChipsIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
@@ -544,7 +544,7 @@
             app:srcCompat="@drawable/ic_poker_chips" />
 
         <TextView
-            android:id="@+id/textView22"
+            android:id="@+id/player5DollarSign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="2dp"
@@ -554,7 +554,7 @@
             android:textColor="@color/ultralight_purple"
             android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@+id/player5Cash"
-            app:layout_constraintStart_toEndOf="@+id/imageView18"
+            app:layout_constraintStart_toEndOf="@+id/player5ChipsIcon"
             app:layout_constraintTop_toBottomOf="@+id/player5Name" />
 
         <TextView
@@ -567,7 +567,7 @@
             android:textColor="@color/white"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/player4Cash"
-            app:layout_constraintStart_toStartOf="@+id/imageView19"
+            app:layout_constraintStart_toStartOf="@+id/player4ChipsIcon"
             app:layout_constraintTop_toBottomOf="@+id/player4Avatar" />
 
         <TextView
@@ -583,19 +583,19 @@
             app:layout_constraintTop_toBottomOf="@+id/player4Avatar" />
 
         <ImageView
-            android:id="@+id/imageView19"
+            android:id="@+id/player4ChipsIcon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="2dp"
             android:layout_weight="0.2"
-            app:layout_constraintEnd_toStartOf="@+id/textView24"
+            app:layout_constraintEnd_toStartOf="@+id/player4DollarSign"
             app:layout_constraintTop_toBottomOf="@+id/player4Name"
             app:srcCompat="@drawable/ic_poker_chips" />
 
         <TextView
-            android:id="@+id/textView24"
+            android:id="@+id/player4DollarSign"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"

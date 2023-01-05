@@ -11,8 +11,7 @@ import jakarta.persistence.UniqueConstraint;
 public class User {
 
     /**
-     *  user.id - primary key
-        user.id auto-increment on new User add
+     *  user.id - primary key (auto-increment on new User add)
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

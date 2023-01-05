@@ -2,8 +2,7 @@ package com.example.polypoker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.polypoker.ui.main.LogInFragment
-import com.example.polypoker.ui.main.RegistrationFragment
+import com.example.polypoker.websocket.SocketConnectionManager
 
 class MainActivity : AppCompatActivity() {
 

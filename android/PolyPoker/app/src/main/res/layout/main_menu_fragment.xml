@@ -258,33 +258,80 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/findGameLinearLayout"
+            android:id="@+id/findcreateGameLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="7dp"
             android:layout_weight="1"
-            android:background="@drawable/purple_light_border"
-            android:backgroundTint="@color/light_purple"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/imageView10"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:src="@drawable/ic_cards" />
+            <LinearLayout
 
-            <TextView
-                android:id="@+id/textView14"
+                android:id="@+id/findGameLinearLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
-                android:text="@string/find_game"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:background="@drawable/purple_light_border"
+                android:backgroundTint="@color/light_purple"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/imageView10"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:src="@drawable/ic_cards" />
+
+                <TextView
+                    android:id="@+id/findGameText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="@string/find_game"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/createGameLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/purple_light_border"
+                android:backgroundTint="@color/light_purple"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <ImageView
+                    android:id="@+id/imageView11"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="2"
+                    android:src="@drawable/ic_cards" />
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="@string/create_game"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
     </LinearLayout>

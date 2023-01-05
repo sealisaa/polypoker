@@ -1,9 +1,4 @@
-package com.beathuntercode.polypokerserver.logic;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+package com.example.polypoker.model;
 
 public class Room {
 
@@ -35,33 +30,11 @@ public class Room {
         this.minRaise = minRaise;
     }
 
-    public List<Player> getPlayersList() {
-        return playersList;
-    }
-
-    public void setPlayersList(List<Player> playersList) {
-        this.playersList = playersList;
-    }
-
-    public GameManager getGameManager() {
-        return gameManager;
-    }
-
-    public void setGameManager(GameManager gameManager) {
-        this.gameManager = gameManager;
-    }
-
-    private List<Player> playersList;
-
-    private GameManager gameManager;
 
     public Room(int roomCode, int minBlind, int minRaise) {
         this.roomCode = roomCode;
         this.minBlind = minBlind;
         this.minRaise = minRaise;
-
-        playersList = new ArrayList<>();
-        gameManager = new GameManager(playersList);
     }
 
 }

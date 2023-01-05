@@ -18,6 +18,7 @@ import com.example.polypoker.Utilities
 import com.example.polypoker.model.User
 import com.example.polypoker.model.UserStatistic
 import com.example.polypoker.retrofit.RetrofitService
+import com.example.polypoker.retrofit.RoomApi
 import com.example.polypoker.retrofit.UserApi
 import com.example.polypoker.retrofit.UserStatisticApi
 import retrofit2.Call
@@ -37,7 +38,9 @@ private const val ARG_PARAM2 = "param2"
  */
 class MainMenuFragment : Fragment() {
 
+    lateinit var userStatisticApi: UserStatisticApi
     lateinit var userApi: UserApi
+    lateinit var roomApi: RoomApi
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -63,8 +66,9 @@ class MainMenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val retrofitService = RetrofitService()
-        val userStatisticApi = retrofitService.retrofit.create(UserStatisticApi::class.java)
+        userStatisticApi = retrofitService.retrofit.create(UserStatisticApi::class.java)
         userApi = retrofitService.retrofit.create(UserApi::class.java)
+        roomApi = retrofitService.retrofit.create(RoomApi::class.java)
 
         val userNameSurnameTextView = view.findViewById<TextView>(R.id.userNameSurname)
         val currentCoinsCountTextView = view.findViewById<TextView>(R.id.currentCoinsCountText)
@@ -121,7 +125,12 @@ class MainMenuFragment : Fragment() {
                 }
             })
 
+
+
         view.findViewById<LinearLayout>(R.id.findGameLinearLayout).setOnClickListener {
+            val user = User()
+            user.login = Utilities.USER_LOGIN
+
             val dialogBuilder = AlertDialog.Builder(activity)
             dialogBuilder.setTitle("Введите код комнаты")
 
@@ -130,15 +139,15 @@ class MainMenuFragment : Fragment() {
             dialogBuilder.setView(roomCodeEditText)
             dialogBuilder.setPositiveButton("OK", object: DialogInterface.OnClickListener {
                 override fun onClick(dialogInterface: DialogInterface?, i: Int) {
-                    joinRoom()
+                    joinRoom(Integer.parseInt(roomCodeEditText.text.toString()), user, view)
                 }
             })
 
             dialogBuilder.show()
+        }
 
-            view.findNavController().navigate(
-                R.id.action_mainMenuFragment_to_roomFragment
-            )
+        view.findViewById<LinearLayout>(R.id.createGameLinearLayout).setOnClickListener {
+
         }
 
     }
@@ -163,7 +172,25 @@ class MainMenuFragment : Fragment() {
             }
     }
 
-    private fun joinRoom() {
+    private fun joinRoom(roomCode: Int, user: User, view: View) {
+        roomApi.joinRoom(roomCode, user).enqueue(object : retrofit2.Callback<Boolean> {
+            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
+                if (response.isSuccessful) {
+                    if (response.body() == true) {
+                        view.findNavController().navigate(
+                            R.id.action_mainMenuFragment_to_roomFragment
+                        )
+                    }
+                    else {
+                        Toast.makeText(activity, "Комната не найдена", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                Toast.makeText(activity, "Ошибка при присоединении к комнате", Toast.LENGTH_LONG).show()
+            }
+        })
 
     }
 }

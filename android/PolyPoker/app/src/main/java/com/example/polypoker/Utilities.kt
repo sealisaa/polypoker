@@ -8,6 +8,8 @@ class Utilities {
     companion object {
         lateinit var USER_LOGIN: String
 
+        const val MAX_PLAYERS_COUNT: Int = 6
+
         val cardsMap = mapOf<Card, String>(
             Card(CardSuit.HEARTS, CardNumber.TWO) to "ic_2_of_hearts",
             Card(CardSuit.HEARTS, CardNumber.THREE) to "ic_3_of_hearts",
