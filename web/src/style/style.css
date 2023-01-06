@@ -871,3 +871,6 @@ input:hover {
     backface-visibility: hidden;
 }
 
+p {
+    color: #8D92C7;
+}
