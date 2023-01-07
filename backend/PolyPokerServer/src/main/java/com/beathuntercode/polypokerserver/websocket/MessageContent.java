@@ -30,7 +30,6 @@ public class MessageContent {
      *      ROUND_END(18),
      *      OK(200),
      *      FAIL(500)
-     * @param roomCode
      */
     public MessageContent(Integer roomCode) {
         this.roomCode = roomCode;
@@ -41,7 +40,6 @@ public class MessageContent {
      *      PLAYER_MAKE_BET(12),
      *      PLAYER_MAKE_RISE(14),
      *      PAYMENT_TO_PLAYER(16)
-     * @param roomCode
      */
     public MessageContent(Integer roomCode, int moneyValue) {
         this.roomCode = roomCode;
@@ -51,7 +49,6 @@ public class MessageContent {
     /**
      * For MessageType.
      *      DRAW_CARD(11)
-     * @param roomCode
      */
     public MessageContent(Integer roomCode, CardSuit cardSuit, CardNumber cardNumber) {
         this.roomCode = roomCode;
