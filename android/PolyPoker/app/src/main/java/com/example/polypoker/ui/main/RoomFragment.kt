@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
@@ -19,7 +20,7 @@ import org.greenrobot.eventbus.Subscribe
 import com.example.polypoker.websocket.nv.RealTimeEvent
 import com.example.polypoker.websocket.stomp.MessageType
 import com.example.polypoker.websocket.stomp.SocketMessage
-import com.example.polypoker.websocket.stomp.messages.MessageContent
+import com.example.polypoker.websocket.stomp.MessageContent
 import java.time.LocalDateTime
 
 
@@ -66,10 +67,6 @@ class RoomFragment : Fragment() {
 
         }
 
-//        EventBus.getDefault().register(this)
-//        socketConnectionManager = SocketConnectionManager()
-//        socketConnectionManager.init(requireContext(), requireActivity().application)
-
         webSocketViewModel = WebSocketViewModel()
 
         return inflater.inflate(R.layout.room_fragment, container, false)
@@ -109,18 +106,30 @@ class RoomFragment : Fragment() {
             view.findViewById(R.id.player6Cash), view.findViewById(R.id.player6Card1),
             view.findViewById(R.id.player6Card2))
 
-//        while (socketConnectionManager.getSocketConnection().clientWebSocket.connection == null ) {
-//            println("NUUUULLL")
-//        }
-//        socketConnectionManager.getSocketConnection().clientWebSocket.connection.sendText("JOPA")
+        view.findViewById<Button>(R.id.readyButton).setOnClickListener {
+            it.visibility = View.INVISIBLE
+            view.findViewById<Button>(R.id.notReadyButton).visibility = View.VISIBLE
+            webSocketViewModel.sendMessage(SocketMessage(
+                MessageType.PLAYER_READY_SET,
+                MessageContent(Utilities.currentRoomCode),
+                Utilities.USER_LOGIN,
+                LocalDateTime.now(),
+                Utilities.HOST_ADDRESS
+            ))
+        }
 
-        webSocketViewModel.sendMessage(SocketMessage(
-            MessageType.PLAYER_READY_SET,
-            MessageContent(Utilities.currentRoomCode),
-            Utilities.USER_LOGIN,
-            LocalDateTime.now(),
-            Utilities.HOST_ADDRESS
-        ))
+        view.findViewById<Button>(R.id.notReadyButton).setOnClickListener {
+            it.visibility = View.INVISIBLE
+            view.findViewById<Button>(R.id.readyButton).visibility = View.VISIBLE
+            webSocketViewModel.sendMessage(SocketMessage(
+                MessageType.PLAYER_READY_SET,
+                MessageContent(Utilities.currentRoomCode),
+                Utilities.USER_LOGIN,
+                LocalDateTime.now(),
+                Utilities.HOST_ADDRESS
+            ))
+        }
+
     }
 
     companion object {

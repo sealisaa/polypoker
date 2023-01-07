@@ -1,6 +1,5 @@
 package com.example.polypoker.websocket.stomp
 
-import com.example.polypoker.websocket.stomp.messages.MessageContent
 import java.time.LocalDateTime
 
 data class SocketMessage (

@@ -1,9 +1,8 @@
 package com.beathuntercode.polypokerserver.logic;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Room {
 
@@ -35,12 +34,12 @@ public class Room {
         this.minRaise = minRaise;
     }
 
-    public List<Player> getPlayersList() {
-        return playersList;
+    public Map<String, Player> getPlayersMap() {
+        return playersMap;
     }
 
-    public void setPlayersList(List<Player> playersList) {
-        this.playersList = playersList;
+    public void setPlayersMap(Map<String, Player> playersMap) {
+        this.playersMap = playersMap;
     }
 
     public GameManager getGameManager() {
@@ -51,7 +50,7 @@ public class Room {
         this.gameManager = gameManager;
     }
 
-    private List<Player> playersList;
+    private Map<String, Player> playersMap;
 
     private GameManager gameManager;
 
@@ -60,8 +59,8 @@ public class Room {
         this.minBlind = minBlind;
         this.minRaise = minRaise;
 
-        playersList = new ArrayList<>();
-        gameManager = new GameManager(playersList);
+        playersMap = new HashMap<>();
+        gameManager = new GameManager(playersMap);
     }
 
 }

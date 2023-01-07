@@ -24,4 +24,6 @@
     <string name="bank_text">БАНК:</string>
     <string name="you_text">Вы</string>
     <string name="create_game">Создать игру</string>
+    <string name="ready">Готов</string>
+    <string name="notReady">Не готов</string>
 </resources>
