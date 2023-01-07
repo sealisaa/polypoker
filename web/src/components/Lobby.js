@@ -14,17 +14,22 @@ class LobbyContent extends React.Component {
         super(props);
         this.state = {
             login: props.login,
-            name: "",
-            surname: ""
+            totalGamesPlayed: 0,
+            winGames: 0,
+            currentCoinsCount: 0,
+            totalEarn: 0
         }
     }
 
     componentDidMount(){
-        UserService.getUserByLogin(this.state.login).then((response) => {
-            console.log(response.data);
-        });
         UserService.getUserStatistic(this.state.login).then((response) => {
             console.log(response.data);
+            this.setState({
+                totalGamesPlayed: response.data.totalGamesPlayed,
+                winGames: response.data.winGames,
+                currentCoinsCount: response.data.currentCoinsCount,
+                totalEarn: response.data.totalEarn
+            });
         });
     }
 
@@ -33,10 +38,10 @@ class LobbyContent extends React.Component {
             <div className="lobby">
                 <div className="lobby__header">
                     <div className="lobby__avatar" />
-                    <span className="lobby__username">User Name</span>
+                    <span className="lobby__username">{this.state.login}</span>
                     <div className="lobby__balance">
                         <div className="lobby__balance-chip" />
-                        <span className="lobby__username">9999</span>
+                        <span className="lobby__username">{this.state.currentCoinsCount}</span>
                     </div>
                     <div className="lobby__exit">
                         <Link to="/">
@@ -48,21 +53,21 @@ class LobbyContent extends React.Component {
                     <div className="lobby__all-games">
                         <div className="lobby__all-games-pic"></div>
                         <div className="lobby__all-games-content">
-                            <span className="lobby__all-games-count">10536</span><br></br>
+                            <span className="lobby__all-games-count">{this.state.totalGamesPlayed}</span><br></br>
                             <span className="lobby__all-games-text">всего партий сыграно</span>
                         </div>
                     </div>
                     <div className="lobby__win-games">
                         <div className="lobby__win-games-pic"></div>
                         <div className="lobby__win-games-content">
-                            <span className="lobby__win-games-count">2567</span><br></br>
+                            <span className="lobby__win-games-count">{this.state.winGames}</span><br></br>
                             <span className="lobby__win-games-text">выигрышных партий</span>
                         </div>
                     </div>
                     <div className="lobby__money-earned">
                         <div className="lobby__money-earned-pic"></div>
                         <div className="lobby__money-earned-content">
-                            <span className="lobby__money-earned-count">$ 999</span><br></br>
+                            <span className="lobby__money-earned-count">$ {this.state.totalEarn}</span><br></br>
                             <span className="lobby__money-earned-text">заработано за все время</span>
                         </div>
                     </div>

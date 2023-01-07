@@ -1,6 +1,5 @@
 import axios from 'axios'
 
-const GET_ALL_USERS_URL = 'http://localhost:8080/user/get-all';
 const SAVE_USER_URL = 'http://localhost:8080/user/save';
 const USER_URL = 'http://localhost:8080/user/';
 const AUTH_USER_URL = 'http://localhost:8080/user/auth';
