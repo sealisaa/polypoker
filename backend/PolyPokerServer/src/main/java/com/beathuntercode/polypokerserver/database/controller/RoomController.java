@@ -36,10 +36,6 @@ public class RoomController {
     @PostMapping("/join-room/{roomCode}")
     public boolean joinRoom(@PathVariable Integer roomCode, @RequestBody User user) {
         UserStatistic userStatistic = userStatisticDao.getUserStatistic(user.getLogin());
-        Player player = new Player(
-                user.getName() + " " + user.getSurname(),
-                userStatistic.getCurrentCoinsCount()
-        );
-        return Utilities.roomsController.joinRoom(roomCode, player);
+        return Utilities.roomsController.joinRoom(roomCode, user, userStatistic);
     }
 }

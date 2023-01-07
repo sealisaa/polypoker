@@ -3,18 +3,19 @@ package com.beathuntercode.polypokerserver.logic;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class GameManager {
 
 
-    private List<Player> playersList;
+    private Map<String, Player> playersMap;
     private int bank;
 
     private List<Card> deck;
     private GameState gameState;
 
-    public GameManager(List<Player> playersList) {
-        this.playersList = playersList;
+    public GameManager(Map<String, Player> playersMap) {
+        this.playersMap = playersMap;
     }
 
     public void checkGameState() {
@@ -42,8 +43,8 @@ public class GameManager {
 
     private boolean isAllPlayersReady() {
         boolean isAllPlayersReady = false;
-        for (Player player : playersList) {
-            if (!player.isReady()) {
+        for (Map.Entry<String, Player> entry : playersMap.entrySet()) {
+            if (!entry.getValue().isReady()) {
                 isAllPlayersReady = false;
             }
             else {
@@ -73,17 +74,17 @@ public class GameManager {
     }
 
     private void startGame() {
-        for (Player player: playersList) {
-            player.setCard1(dealRandomCard());
-            player.setCard2(dealRandomCard());
+        for (Map.Entry<String, Player> entry : playersMap.entrySet()) {
+            entry.getValue().setCard1(dealRandomCard());
+            entry.getValue().setCard2(dealRandomCard());
         }
-        playersList.get(0).setSmallBlind(true);
-        playersList.get(1).setBigBlind(true);
+        playersMap.get(0).setSmallBlind(true);
+        playersMap.get(1).setBigBlind(true);
     }
 
     private void startBlinds() {
-        Player smallBlindPlayer = playersList.stream().filter(Player::isSmallBlind).findFirst().get();
-        Player bigBlindPlayer = playersList.stream().filter(Player::isBigBlind).findFirst().get();
+        Player smallBlindPlayer = playersMap.entrySet().stream().filter(entry -> entry.getValue().isSmallBlind()).findFirst().get().getValue();
+        Player bigBlindPlayer = playersMap.entrySet().stream().filter(entry -> entry.getValue().isBigBlind()).findFirst().get().getValue();
 
         //TODO: Реализовать запросы сервера к клиенту на блайнды
     }

@@ -2,7 +2,8 @@ package com.beathuntercode.polypokerserver.websocket;
 
 import java.time.LocalDateTime;
 
-import com.beathuntercode.polypokerserver.websocket.messages.MessageContent;
+import com.beathuntercode.polypokerserver.logic.Room;
+import com.beathuntercode.polypokerserver.logic.Utilities;
 
 public class MessageHandler {
 
@@ -13,8 +14,7 @@ public class MessageHandler {
      */
     public SocketMessage handleMessage(SocketMessage message) {
         switch (message.getMessageType()) {
-            case    PLAYER_READY_SET,
-                    PLAYER_MAKE_CHECK,
+            case    PLAYER_MAKE_CHECK,
                     PLAYER_MAKE_FOLD -> {
                 return new SocketMessage(
                         MessageType.OK,
@@ -24,8 +24,23 @@ public class MessageHandler {
                         message.getAuthor()
                 );
             }
+            case PLAYER_READY_SET -> {
+                Room room = Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode());
+                room.getPlayersMap().get(message.getAuthor()).setReady(
+                        !room.getPlayersMap().get(message.getAuthor()).isReady()
+                );
+
+                return new SocketMessage(
+                        MessageType.OK,
+                        new MessageContent(message.getContent().getRoomCode()),
+                        message.getReceiver(),
+                        LocalDateTime.now(),
+                        message.getAuthor());
+
+            }
             case PLAYER_ROOM_EXIT -> {
-                //TODO()
+                Room room = Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode());
+                room.getPlayersMap().remove(message.getAuthor());
             }
             case ROUND_BEGIN -> {
                 //TODO()
