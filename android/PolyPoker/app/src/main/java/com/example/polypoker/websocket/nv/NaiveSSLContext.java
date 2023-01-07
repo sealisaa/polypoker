@@ -1,4 +1,4 @@
-package com.example.polypoker.websocket;
+package com.example.polypoker.websocket.nv;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;

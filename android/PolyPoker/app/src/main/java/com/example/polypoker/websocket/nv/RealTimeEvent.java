@@ -1,4 +1,4 @@
-package com.example.polypoker.websocket;
+package com.example.polypoker.websocket.nv;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;

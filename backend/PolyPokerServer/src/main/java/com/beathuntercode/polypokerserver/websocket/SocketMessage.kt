@@ -1,5 +1,6 @@
 package com.beathuntercode.polypokerserver.websocket
 
+import com.beathuntercode.polypokerserver.websocket.messages.MessageContent
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
@@ -8,8 +9,9 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer
 import java.time.LocalDateTime
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-data class SocketMessage(
-    val text: String,
+open class SocketMessage(
+    val messageType: MessageType,
+    val content: MessageContent,
     var author: String,
     @JsonDeserialize(using = LocalDateTimeDeserializer::class)
     @JsonSerialize(using = LocalDateTimeSerializer::class)

@@ -1,4 +1,4 @@
-package com.example.polypoker.websocket;
+package com.example.polypoker.websocket.nv;
 
 import android.util.Log;
 
@@ -77,7 +77,7 @@ public class ClientWebSocket {
         @Override
         public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception {
             super.onConnected(websocket, headers);
-            Log.i(TAG, "onConnected");
+            Log.i(TAG, "Socket connected");
         }
 
         public void onTextMessage(WebSocket websocket, String message) {
@@ -87,7 +87,7 @@ public class ClientWebSocket {
 
         @Override
         public void onError(WebSocket websocket, WebSocketException cause) {
-            Log.i(TAG, "Error -->" + cause.getMessage());
+            Log.i(TAG, "Error --> " + cause.getMessage());
 
             reconnect();
         }
@@ -104,7 +104,7 @@ public class ClientWebSocket {
 
         @Override
         public void onUnexpectedError(WebSocket websocket, WebSocketException cause) {
-            Log.i(TAG, "Error -->" + cause.getMessage());
+            Log.i(TAG, "Unexpected Error --> " + cause.getMessage());
             reconnect();
         }
 
@@ -112,6 +112,12 @@ public class ClientWebSocket {
         public void onPongFrame(WebSocket websocket, WebSocketFrame frame) throws Exception {
             super.onPongFrame(websocket, frame);
             websocket.sendPing("Are you there?");
+            Log.i(TAG, "Sending ping --> Are you there?" + frame.getPayloadText());
+        }
+
+        @Override
+        public void onFrameSent(WebSocket websocket, WebSocketFrame frame) throws Exception {
+            Log.i(TAG, "Sending frame --> " + frame.getPayloadText() + " to " + websocket.getURI());
         }
     }
 

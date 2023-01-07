@@ -1,4 +1,4 @@
-package com.example.polypoker.websocket;
+package com.example.polypoker.websocket.nv;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
-import com.google.gson.Gson;
 
-import java.util.prefs.Preferences;
+import com.example.polypoker.Utilities;
+import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -39,16 +39,10 @@ public class SocketConnection implements ClientWebSocket.MessageListener {
     }
 
     public void openConnection() {
-//        if (!Preferences.getManager().isAuth()) {
-//            Log.i("Websocket", "Error: User is not authorize");
-//            return;
-//        }
         if (clientWebSocket != null) clientWebSocket.close();
         try {
-            clientWebSocket = new ClientWebSocket(this,
-                    "ws://192.168.1.116:8080/room/websocket");
+            clientWebSocket = new ClientWebSocket(this, Utilities.HOST_ADDRESS);
             clientWebSocket.connect();
-            Log.i("Websocket", "Socket connected");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,5 +98,13 @@ public class SocketConnection implements ClientWebSocket.MessageListener {
         return clientWebSocket != null &&
                 clientWebSocket.getConnection() != null &&
                 clientWebSocket.getConnection().isOpen();
+    }
+
+    public ClientWebSocket getClientWebSocket() {
+        return clientWebSocket;
+    }
+
+    public void setClientWebSocket(ClientWebSocket clientWebSocket) {
+        this.clientWebSocket = clientWebSocket;
     }
 }

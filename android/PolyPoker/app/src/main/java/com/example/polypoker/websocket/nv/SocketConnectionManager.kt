@@ -1,8 +1,7 @@
-package com.example.polypoker.websocket
+package com.example.polypoker.websocket.nv
 
 import android.app.Application
 import android.content.Context
-import android.content.OperationApplicationException
 import android.util.Log
 
 class SocketConnectionManager {
@@ -32,6 +31,13 @@ class SocketConnectionManager {
         socketConnection.openConnection()
     }
 
+    fun getSocketConnection(): SocketConnection {
+        return socketConnection
+    }
+
+    fun setSocketConnection(socketConnection: SocketConnection) {
+        this.socketConnection = socketConnection
+    }
 
     private val appActivityListener: BackgroundManager.Listener =
         object : BackgroundManager.Listener {

@@ -1,7 +1,6 @@
-package com.beathuntercode.polypokerserver.websocket;
+package com.example.polypoker.websocket.stomp;
 
 public enum MessageType {
-
     PLAYER_READY_SET(5),
     PLAYER_ROOM_EXIT(6),
     ROUND_BEGIN(10),
@@ -15,7 +14,6 @@ public enum MessageType {
     ROUND_END(18),
     OK(200),
     FAIL(500);
-
 
     private int value;
 

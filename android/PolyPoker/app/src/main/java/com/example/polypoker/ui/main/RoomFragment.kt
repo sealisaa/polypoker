@@ -8,13 +8,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
-import com.example.polypoker.MainActivity
 import com.example.polypoker.R
 import com.example.polypoker.retrofit.RetrofitService
 import com.example.polypoker.retrofit.RoomApi
-import com.example.polypoker.websocket.SocketConnectionManager
-import okhttp3.*
-import okio.ByteString
+import com.example.polypoker.websocket.stomp.WebSocketViewModel
+import com.example.polypoker.websocket.nv.SocketConnectionManager
+import org.greenrobot.eventbus.Subscribe
+import com.example.polypoker.websocket.nv.RealTimeEvent
+import org.greenrobot.eventbus.EventBus
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -33,10 +34,9 @@ class RoomFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-//    private lateinit var client: StompClient
+    private lateinit var socketConnectionManager: SocketConnectionManager
 
-//    @Inject
-//    private lateinit var roomViewModel: RoomViewModel
+    private lateinit var mainViewModel: WebSocketViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,8 +61,11 @@ class RoomFragment : Fragment() {
 
         }
 
-        val socketConnectionManager = SocketConnectionManager()
-        socketConnectionManager.init(requireContext(), requireActivity().application)
+//        EventBus.getDefault().register(this)
+//        socketConnectionManager = SocketConnectionManager()
+//        socketConnectionManager.init(requireContext(), requireActivity().application)
+
+        mainViewModel = WebSocketViewModel()
 
         return inflater.inflate(R.layout.room_fragment, container, false)
     }
@@ -100,6 +103,12 @@ class RoomFragment : Fragment() {
             view.findViewById(R.id.player6Cash), view.findViewById(R.id.player6Card1),
             view.findViewById(R.id.player6Card2))
 
+//        while (socketConnectionManager.getSocketConnection().clientWebSocket.connection == null ) {
+//            println("NUUUULLL")
+//        }
+//        socketConnectionManager.getSocketConnection().clientWebSocket.connection.sendText("JOPA")
+
+        mainViewModel.sendMessage("JOPA")
     }
 
     companion object {
@@ -132,6 +141,11 @@ class RoomFragment : Fragment() {
         playerCash.visibility = View.INVISIBLE
         playerCard1.visibility = View.INVISIBLE
         playerCard2.visibility = View.INVISIBLE
+    }
+
+    @Subscribe
+    fun handleRealTimeMessage(event: RealTimeEvent?) {
+        // processing of all real-time events
     }
 
 }

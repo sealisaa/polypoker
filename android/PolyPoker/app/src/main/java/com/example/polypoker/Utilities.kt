@@ -10,6 +10,8 @@ class Utilities {
 
         const val MAX_PLAYERS_COUNT: Int = 6
 
+        const val HOST_ADDRESS = "ws://192.168.1.116:8080/room/websocket"
+
         val cardsMap = mapOf<Card, String>(
             Card(CardSuit.HEARTS, CardNumber.TWO) to "ic_2_of_hearts",
             Card(CardSuit.HEARTS, CardNumber.THREE) to "ic_3_of_hearts",

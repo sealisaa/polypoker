@@ -2,7 +2,6 @@ package com.example.polypoker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.polypoker.websocket.SocketConnectionManager
 
 class MainActivity : AppCompatActivity() {
 
