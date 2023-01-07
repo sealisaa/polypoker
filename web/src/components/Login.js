@@ -1,11 +1,22 @@
 import React from 'react';
 import '../style/style.css';
 import { Link } from 'react-router-dom';
+import UserService from '../services/UserService';
 
 class Login extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            users: []
+        }
     }
+
+    componentDidMount(){
+        UserService.getUsers().then((response) => {
+            console.log(response.data);
+        });
+    }
+
     render() {
         return (
             <div className="login">
@@ -32,7 +43,7 @@ class Login extends React.Component {
                     </button>
                     <div className="login__create-account">
                         <span>Нет аккаунта?</span>
-                            <Link to="/register">Зарегистрироваться</Link>
+                        <Link to="/register">Зарегистрироваться</Link>
                     </div>
                 </div>
             </div>
