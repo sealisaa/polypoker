@@ -2,21 +2,10 @@ import axios from 'axios'
 
 const GET_ALL_USERS_URL = 'http://localhost:8080/user/get-all';
 const SAVE_USER_URL = 'http://localhost:8080/user/save';
-
-class User {
-    constructor(name, surname, login, password) {
-        this.name = name;
-        this.surname = surname;
-        this.login = login;
-        this.password = password;
-    }
-}
+const USER_URL = 'http://localhost:8080/user/';
+const AUTH_USER_URL = 'http://localhost:8080/user/auth';
 
 class UserService {
-
-    getUsers() {
-        return axios.get(GET_ALL_USERS_URL);
-    }
 
     saveUser(name, surname, login, password) {
         try {
@@ -26,6 +15,24 @@ class UserService {
         } catch (error) {
             console.error(error)
         }
+    }
+
+    authorizeUser(login, password) {
+        try {
+            return axios.post(
+                AUTH_USER_URL,
+                {login: login, password: password})
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    getUserByLogin(login) {
+        return axios.get(USER_URL + login);
+    }
+
+    getUserStatistic(login) {
+        return axios.get(USER_URL + login + '/get-statistic');
     }
 }
 
