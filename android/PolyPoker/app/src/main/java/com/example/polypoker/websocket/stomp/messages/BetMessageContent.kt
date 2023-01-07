@@ -4,7 +4,8 @@ import com.example.polypoker.model.CardNumber
 import com.example.polypoker.model.CardSuit
 
 class BetMessageContent (
+    roomCode: Int,
     private var betValue: Int
-) : MessageContent() {
+) : MessageContent(roomCode) {
 
 }

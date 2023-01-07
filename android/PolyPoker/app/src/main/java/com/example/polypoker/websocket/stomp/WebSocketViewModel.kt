@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 
 class WebSocketViewModel : ViewModel() {
     companion object{
-        const val SOCKET_URL = "ws://192.168.1.116:8080/room/websocket"
+        const val SOCKET_URL = Utilities.HOST_ADDRESS
         const val SERVER_ANSWERS_LINK = "/room/user"
         const val LINK_SOCKET = "/room/api/socket"
     }
@@ -56,7 +56,6 @@ class WebSocketViewModel : ViewModel() {
                     Log.d(TAG, "RECEIVED message from server -> " + topicMessage.payload)
                     val message: SocketMessage =
                         gson.fromJson(topicMessage.payload, SocketMessage::class.java)
-                    val newMessage = dtoToEntity(message)
                 },
                     {
                         Log.e(TAG, "Error!", it)
@@ -90,10 +89,8 @@ class WebSocketViewModel : ViewModel() {
         }
     }
 
-    fun sendMessage(text: String) {
-        val message = Message(text = text, author = Utilities.USER_LOGIN)
-        val chatSocketMessage = entityToDto(message)
-        sendCompletable(mStompClient!!.send(LINK_SOCKET, gson.toJson(chatSocketMessage)), gson.toJson(chatSocketMessage))
+    fun sendMessage(message: SocketMessage) {
+        sendCompletable(mStompClient!!.send(LINK_SOCKET, gson.toJson(message)), gson.toJson(message))
     }
 
     private fun sendCompletable(request: Completable, message: String) {

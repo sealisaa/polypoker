@@ -15,7 +15,8 @@ public class DrawCardMessageContent extends MessageContent {
     CardSuit cardSuit;
     CardNumber cardNumber;
 
-    public DrawCardMessageContent(CardSuit cardSuit, CardNumber cardNumber) {
+    public DrawCardMessageContent(int roomCode, CardSuit cardSuit, CardNumber cardNumber) {
+        super(roomCode);
         this.cardSuit = cardSuit;
         this.cardNumber = cardNumber;
     }

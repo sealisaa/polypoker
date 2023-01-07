@@ -1,5 +1,6 @@
 package com.example.polypoker.ui.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,13 +10,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import com.example.polypoker.R
+import com.example.polypoker.Utilities
 import com.example.polypoker.retrofit.RetrofitService
 import com.example.polypoker.retrofit.RoomApi
 import com.example.polypoker.websocket.stomp.WebSocketViewModel
 import com.example.polypoker.websocket.nv.SocketConnectionManager
 import org.greenrobot.eventbus.Subscribe
 import com.example.polypoker.websocket.nv.RealTimeEvent
-import org.greenrobot.eventbus.EventBus
+import com.example.polypoker.websocket.stomp.MessageType
+import com.example.polypoker.websocket.stomp.SocketMessage
+import com.example.polypoker.websocket.stomp.messages.MessageContent
+import java.time.LocalDateTime
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -36,7 +41,7 @@ class RoomFragment : Fragment() {
 
     private lateinit var socketConnectionManager: SocketConnectionManager
 
-    private lateinit var mainViewModel: WebSocketViewModel
+    private lateinit var webSocketViewModel: WebSocketViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,11 +70,12 @@ class RoomFragment : Fragment() {
 //        socketConnectionManager = SocketConnectionManager()
 //        socketConnectionManager.init(requireContext(), requireActivity().application)
 
-        mainViewModel = WebSocketViewModel()
+        webSocketViewModel = WebSocketViewModel()
 
         return inflater.inflate(R.layout.room_fragment, container, false)
     }
 
+    @SuppressLint("NewApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -108,7 +114,13 @@ class RoomFragment : Fragment() {
 //        }
 //        socketConnectionManager.getSocketConnection().clientWebSocket.connection.sendText("JOPA")
 
-        mainViewModel.sendMessage("JOPA")
+        webSocketViewModel.sendMessage(SocketMessage(
+            MessageType.PLAYER_READY_SET,
+            MessageContent(),
+            Utilities.USER_LOGIN,
+            LocalDateTime.now(),
+            Utilities.HOST_ADDRESS
+        ))
     }
 
     companion object {
@@ -129,6 +141,21 @@ class RoomFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    @SuppressLint("NewApi")
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val disconnectMessage: SocketMessage = SocketMessage(
+            MessageType.PLAYER_ROOM_EXIT,
+            MessageContent(),
+            Utilities.USER_LOGIN,
+            LocalDateTime.now(),
+            Utilities.HOST_ADDRESS
+        )
+
+        webSocketViewModel.sendMessage(disconnectMessage)
     }
 
     fun hidePlayerSeat(playerAvatar: ImageView, playerName: TextView,

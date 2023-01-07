@@ -4,7 +4,8 @@ public class RaiseMessageContent extends MessageContent {
 
     private int raiseValue;
 
-    public RaiseMessageContent(int raiseValue) {
+    public RaiseMessageContent(int roomCode, int raiseValue) {
+        super(roomCode);
         this.raiseValue = raiseValue;
     }
 

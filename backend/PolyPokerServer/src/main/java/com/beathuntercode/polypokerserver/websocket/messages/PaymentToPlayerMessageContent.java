@@ -4,7 +4,8 @@ public class PaymentToPlayerMessageContent extends MessageContent {
 
     private Integer paymentValue;
 
-    public PaymentToPlayerMessageContent(Integer paymentValue) {
+    public PaymentToPlayerMessageContent(int roomCode, Integer paymentValue) {
+        super(roomCode);
         this.paymentValue = paymentValue;
     }
 

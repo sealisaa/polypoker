@@ -4,7 +4,8 @@ public class BetMessageContent extends MessageContent {
 
     private int betValue;
 
-    public BetMessageContent(int betValue) {
+    public BetMessageContent(int roomCode, int betValue) {
+        super(roomCode);
         this.betValue = betValue;
     }
 

@@ -19,7 +19,7 @@ public class MessageHandler {
                 return new SocketMessage(
                         MessageType.OK,
                         new MessageContent(),
-                        "SERVER",
+                        message.getReceiver(),
                         LocalDateTime.now(),
                         message.getAuthor()
                 );
@@ -58,7 +58,7 @@ public class MessageHandler {
                 return new SocketMessage(
                         MessageType.FAIL,
                         new MessageContent(),
-                        "SERVER",
+                        message.getReceiver(),
                         LocalDateTime.now(),
                         message.getAuthor()
                 );
