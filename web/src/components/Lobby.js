@@ -1,11 +1,33 @@
 import React from 'react';
 import '../style/style.css';
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
+import UserService from "../services/UserService";
 
-class Lobby extends React.Component {
+const Lobby = props => {
+    const location = useLocation();
+    const login = location.state;
+    return <LobbyContent login={login} {...props} />
+}
+
+class LobbyContent extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            login: props.login,
+            name: "",
+            surname: ""
+        }
     }
+
+    componentDidMount(){
+        UserService.getUserByLogin(this.state.login).then((response) => {
+            console.log(response.data);
+        });
+        UserService.getUserStatistic(this.state.login).then((response) => {
+            console.log(response.data);
+        });
+    }
+
     render() {
         return (
             <div className="lobby">
