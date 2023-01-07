@@ -139,7 +139,8 @@ class MainMenuFragment : Fragment() {
             dialogBuilder.setView(roomCodeEditText)
             dialogBuilder.setPositiveButton("OK", object: DialogInterface.OnClickListener {
                 override fun onClick(dialogInterface: DialogInterface?, i: Int) {
-                    joinRoom(Integer.parseInt(roomCodeEditText.text.toString()), user, view)
+                    Utilities.currentRoomCode = Integer.parseInt(roomCodeEditText.text.toString())
+                    joinRoom(Utilities.currentRoomCode, user, view)
                 }
             })
 

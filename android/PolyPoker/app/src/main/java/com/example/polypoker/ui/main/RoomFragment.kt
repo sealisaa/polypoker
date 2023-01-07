@@ -116,7 +116,7 @@ class RoomFragment : Fragment() {
 
         webSocketViewModel.sendMessage(SocketMessage(
             MessageType.PLAYER_READY_SET,
-            MessageContent(),
+            MessageContent(Utilities.currentRoomCode),
             Utilities.USER_LOGIN,
             LocalDateTime.now(),
             Utilities.HOST_ADDRESS
@@ -149,7 +149,7 @@ class RoomFragment : Fragment() {
 
         val disconnectMessage: SocketMessage = SocketMessage(
             MessageType.PLAYER_ROOM_EXIT,
-            MessageContent(),
+            MessageContent(Utilities.currentRoomCode),
             Utilities.USER_LOGIN,
             LocalDateTime.now(),
             Utilities.HOST_ADDRESS

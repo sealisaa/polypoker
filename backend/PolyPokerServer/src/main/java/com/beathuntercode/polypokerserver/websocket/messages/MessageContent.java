@@ -5,9 +5,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MessageContent {
 
-    private int roomCode;
+    private Integer roomCode;
 
-    public MessageContent(int roomCode) {
+    public MessageContent() {
+
+    }
+
+    public MessageContent(Integer roomCode) {
         this.roomCode = roomCode;
     }
 

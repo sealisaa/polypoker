@@ -18,7 +18,7 @@ public class MessageHandler {
                     PLAYER_MAKE_FOLD -> {
                 return new SocketMessage(
                         MessageType.OK,
-                        new MessageContent(),
+                        new MessageContent(message.getContent().getRoomCode()),
                         message.getReceiver(),
                         LocalDateTime.now(),
                         message.getAuthor()
@@ -57,7 +57,7 @@ public class MessageHandler {
             default -> {
                 return new SocketMessage(
                         MessageType.FAIL,
-                        new MessageContent(),
+                        new MessageContent(message.getContent().getRoomCode()),
                         message.getReceiver(),
                         LocalDateTime.now(),
                         message.getAuthor()
