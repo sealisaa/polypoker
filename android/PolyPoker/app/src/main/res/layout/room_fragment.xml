@@ -84,39 +84,39 @@
             app:layout_constraintVertical_bias="0.0" />
 
         <ImageView
-            android:id="@+id/card1"
+            android:id="@+id/tableCard1"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_marginStart="66dp"
             android:layout_marginEnd="9dp"
             android:layout_marginBottom="12dp"
-            app:layout_constraintBottom_toTopOf="@+id/card4"
-            app:layout_constraintEnd_toStartOf="@+id/card2"
+            app:layout_constraintBottom_toTopOf="@+id/tableCard4"
+            app:layout_constraintEnd_toStartOf="@+id/tableCard2"
             app:layout_constraintStart_toStartOf="@+id/roomTable"
             app:srcCompat="@drawable/ic_card_place" />
 
         <ImageView
-            android:id="@+id/card2"
+            android:id="@+id/tableCard2"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="11dp"
-            app:layout_constraintBottom_toTopOf="@+id/card5"
-            app:layout_constraintEnd_toStartOf="@+id/card3"
+            app:layout_constraintBottom_toTopOf="@+id/tabkeCard5"
+            app:layout_constraintEnd_toStartOf="@+id/tableCard3"
             app:srcCompat="@drawable/ic_card_place" />
 
         <ImageView
-            android:id="@+id/card3"
+            android:id="@+id/tableCard3"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_marginEnd="68dp"
             android:layout_marginBottom="11dp"
-            app:layout_constraintBottom_toTopOf="@+id/card5"
+            app:layout_constraintBottom_toTopOf="@+id/tabkeCard5"
             app:layout_constraintEnd_toEndOf="@+id/roomTable"
             app:srcCompat="@drawable/ic_card_place" />
 
         <ImageView
-            android:id="@+id/card4"
+            android:id="@+id/tableCard4"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_marginStart="89dp"
@@ -126,7 +126,7 @@
             app:srcCompat="@drawable/ic_card_place" />
 
         <ImageView
-            android:id="@+id/card5"
+            android:id="@+id/tabkeCard5"
             android:layout_width="40dp"
             android:layout_height="60dp"
             android:layout_marginEnd="92dp"
@@ -162,7 +162,7 @@
             android:layout_marginEnd="9dp"
             android:layout_marginBottom="52dp"
             app:layout_constraintBottom_toTopOf="@+id/player1Card1"
-            app:layout_constraintEnd_toStartOf="@+id/card4"
+            app:layout_constraintEnd_toStartOf="@+id/tableCard4"
             app:srcCompat="@drawable/ic_card_place" />
 
         <ImageView
@@ -207,7 +207,7 @@
             android:layout_marginEnd="5dp"
             app:layout_constraintEnd_toStartOf="@+id/player2Card2"
             app:layout_constraintStart_toEndOf="@+id/player2Avatar"
-            app:layout_constraintTop_toBottomOf="@+id/card4"
+            app:layout_constraintTop_toBottomOf="@+id/tableCard4"
             app:srcCompat="@drawable/ic_card_place" />
 
         <ImageView
@@ -239,7 +239,7 @@
             app:layout_constraintEnd_toStartOf="@+id/player6Avatar"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/player6Card1"
-            app:layout_constraintTop_toBottomOf="@+id/card5"
+            app:layout_constraintTop_toBottomOf="@+id/tabkeCard5"
             app:srcCompat="@drawable/ic_card_place" />
 
         <ImageView
@@ -261,7 +261,7 @@
             android:layout_marginBottom="52dp"
             app:layout_constraintBottom_toTopOf="@+id/player1Card2"
             app:layout_constraintEnd_toStartOf="@+id/player6ChipsIcon"
-            app:layout_constraintStart_toEndOf="@+id/card5"
+            app:layout_constraintStart_toEndOf="@+id/tabkeCard5"
             app:srcCompat="@drawable/ic_card_place" />
 
         <ImageView
@@ -271,7 +271,7 @@
             android:layout_marginStart="148dp"
             android:layout_marginTop="88dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card5"
+            app:layout_constraintTop_toBottomOf="@+id/tabkeCard5"
             app:srcCompat="@drawable/user_main_menu_avatar" />
 
         <ImageView
@@ -483,7 +483,7 @@
             android:text="00000.00"
             android:textColor="@color/ultralight_purple"
             android:textSize="13sp"
-            app:layout_constraintEnd_toStartOf="@+id/card1"
+            app:layout_constraintEnd_toStartOf="@+id/tableCard1"
             app:layout_constraintTop_toBottomOf="@+id/player3Card1" />
 
         <ImageView
@@ -540,7 +540,7 @@
             android:layout_marginStart="31dp"
             android:layout_marginTop="23dp"
             android:layout_weight="0.2"
-            app:layout_constraintStart_toEndOf="@+id/card3"
+            app:layout_constraintStart_toEndOf="@+id/tableCard3"
             app:layout_constraintTop_toBottomOf="@+id/player5Avatar"
             app:srcCompat="@drawable/ic_poker_chips" />
 

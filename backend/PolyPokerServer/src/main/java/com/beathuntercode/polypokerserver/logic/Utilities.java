@@ -1,5 +1,6 @@
 package com.beathuntercode.polypokerserver.logic;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class Utilities {
 
     public static RoomsController roomsController = new RoomsController();
 
-    public static List<Card> cardList = List.of(
+    public static ArrayList<Card> cardList = new ArrayList<>(List.of(
             new Card(CardSuit.HEARTS, CardNumber.TWO),
             new Card(CardSuit.HEARTS, CardNumber.THREE),
             new Card(CardSuit.HEARTS, CardNumber.FOUR),
@@ -65,7 +66,7 @@ public class Utilities {
             new Card(CardSuit.SPADES, CardNumber.QUEEN),
             new Card(CardSuit.SPADES, CardNumber.KING),
             new Card(CardSuit.SPADES, CardNumber.ACE)
-    );
+    ));
 
     public static int getRndIntInRange(int min, int max){
         return (int) (Math.random()*((max-min)+1))+min;

@@ -11,7 +11,7 @@ public class GameManager {
     private Map<String, Player> playersMap;
     private int bank;
 
-    private List<Card> deck = Utilities.cardList;
+    private ArrayList<Card> deck = Utilities.cardList;
     private GameState gameState;
 
     public GameManager(Map<String, Player> playersMap) {
@@ -70,7 +70,9 @@ public class GameManager {
     }
 
     public Card dealRandomCard() {
-        return deck.get(Utilities.getRndIntInRange(0, deck.size() - 1));
+        Card card = deck.get(Utilities.getRndIntInRange(0, deck.size() - 1));
+        deck.remove(card);
+        return card;
     }
 
     private void startBlinds() {

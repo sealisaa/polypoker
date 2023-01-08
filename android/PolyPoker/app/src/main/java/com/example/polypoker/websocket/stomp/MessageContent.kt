@@ -42,7 +42,7 @@ open class MessageContent {
 
     constructor (
         roomCode: Int?,
-        moneyValue: Int,
+        moneyValue: Int?,
     ) {
         this.roomCode = roomCode
         this.moneyValue = moneyValue
@@ -69,7 +69,7 @@ open class MessageContent {
         return moneyValue
     }
 
-    open fun setMoneyValue(moneyValue: Int) {
+    open fun setMoneyValue(moneyValue: Int?) {
         this.moneyValue = moneyValue
     }
 

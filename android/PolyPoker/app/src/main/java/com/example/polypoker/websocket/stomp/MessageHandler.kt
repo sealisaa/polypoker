@@ -9,7 +9,6 @@ import com.example.polypoker.R
 import com.example.polypoker.Utilities
 import com.example.polypoker.model.Card
 import com.example.polypoker.model.GameManager
-import com.example.polypoker.model.Player
 import com.example.polypoker.websocket.stomp.MessageType.*
 import java.time.LocalDateTime
 
@@ -47,42 +46,45 @@ class MessageHandler(
                 }
             }
             DRAW_CARD -> {
-                if (message.content.getUserLogin() != null) {
-                    val player = GameManager.playersMap[message.content.getUserLogin()]
-                    if (player?.card1 == null) {
+                val player = GameManager.playersMap[message.content.getUserLogin()]
+                when {
+                    player?.card1 == null -> {
                         player?.card1 = Card(
                             message.content.getCardSuit(),
                             message.content.getCardNumber()
                         )
-                    } else if (player.card2 == null) {
+                        updateRoomCard(R.id.player1Card1, player?.card1!!)
+                    }
+                    player.card2 == null -> {
                         player.card2 = Card(
                             message.content.getCardSuit(),
                             message.content.getCardNumber()
                         )
+                        updateRoomCard(R.id.player1Card2, player?.card2!!)
                     }
-                }
-                else {
-                    if (GameManager.TABLE_CARD1 == null) {
+                    GameManager.TABLE_CARD1 == null -> {
                         GameManager.TABLE_CARD1 = Card(
                             message.content.getCardSuit(),
                             message.content.getCardNumber()
                         )
+                        updateRoomCard(R.id.tableCard1, GameManager.TABLE_CARD1)
                     }
-                    if (GameManager.TABLE_CARD2 == null) {
+                    GameManager.TABLE_CARD2 == null -> {
                         GameManager.TABLE_CARD2 = Card(
                             message.content.getCardSuit(),
                             message.content.getCardNumber()
                         )
+                        updateRoomCard(R.id.tableCard2, GameManager.TABLE_CARD2)
                     }
-                    if (GameManager.TABLE_CARD3 == null) {
+                    GameManager.TABLE_CARD3 == null -> {
                         GameManager.TABLE_CARD3 = Card(
                             message.content.getCardSuit(),
                             message.content.getCardNumber()
                         )
+                        updateRoomCard(R.id.tableCard3, GameManager.TABLE_CARD3)
                     }
                 }
 
-                updateRoomCards()
             }
             PLAYER_MAKE_BET -> TODO()
             PLAYER_MAKE_CHECK -> TODO()
@@ -112,16 +114,9 @@ class MessageHandler(
         )
     }
 
-    private fun updateRoomCards() {
-        val player1 = GameManager.playersMap.get(Utilities.USER_LOGIN)
-
-        roomView.findViewById<ImageView>(R.id.player1Card1).setImageResource(
-            Utilities.cardsMap.get(player1?.card1)!!
+    private fun updateRoomCard(cardResource: Int, card: Card) {
+        roomView.findViewById<ImageView>(cardResource).setImageResource(
+            Utilities.cardsMap[card]!!
         )
-
-        roomView.findViewById<ImageView>(R.id.player1Card2).setImageResource(
-            Utilities.cardsMap.get(player1?.card2)!!
-        )
-
     }
 }
