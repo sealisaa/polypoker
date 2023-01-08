@@ -2,6 +2,7 @@ package com.beathuntercode.polypokerserver.logic;
 
 public class Player {
 
+    private String login;
     private String name;
     private int cash;
     private Card card1;
@@ -9,6 +10,15 @@ public class Player {
     private boolean isReady;
     private boolean isSmallBlind;
     private boolean isBigBlind;
+
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
 
     public String getName() {
         return name;
@@ -66,7 +76,8 @@ public class Player {
         isBigBlind = bigBlind;
     }
 
-    public Player(String name, int cash) {
+    public Player(String login, String name, int cash) {
+        this.login = login;
         this.name = name;
         this.cash = cash;
         isReady = false;

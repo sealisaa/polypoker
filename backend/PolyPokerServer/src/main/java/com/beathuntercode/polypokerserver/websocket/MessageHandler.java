@@ -2,10 +2,25 @@ package com.beathuntercode.polypokerserver.websocket;
 
 import java.time.LocalDateTime;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.beathuntercode.polypokerserver.database.controller.UserController;
+import com.beathuntercode.polypokerserver.database.controller.UserStatisticController;
+import com.beathuntercode.polypokerserver.database.model.user.User;
+import com.beathuntercode.polypokerserver.database.model.user.UserDao;
+import com.beathuntercode.polypokerserver.database.model.userstatistic.UserStatistic;
+import com.beathuntercode.polypokerserver.database.model.userstatistic.UserStatisticDao;
 import com.beathuntercode.polypokerserver.logic.Card;
+import com.beathuntercode.polypokerserver.logic.GameState;
+import com.beathuntercode.polypokerserver.logic.Player;
 import com.beathuntercode.polypokerserver.logic.Room;
+import com.beathuntercode.polypokerserver.logic.RoomsController;
 import com.beathuntercode.polypokerserver.logic.Utilities;
 
+@RestController
 public class MessageHandler {
 
     /**
@@ -13,64 +28,27 @@ public class MessageHandler {
      * @param message Incoming SocketMessage from client
      * @return SocketMessage answer for client
      */
-    public SocketMessage handleMessage(SocketMessage message) {
+    public SocketMessage handleMessage(SocketMessage message, UserDao userDao, UserStatisticDao userStatisticDao) {
         Room room = Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode());
         switch (message.getMessageType()) {
             case    PLAYER_MAKE_CHECK,
                     PLAYER_MAKE_FOLD -> {
-                return new SocketMessage(
-                        MessageType.OK,
-                        new MessageContent(message.getContent().getRoomCode()),
-                        message.getReceiver(),
-                        LocalDateTime.now(),
-                        message.getAuthor()
-                );
+                return okMessage(message);
+            }
+            case PLAYER_ROOM_JOIN -> {
+                return playerRoomJoin(message, userDao, userStatisticDao);
             }
             case PLAYER_READY_SET -> {
-                room.getPlayersMap().get(message.getAuthor()).setReady(
-                        !room.getPlayersMap().get(message.getAuthor()).isReady()
-                );
-
-                if (room.getPlayersMap().entrySet().stream().allMatch(entry -> entry.getValue().isReady())) {
-//                    room.getGameManager().shuffleDeck();
-                    return new SocketMessage(
-                            MessageType.ROUND_BEGIN,
-                            new MessageContent(message.getContent().getRoomCode()),
-                            message.getReceiver(),
-                            LocalDateTime.now(),
-                            message.getAuthor());
-                }
-                else {
-                    return new SocketMessage(
-                            MessageType.OK,
-                            new MessageContent(message.getContent().getRoomCode()),
-                            message.getReceiver(),
-                            LocalDateTime.now(),
-                            message.getAuthor()
-                    );
-                }
-
+                return playerReadySet(message, room);
             }
             case PLAYER_ROOM_EXIT -> {
-                room.getPlayersMap().remove(message.getAuthor());
+                playerRoomExit(message, room);
             }
             case ROUND_BEGIN -> {
                 //TODO()
             }
             case DRAW_CARD -> {
-                Card randomCard = room.getGameManager().dealRandomCard();
-                return new SocketMessage(
-                        MessageType.DRAW_CARD,
-                        new MessageContent(
-                                message.getContent().getRoomCode(),
-                                message.getAuthor(),
-                                randomCard.getCardSuit(),
-                                randomCard.getCardNumber()
-                        ),
-                        message.getReceiver(),
-                        LocalDateTime.now(),
-                        message.getAuthor()
-                );
+                return drawCard(message, room);
             }
             case PLAYER_MAKE_BET -> {
                 //TODO()
@@ -94,16 +72,135 @@ public class MessageHandler {
                 //TODO()
             }
             default -> {
-                return new SocketMessage(
-                        MessageType.FAIL,
-                        new MessageContent(message.getContent().getRoomCode()),
-                        message.getReceiver(),
-                        LocalDateTime.now(),
-                        message.getAuthor()
-                );
+                return failMessage(message);
             }
         }
         return null;
+    }
+
+    private SocketMessage playerRoomJoin(SocketMessage message, UserDao userDao, UserStatisticDao userStatisticDao) {
+        UserStatistic userStatistic = userStatisticDao.getUserStatistic(message.getContent().getUserLogin());
+        User user = userDao.getUserByLogin(message.getContent().getUserLogin());
+        Player player = new Player(
+                message.getContent().getUserLogin(),
+                user.getName() + " " + user.getSurname(),
+                userStatistic.getCurrentCoinsCount()
+        );
+        if (Utilities.roomsController.roomsMap.containsKey(message.getContent().getRoomCode())) {
+            Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode()).getPlayersMap().put(user.getLogin(), player);
+            System.out.println(Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode()).getPlayersMap());
+            return new SocketMessage(
+                    MessageType.PLAYER_ROOM_JOIN,
+                    new MessageContent(
+                            message.getContent().getRoomCode(),
+                            user.getLogin(),
+                            user.getName() + " " + user.getSurname(),
+                            userStatistic.getCurrentCoinsCount()
+
+                    ),
+                    message.getReceiver(),
+                    LocalDateTime.now(),
+                    message.getAuthor()
+
+            );
+
+        }
+        else return failMessage(message);
+    }
+
+
+    private SocketMessage playerReadySet(SocketMessage message, Room room) {
+        room.getPlayersMap().get(message.getAuthor()).setReady(
+                !room.getPlayersMap().get(message.getAuthor()).isReady()
+        );
+
+        if (room.getPlayersMap().entrySet().stream().allMatch(entry -> entry.getValue().isReady())) {
+//                    room.getGameManager().shuffleDeck();
+            room.getGameManager().changeGameStateToNext();
+            if (room.getGameManager().getGameState() == GameState.BLINDS) {
+                return new SocketMessage(
+                        MessageType.ROUND_BEGIN,
+                        new MessageContent(message.getContent().getRoomCode()),
+                        message.getReceiver(),
+                        LocalDateTime.now(),
+                        message.getAuthor());
+            }
+            else {
+                return new SocketMessage(
+                        MessageType.NEXT_STEP_OF_ROUND,
+                        new MessageContent(message.getContent().getRoomCode()),
+                        message.getReceiver(),
+                        LocalDateTime.now(),
+                        message.getAuthor());
+            }
+
+        }
+        else {
+            return new SocketMessage(
+                    MessageType.OK,
+                    new MessageContent(message.getContent().getRoomCode()),
+                    message.getReceiver(),
+                    LocalDateTime.now(),
+                    message.getAuthor()
+            );
+        }
+
+    }
+
+    private SocketMessage drawCard(SocketMessage message, Room room) {
+        Card randomCard = room.getGameManager().dealRandomCard();
+        if (message.getContent().getUserLogin() != null) {
+            return new SocketMessage(
+                    MessageType.DRAW_CARD,
+                    new MessageContent(
+                            message.getContent().getRoomCode(),
+                            message.getContent().getUserLogin(),
+                            randomCard.getCardSuit(),
+                            randomCard.getCardNumber()
+                    ),
+                    message.getReceiver(),
+                    LocalDateTime.now(),
+                    message.getAuthor()
+            );
+        }
+        else {
+            return new SocketMessage(
+                    MessageType.DRAW_CARD,
+                    new MessageContent(
+                            message.getContent().getRoomCode(),
+                            randomCard.getCardSuit(),
+                            randomCard.getCardNumber()
+                    ),
+                    message.getReceiver(),
+                    LocalDateTime.now(),
+                    message.getAuthor()
+            );
+        }
+    }
+
+
+    private void playerRoomExit(SocketMessage message, Room room) {
+        room.getPlayersMap().remove(message.getAuthor());
+    }
+
+    private SocketMessage okMessage(SocketMessage message) {
+        return new SocketMessage(
+                MessageType.OK,
+                new MessageContent(message.getContent().getRoomCode()),
+                message.getReceiver(),
+                LocalDateTime.now(),
+                message.getAuthor()
+        );
+    }
+
+    private SocketMessage failMessage(SocketMessage message) {
+        return new SocketMessage(
+                MessageType.FAIL,
+                new MessageContent(message.getContent().getRoomCode()),
+                message.getReceiver(),
+                LocalDateTime.now(),
+                message.getAuthor()
+        );
     }
 
 }

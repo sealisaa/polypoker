@@ -1,10 +1,15 @@
 package com.beathuntercode.polypokerserver.logic;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.beathuntercode.polypokerserver.database.model.user.User;
 import com.beathuntercode.polypokerserver.database.model.userstatistic.UserStatistic;
+import com.beathuntercode.polypokerserver.websocket.MessageContent;
+import com.beathuntercode.polypokerserver.websocket.MessageType;
+import com.beathuntercode.polypokerserver.websocket.SocketMessage;
+import com.beathuntercode.polypokerserver.websocket.WebSocketController;
 
 public class RoomsController {
 
@@ -18,20 +23,6 @@ public class RoomsController {
         roomsMap.put(room.getRoomCode(), room);
     }
 
-    public boolean joinRoom(int roomCode, User user, UserStatistic userStatistic) {
-        Player player = new Player(
-                user.getName() + " " + user.getSurname(),
-                userStatistic.getCurrentCoinsCount()
-        );
-        if (roomsMap.containsKey(roomCode)) {
-            roomsMap.get(roomCode).getPlayersMap().put(user.getLogin(), player);
-            System.out.println(roomsMap.get(roomCode).getPlayersMap());
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 
     public boolean exitRoom(int roomCode, Player player) {
         if (roomsMap.containsKey(roomCode)) {

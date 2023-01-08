@@ -11,62 +11,38 @@ public class GameManager {
     private Map<String, Player> playersMap;
     private int bank;
 
-    private ArrayList<Card> deck = Utilities.cardList;
+    private ArrayList<Card> deck;
     private GameState gameState;
 
     public GameManager(Map<String, Player> playersMap) {
         this.playersMap = playersMap;
+        deck = Utilities.cardList;
     }
 
-    public void checkGameState() {
+    public void changeGameStateToNext() {
         switch (gameState) {
             case BLINDS -> {
-                break;
+                gameState = GameState.PREFLOP;
             }
             case PREFLOP -> {
-                break;
+                gameState = GameState.FLOP;
             }
             case FLOP -> {
-                break;
+                gameState = GameState.TERN;
             }
             case TERN -> {
-                break;
+                gameState = GameState.RIVER;
             }
             case RIVER -> {
-                break;
+                gameState = GameState.SHOWDOWN;
             }
             case SHOWDOWN -> {
                 break;
             }
-        }
-    }
-
-    private boolean isAllPlayersReady() {
-        boolean isAllPlayersReady = false;
-        for (Map.Entry<String, Player> entry : playersMap.entrySet()) {
-            if (!entry.getValue().isReady()) {
-                isAllPlayersReady = false;
-            }
-            else {
-                isAllPlayersReady = true;
+            default -> {
+                gameState = GameState.BLINDS;
             }
         }
-        return isAllPlayersReady;
-    }
-
-    private List<Card> createDeck() {
-        List<Card> deck = new ArrayList<>();
-        for (CardSuit cardSuit : CardSuit.values()) {
-            for (CardNumber cardNumber : CardNumber.values()) {
-                Card card = new Card(cardSuit, cardNumber);
-                deck.add(card);
-            }
-        }
-        return deck;
-    }
-
-    public void shuffleDeck() {
-        Collections.shuffle(deck);
     }
 
     public Card dealRandomCard() {
@@ -82,4 +58,11 @@ public class GameManager {
         //TODO: Реализовать запросы сервера к клиенту на блайнды
     }
 
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
 }

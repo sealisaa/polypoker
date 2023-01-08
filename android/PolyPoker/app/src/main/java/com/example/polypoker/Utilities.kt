@@ -1,8 +1,11 @@
 package com.example.polypoker
 
+import android.view.View
 import com.example.polypoker.model.Card
 import com.example.polypoker.model.CardNumber
 import com.example.polypoker.model.CardSuit
+import com.example.polypoker.websocket.nv.SocketConnectionManager
+import com.example.polypoker.websocket.stomp.WebSocketViewModel
 
 class Utilities {
     companion object {
@@ -16,6 +19,15 @@ class Utilities {
         const val HOST_ADDRESS = "ws://192.168.1.116:8080/room/websocket"
 
         var currentRoomCode: Int = -1
+
+        var isPlaying = false
+
+        var currentMainMenuView: View? = null
+        var currentRoomView: View? = null
+
+        lateinit var socketConnectionManager: SocketConnectionManager
+
+        lateinit var webSocketViewModel: WebSocketViewModel
 
         val cardsMap = mapOf<Card, Int>(
             Card(CardSuit.HEARTS, CardNumber.TWO) to R.drawable.ic_2_of_hearts,

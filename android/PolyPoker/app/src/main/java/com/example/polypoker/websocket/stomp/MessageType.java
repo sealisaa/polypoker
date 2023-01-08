@@ -1,6 +1,7 @@
 package com.example.polypoker.websocket.stomp;
 
 public enum MessageType {
+    PLAYER_ROOM_JOIN(4),
     PLAYER_READY_SET(5),
     PLAYER_ROOM_EXIT(6),
     ROUND_BEGIN(10),

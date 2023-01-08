@@ -1,10 +1,7 @@
 package com.beathuntercode.polypokerserver.logic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import com.beathuntercode.polypokerserver.database.controller.RoomController;
 
 public class Utilities {
 

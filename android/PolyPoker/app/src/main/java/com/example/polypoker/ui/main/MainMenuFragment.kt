@@ -1,5 +1,6 @@
 package com.example.polypoker.ui.main
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
@@ -21,8 +22,14 @@ import com.example.polypoker.retrofit.RetrofitService
 import com.example.polypoker.retrofit.RoomApi
 import com.example.polypoker.retrofit.UserApi
 import com.example.polypoker.retrofit.UserStatisticApi
+import com.example.polypoker.websocket.nv.SocketConnectionManager
+import com.example.polypoker.websocket.stomp.MessageContent
+import com.example.polypoker.websocket.stomp.MessageType
+import com.example.polypoker.websocket.stomp.SocketMessage
+import com.example.polypoker.websocket.stomp.WebSocketViewModel
 import retrofit2.Call
 import retrofit2.Response
+import java.time.LocalDateTime
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -64,6 +71,10 @@ class MainMenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        Utilities.currentMainMenuView = view
+
+        Utilities.webSocketViewModel = WebSocketViewModel(view)
 
         val retrofitService = RetrofitService()
         userStatisticApi = retrofitService.retrofit.create(UserStatisticApi::class.java)
@@ -142,7 +153,7 @@ class MainMenuFragment : Fragment() {
             dialogBuilder.setPositiveButton("OK", object: DialogInterface.OnClickListener {
                 override fun onClick(dialogInterface: DialogInterface?, i: Int) {
                     Utilities.currentRoomCode = Integer.parseInt(roomCodeEditText.text.toString())
-                    joinRoom(Utilities.currentRoomCode, user, view)
+                    joinRoom(Utilities.currentRoomCode, user)
                 }
             })
 
@@ -153,6 +164,21 @@ class MainMenuFragment : Fragment() {
 
         }
 
+    }
+
+    @SuppressLint("NewApi")
+    override fun onDestroy() {
+        super.onDestroy()
+
+        val disconnectMessage: SocketMessage = SocketMessage(
+            MessageType.PLAYER_ROOM_EXIT,
+            MessageContent(Utilities.currentRoomCode),
+            Utilities.USER_LOGIN,
+            LocalDateTime.now(),
+            Utilities.HOST_ADDRESS
+        )
+
+        Utilities.webSocketViewModel.sendMessage(disconnectMessage)
     }
 
     companion object {
@@ -175,25 +201,18 @@ class MainMenuFragment : Fragment() {
             }
     }
 
-    private fun joinRoom(roomCode: Int, user: User, view: View) {
-        roomApi.joinRoom(roomCode, user).enqueue(object : retrofit2.Callback<Boolean> {
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                if (response.isSuccessful) {
-                    if (response.body() == true) {
-                        view.findNavController().navigate(
-                            R.id.action_mainMenuFragment_to_roomFragment
-                        )
-                    }
-                    else {
-                        Toast.makeText(activity, "Комната не найдена", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                Toast.makeText(activity, "Ошибка при присоединении к комнате", Toast.LENGTH_LONG).show()
-            }
-        })
-
+    @SuppressLint("NewApi")
+    private fun joinRoom(roomCode: Int, user: User) {
+        val socketMessage = SocketMessage(
+            MessageType.PLAYER_ROOM_JOIN,
+            MessageContent(
+                roomCode,
+                user.login
+            ),
+            user.login,
+            LocalDateTime.now(),
+            Utilities.HOST_ADDRESS
+        )
+        Utilities.webSocketViewModel.sendMessage(socketMessage)
     }
 }

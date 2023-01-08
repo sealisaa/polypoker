@@ -30,6 +30,22 @@ open class MessageContent {
 
     constructor (
         roomCode: Int?,
+        moneyValue: Int?,
+    ) {
+        this.roomCode = roomCode
+        this.moneyValue = moneyValue
+    }
+
+    constructor (
+        roomCode: Int?,
+        userLogin: String?,
+    ) {
+        this.roomCode = roomCode
+        this.userLogin = userLogin
+    }
+
+    constructor (
+        roomCode: Int?,
         userLogin: String?,
         cardSuit: CardSuit?,
         cardNumber: CardNumber?
@@ -42,12 +58,13 @@ open class MessageContent {
 
     constructor (
         roomCode: Int?,
-        moneyValue: Int?,
+        cardSuit: CardSuit?,
+        cardNumber: CardNumber?
     ) {
         this.roomCode = roomCode
-        this.moneyValue = moneyValue
+        this.cardSuit = cardSuit
+        this.cardNumber = cardNumber
     }
-
 
     open fun getRoomCode(): Int? {
         return roomCode

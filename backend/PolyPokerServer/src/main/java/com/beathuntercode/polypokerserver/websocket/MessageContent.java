@@ -9,14 +9,27 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class MessageContent {
 
     private Integer roomCode;
-
     private String userLogin;
+    private String userName;
     private int moneyValue;
 
     private CardSuit cardSuit;
     private CardNumber cardNumber;
 
     public MessageContent() {
+    }
+
+    /**
+     * For MessageType.
+     *      NEW_PLAYER_JOIN(7)
+     *
+     * Client uses this constructor to send Card request to server
+     */
+    public MessageContent(Integer roomCode, String userLogin, String userName, Integer moneyValue) {
+        this.roomCode = roomCode;
+        this.userLogin = userLogin;
+        this.userName = userName;
+        this.moneyValue = moneyValue;
     }
 
 
@@ -50,10 +63,35 @@ public class MessageContent {
     /**
      * For MessageType.
      *      DRAW_CARD(11)
+     *
+     * Client uses this constructor to send Card request to server
+     */
+    public MessageContent(Integer roomCode, String userLogin) {
+        this.roomCode = roomCode;
+        this.userLogin = userLogin;
+    }
+
+    /**
+     * For MessageType.
+     *      DRAW_CARD(11)
+     *
+     * Server uses this constructor to send Card to client
      */
     public MessageContent(Integer roomCode, String userLogin, CardSuit cardSuit, CardNumber cardNumber) {
         this.roomCode = roomCode;
         this.userLogin = userLogin;
+        this.cardSuit = cardSuit;
+        this.cardNumber = cardNumber;
+    }
+
+    /**
+     * For MessageType.
+     *      DRAW_CARD(11)
+     *
+     * Server uses this constructor to send Card to client for table in room
+     */
+    public MessageContent(Integer roomCode, CardSuit cardSuit, CardNumber cardNumber) {
+        this.roomCode = roomCode;
         this.cardSuit = cardSuit;
         this.cardNumber = cardNumber;
     }
