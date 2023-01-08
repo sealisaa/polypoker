@@ -67,6 +67,14 @@ public class MessageContent {
         this.roomCode = roomCode;
     }
 
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
+    }
+
     public int getMoneyValue() {
         return moneyValue;
     }
