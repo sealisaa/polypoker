@@ -2,6 +2,7 @@ package com.beathuntercode.polypokerserver.websocket;
 
 import java.time.LocalDateTime;
 
+import com.beathuntercode.polypokerserver.logic.Card;
 import com.beathuntercode.polypokerserver.logic.Room;
 import com.beathuntercode.polypokerserver.logic.Utilities;
 
@@ -13,6 +14,7 @@ public class MessageHandler {
      * @return SocketMessage answer for client
      */
     public SocketMessage handleMessage(SocketMessage message) {
+        Room room = Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode());
         switch (message.getMessageType()) {
             case    PLAYER_MAKE_CHECK,
                     PLAYER_MAKE_FOLD -> {
@@ -25,28 +27,50 @@ public class MessageHandler {
                 );
             }
             case PLAYER_READY_SET -> {
-                Room room = Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode());
                 room.getPlayersMap().get(message.getAuthor()).setReady(
                         !room.getPlayersMap().get(message.getAuthor()).isReady()
                 );
 
-                return new SocketMessage(
-                        MessageType.OK,
-                        new MessageContent(message.getContent().getRoomCode()),
-                        message.getReceiver(),
-                        LocalDateTime.now(),
-                        message.getAuthor());
+                if (room.getPlayersMap().entrySet().stream().allMatch(entry -> entry.getValue().isReady())) {
+//                    room.getGameManager().shuffleDeck();
+                    return new SocketMessage(
+                            MessageType.ROUND_BEGIN,
+                            new MessageContent(message.getContent().getRoomCode()),
+                            message.getReceiver(),
+                            LocalDateTime.now(),
+                            message.getAuthor());
+                }
+                else {
+                    return new SocketMessage(
+                            MessageType.OK,
+                            new MessageContent(message.getContent().getRoomCode()),
+                            message.getReceiver(),
+                            LocalDateTime.now(),
+                            message.getAuthor()
+                    );
+                }
 
             }
             case PLAYER_ROOM_EXIT -> {
-                Room room = Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode());
                 room.getPlayersMap().remove(message.getAuthor());
             }
             case ROUND_BEGIN -> {
                 //TODO()
             }
             case DRAW_CARD -> {
-                //TODO()
+                Card randomCard = room.getGameManager().dealRandomCard();
+                return new SocketMessage(
+                        MessageType.DRAW_CARD,
+                        new MessageContent(
+                                message.getContent().getRoomCode(),
+                                message.getAuthor(),
+                                randomCard.getCardSuit(),
+                                randomCard.getCardNumber()
+                        ),
+                        message.getReceiver(),
+                        LocalDateTime.now(),
+                        message.getAuthor()
+                );
             }
             case PLAYER_MAKE_BET -> {
                 //TODO()

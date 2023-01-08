@@ -12,6 +12,8 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import com.example.polypoker.R
 import com.example.polypoker.Utilities
+import com.example.polypoker.model.GameManager
+import com.example.polypoker.model.Player
 import com.example.polypoker.retrofit.RetrofitService
 import com.example.polypoker.retrofit.RoomApi
 import com.example.polypoker.websocket.stomp.WebSocketViewModel
@@ -67,14 +69,24 @@ class RoomFragment : Fragment() {
 
         }
 
-        webSocketViewModel = WebSocketViewModel()
-
         return inflater.inflate(R.layout.room_fragment, container, false)
     }
 
     @SuppressLint("NewApi")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        webSocketViewModel = WebSocketViewModel(view)
+        GameManager.playersMap.put(
+            Utilities.USER_LOGIN,
+            Player(
+                Utilities.USER_NAME,
+                Utilities.USER_CASH,
+                null,
+                null
+        ))
+
+        view.findViewById<TextView>(R.id.player1Cash).text = Utilities.USER_CASH.toString()
 
         hidePlayerSeat(
             view.findViewById(R.id.player2Avatar), view.findViewById(R.id.player2Name),

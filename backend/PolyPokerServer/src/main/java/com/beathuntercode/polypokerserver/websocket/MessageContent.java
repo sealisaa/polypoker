@@ -10,6 +10,7 @@ public class MessageContent {
 
     private Integer roomCode;
 
+    private String userLogin;
     private int moneyValue;
 
     private CardSuit cardSuit;
@@ -50,8 +51,9 @@ public class MessageContent {
      * For MessageType.
      *      DRAW_CARD(11)
      */
-    public MessageContent(Integer roomCode, CardSuit cardSuit, CardNumber cardNumber) {
+    public MessageContent(Integer roomCode, String userLogin, CardSuit cardSuit, CardNumber cardNumber) {
         this.roomCode = roomCode;
+        this.userLogin = userLogin;
         this.cardSuit = cardSuit;
         this.cardNumber = cardNumber;
     }

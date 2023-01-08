@@ -10,6 +10,8 @@ import com.example.polypoker.model.CardSuit
 open class MessageContent {
     private var roomCode: Int? = null
 
+    private var userLogin: String? = null
+
     private var moneyValue: Int? = null
 
     private var cardSuit: CardSuit? = null
@@ -28,21 +30,24 @@ open class MessageContent {
 
     constructor (
         roomCode: Int?,
+        userLogin: String?,
+        cardSuit: CardSuit?,
+        cardNumber: CardNumber?
+    ) {
+        this.roomCode = roomCode
+        this.userLogin = userLogin
+        this.cardSuit = cardSuit
+        this.cardNumber = cardNumber
+    }
+
+    constructor (
+        roomCode: Int?,
         moneyValue: Int,
     ) {
         this.roomCode = roomCode
         this.moneyValue = moneyValue
     }
 
-    constructor (
-        roomCode: Int?,
-        cardSuit: CardSuit?,
-        cardNumber: CardNumber?
-    ) {
-        this.roomCode = roomCode
-        this.cardSuit = cardSuit
-        this.cardNumber = cardNumber
-    }
 
     open fun getRoomCode(): Int? {
         return roomCode
@@ -50,6 +55,14 @@ open class MessageContent {
 
     open fun setRoomCode(roomCode: Int?) {
         this.roomCode = roomCode
+    }
+
+    open fun getUserLogin(): String? {
+        return userLogin
+    }
+
+    open fun setUserLogin(userLogin: String?) {
+        this.userLogin = userLogin
     }
 
     open fun getMoneyValue(): Int? {

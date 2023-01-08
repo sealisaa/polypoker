@@ -51,13 +51,14 @@
             android:layout_gravity="center"/>
 
         <TextView
+            android:id="@+id/bankMoneyCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:layout_weight="1"
-            android:textColor="@color/white"
-            android:textStyle="bold"
             android:text="0000000.00"
-            android:layout_gravity="center"/>
+            android:textColor="@color/white"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

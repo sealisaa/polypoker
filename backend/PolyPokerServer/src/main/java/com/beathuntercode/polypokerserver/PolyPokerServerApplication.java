@@ -10,7 +10,7 @@ public class PolyPokerServerApplication {
 
 	public static void main(String[] args) {
 
-		Utilities.roomsController.createRoom(11, 10, 20);
+		Utilities.roomsController.createRoom(1, 10, 20);
 
 		SpringApplication.run(PolyPokerServerApplication.class, args);
 

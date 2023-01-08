@@ -2,6 +2,7 @@ package com.example.polypoker.websocket.stomp
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,12 +20,14 @@ import ua.naiksoftware.stomp.dto.StompMessage
 import ua.naiksoftware.stomp.provider.OkHttpConnectionProvider.TAG
 import java.time.LocalDateTime
 
-class WebSocketViewModel : ViewModel() {
+class WebSocketViewModel(private var view: View) : ViewModel() {
     companion object{
         const val SOCKET_URL = Utilities.HOST_ADDRESS
         const val SERVER_ANSWERS_LINK = "/room/user"
         const val LINK_SOCKET = "/room/api/socket"
     }
+
+    private val messageHandler: MessageHandler = MessageHandler(view, this)
 
     @SuppressLint("NewApi")
     private val gson: Gson = GsonBuilder().registerTypeAdapter(LocalDateTime::class.java,
@@ -56,6 +59,7 @@ class WebSocketViewModel : ViewModel() {
                     Log.d(TAG, "RECEIVED message from server -> " + topicMessage.payload)
                     val message: SocketMessage =
                         gson.fromJson(topicMessage.payload, SocketMessage::class.java)
+                    messageHandler.handleMessage(message)
                 },
                     {
                         Log.e(TAG, "Error!", it)

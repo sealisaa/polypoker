@@ -86,6 +86,7 @@ class MainMenuFragment : Fragment() {
                         val user = response.body()
 
                         userNameSurnameTextView.text = "${user?.name} ${user?.surname}"
+                        Utilities.USER_NAME = "${user?.name} ${user?.surname}"
                     }
                 }
 
@@ -109,6 +110,7 @@ class MainMenuFragment : Fragment() {
                         val userStatistic = response.body()
 
                         currentCoinsCountTextView.text = userStatistic?.currentCoinsCount.toString()
+                        Utilities.USER_CASH = userStatistic?.currentCoinsCount!!
                         totalGamesPlayedTextView.text = userStatistic?.totalGamesPlayed.toString()
                         winGamesTextView.text = userStatistic?.winGames.toString()
                         totalEarnTextView.text = userStatistic?.totalEarn.toString()

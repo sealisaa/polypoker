@@ -11,7 +11,7 @@ public class GameManager {
     private Map<String, Player> playersMap;
     private int bank;
 
-    private List<Card> deck;
+    private List<Card> deck = Utilities.cardList;
     private GameState gameState;
 
     public GameManager(Map<String, Player> playersMap) {
@@ -65,21 +65,12 @@ public class GameManager {
         return deck;
     }
 
-    private void shuffleDeck(List<Card> deck) {
+    public void shuffleDeck() {
         Collections.shuffle(deck);
     }
 
-    private Card dealRandomCard() {
+    public Card dealRandomCard() {
         return deck.get(Utilities.getRndIntInRange(0, deck.size() - 1));
-    }
-
-    private void startGame() {
-        for (Map.Entry<String, Player> entry : playersMap.entrySet()) {
-            entry.getValue().setCard1(dealRandomCard());
-            entry.getValue().setCard2(dealRandomCard());
-        }
-        playersMap.get(0).setSmallBlind(true);
-        playersMap.get(1).setBigBlind(true);
     }
 
     private void startBlinds() {
