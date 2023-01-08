@@ -81,6 +81,10 @@ class LobbyContent extends React.Component {
                         <div className="lobby__find-game-pic"></div>
                         <span className="lobby__find-game-text">Найти игру</span>
                     </Link>
+                    <div className="lobby__create-game">
+                        <div className="lobby__create-game-pic"></div>
+                        <span className="lobby__create-game-text">Создать игру</span>
+                    </div>
                 </div>
             </div>
         )

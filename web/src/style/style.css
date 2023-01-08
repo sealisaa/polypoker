@@ -296,9 +296,10 @@ input:hover {
     height: 75px;
     border-radius: 38px;
     background-color: #8D92C7;
-    background-image: url("../img/avatar.svg");
+    background-image: url("../img/Angela.svg");
     background-repeat: no-repeat;
-    background-position: bottom;
+    background-position: center;
+    background-size: contain;
 }
 
 .lobby__username {
@@ -410,14 +411,14 @@ input:hover {
 
 .lobby__actions {
     margin-top: 25px;
-    height: 250px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.lobby__donate, .lobby__find-game {
-    width: 615px;
+.lobby__donate, .lobby__find-game, .lobby__create-game {
+    width: 400px;
     height: 100%;
     background-color: #3F4779;
     border-radius: 50px;
@@ -427,24 +428,44 @@ input:hover {
     text-decoration: none;
 }
 
-.lobby__donate:hover, .lobby__find-game:hover {
+.lobby__donate:hover, .lobby__find-game:hover, .lobby__create-game:hover {
     background-color: #8D92C7;
     cursor: pointer;
 }
 
-.lobby__donate-pic, .lobby__find-game-pic {
-    width: 175px;
-    height: 175px;
+.lobby__donate-pic, .lobby__find-game-pic, .lobby__create-game-pic {
+    width: 125px;
+    height: 125px;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
 }
 
-.lobby__donate-text, .lobby__find-game-text {
+.lobby__donate-text {
     margin-left: 40px;
     font-family: 'Roboto', sans-serif;
-    font-size: 36px;
-    line-height: 48px;
+    font-size: 30px;
+    line-height: 32px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    color: #FFFFFF;
+}
+
+.lobby__find-game-text {
+    margin-left: 25px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+    line-height: 32px;
+    font-weight: 700;
+    letter-spacing: -0.6px;
+    color: #FFFFFF;
+}
+
+.lobby__create-game-text {
+    margin-left: 25px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 30px;
+    line-height: 32px;
     font-weight: 700;
     letter-spacing: -0.6px;
     color: #FFFFFF;
@@ -452,10 +473,15 @@ input:hover {
 
 .lobby__donate-pic {
     background-image: url("../img/diamond.svg");
+    margin-left: 40px;
 }
 
 .lobby__find-game-pic {
     background-image: url("../img/find-game.svg");
+}
+
+.lobby__create-game-pic {
+    background-image: url("../img/create-game.svg");
 }
 
 .game {
