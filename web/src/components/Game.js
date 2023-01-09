@@ -1,8 +1,17 @@
 import React from 'react';
 import '../style/style.css';
-import {Link} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 
-class Game extends React.Component {
+const Game = props => {
+    const location = useLocation();
+    const login = location.state.login;
+    const game = location.state.game;
+    console.log(login);
+    console.log(game);
+    return <GameContent login={login} game={game} {...props} />
+}
+
+class GameContent extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -103,9 +112,12 @@ class Game extends React.Component {
                     <button className="game__fold">FOLD</button>
                     <button className="game__call">CALL</button>
                     <button className="game__raise">RAISE</button>
-                    <div className="game__bank">
-                        <div className="game__bank-chip"></div>
-                        <span className="game__bank-value">BANK: $ 1.000.000</span>
+                    <div className="game__right-nav">
+                        <button className="game__check">CHECK</button>
+                        <div className="game__bank">
+                            <div className="game__bank-chip"></div>
+                            <span className="game__bank-value">BANK: $ 1.000.000</span>
+                        </div>
                     </div>
                 </div>
             </div>

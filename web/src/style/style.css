@@ -800,6 +800,30 @@ input:hover {
     color: #8D92C7;
 }
 
+.game__right-nav {
+    display: flex;
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.game__check {
+    border: none;
+    width: 125px;
+    height: 70px;
+    background-color: #F1B779;
+    border-radius: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #212544;
+    margin-right: 25px;
+}
+
+.game__check:hover {
+    background-color: #212544;
+    color: #8D92C7;
+}
+
 .game__fold:hover, .game__call:hover, .game__raise:hover {
     background-color: #F1B779;
     color: #212544;
@@ -810,8 +834,6 @@ input:hover {
     height: 70px;
     background-color: #212544;
     border-radius: 20px;
-    margin-right: 0;
-    margin-left: auto;
     display: flex;
     align-items: center;
     justify-content: center;

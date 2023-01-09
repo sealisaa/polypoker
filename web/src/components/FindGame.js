@@ -32,7 +32,8 @@ class FindGameContent extends React.Component {
     render() {
         if (this.state.success) {
             const login = this.state.login;
-            return <Navigate to="/game" state={login} />
+            const game = this.state.game;
+            return <Navigate to="/game" state={{login, game}} />
         }
         return (
             <div className="find-game">
