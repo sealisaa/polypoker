@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import com.example.polypoker.R
 import com.example.polypoker.Utilities
@@ -22,13 +23,16 @@ import com.example.polypoker.retrofit.RetrofitService
 import com.example.polypoker.retrofit.RoomApi
 import com.example.polypoker.retrofit.UserApi
 import com.example.polypoker.retrofit.UserStatisticApi
+import com.example.polypoker.websocket.nv.RealTimeEvent
 import com.example.polypoker.websocket.nv.SocketConnectionManager
 import com.example.polypoker.websocket.stomp.MessageContent
 import com.example.polypoker.websocket.stomp.MessageType
 import com.example.polypoker.websocket.stomp.SocketMessage
 import com.example.polypoker.websocket.stomp.WebSocketViewModel
+import org.greenrobot.eventbus.Subscribe
 import retrofit2.Call
 import retrofit2.Response
+import ua.naiksoftware.stomp.dto.LifecycleEvent
 import java.time.LocalDateTime
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -74,7 +78,9 @@ class MainMenuFragment : Fragment() {
 
         Utilities.currentMainMenuView = view
 
-        Utilities.webSocketViewModel = WebSocketViewModel(view)
+        if (Utilities.webSocketViewModel == null) {
+            Utilities.webSocketViewModel = WebSocketViewModel(view)
+        }
 
         val retrofitService = RetrofitService()
         userStatisticApi = retrofitService.retrofit.create(UserStatisticApi::class.java)
@@ -152,6 +158,9 @@ class MainMenuFragment : Fragment() {
             dialogBuilder.setView(roomCodeEditText)
             dialogBuilder.setPositiveButton("OK", object: DialogInterface.OnClickListener {
                 override fun onClick(dialogInterface: DialogInterface?, i: Int) {
+                    Utilities.currentMainMenuView.findNavController().navigate(
+                        R.id.action_mainMenuFragment_to_roomFragment
+                    )
                     Utilities.currentRoomCode = Integer.parseInt(roomCodeEditText.text.toString())
                     joinRoom(Utilities.currentRoomCode, user)
                 }
@@ -171,14 +180,15 @@ class MainMenuFragment : Fragment() {
         super.onDestroy()
 
         val disconnectMessage: SocketMessage = SocketMessage(
-            MessageType.PLAYER_ROOM_EXIT,
-            MessageContent(Utilities.currentRoomCode),
+            MessageType.SOCKET_DISCONNECT,
+            MessageContent(),
             Utilities.USER_LOGIN,
             LocalDateTime.now(),
             Utilities.HOST_ADDRESS
         )
 
-        Utilities.webSocketViewModel.sendMessage(disconnectMessage)
+        Utilities.webSocketViewModel!!.sendMessage(disconnectMessage)
+        Utilities.webSocketViewModel = null
     }
 
     companion object {
@@ -213,6 +223,11 @@ class MainMenuFragment : Fragment() {
             LocalDateTime.now(),
             Utilities.HOST_ADDRESS
         )
-        Utilities.webSocketViewModel.sendMessage(socketMessage)
+        Utilities.webSocketViewModel!!.sendMessage(socketMessage)
+    }
+
+    @Subscribe
+    fun handleRealTimeMessage(event: RealTimeEvent?) {
+        // processing of all real-time events
     }
 }

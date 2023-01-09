@@ -1,8 +1,11 @@
 package com.beathuntercode.polypokerserver.websocket;
 
+import java.util.List;
+
 import com.beathuntercode.polypokerserver.logic.Card;
 import com.beathuntercode.polypokerserver.logic.CardNumber;
 import com.beathuntercode.polypokerserver.logic.CardSuit;
+import com.beathuntercode.polypokerserver.logic.Player;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude
@@ -16,12 +19,26 @@ public class MessageContent {
     private CardSuit cardSuit;
     private CardNumber cardNumber;
 
+    private List<Player> roomPlayersList;
+
     public MessageContent() {
     }
 
     /**
      * For MessageType.
-     *      NEW_PLAYER_JOIN(7)
+     *      CHECK_ROOM_PLAYERS(7)
+     *
+     * Client uses this constructor to send Card request to server
+     */
+    public MessageContent(Integer roomCode, List<Player> roomPlayersList) {
+        this.roomCode = roomCode;
+        this.roomPlayersList = roomPlayersList;
+    }
+
+
+    /**
+     * For MessageType.
+     *      PLAYER_ROOM_JOIN(4)
      *
      * Client uses this constructor to send Card request to server
      */
@@ -31,7 +48,6 @@ public class MessageContent {
         this.userName = userName;
         this.moneyValue = moneyValue;
     }
-
 
     /**
      * For MessageType.
@@ -135,5 +151,21 @@ public class MessageContent {
 
     public void setCardNumber(CardNumber cardNumber) {
         this.cardNumber = cardNumber;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public List<Player> getRoomPlayersList() {
+        return roomPlayersList;
+    }
+
+    public void setRoomPlayersList(List<Player> roomPlayersList) {
+        this.roomPlayersList = roomPlayersList;
     }
 }

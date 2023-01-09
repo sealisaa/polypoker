@@ -72,17 +72,22 @@ class RoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        GameManager.playersMap.put(
-            Utilities.USER_LOGIN,
-            Player(
-                Utilities.USER_LOGIN,
-                Utilities.USER_NAME,
-                null,
-                null,
-                view.findViewById(R.id.player1Card1),
-                view.findViewById(R.id.player1Card2),
-                view.findViewById(R.id.player1Cash),
-        ))
+        Utilities.currentRoomView = view
+
+
+
+//        GameManager.playersMap.put(
+//            Utilities.USER_LOGIN,
+//            Player(
+//                Utilities.USER_LOGIN,
+//                Utilities.USER_NAME,
+//                0,
+//                null,
+//                null,
+//                view.findViewById(R.id.player1Card1),
+//                view.findViewById(R.id.player1Card2),
+//                view.findViewById(R.id.player1Cash),
+//        ))
 
         view.findViewById<TextView>(R.id.player1Cash).text = Utilities.USER_CASH.toString()
 
@@ -119,7 +124,7 @@ class RoomFragment : Fragment() {
         view.findViewById<Button>(R.id.readyButton).setOnClickListener {
             it.visibility = View.INVISIBLE
             view.findViewById<Button>(R.id.notReadyButton).visibility = View.VISIBLE
-            Utilities.webSocketViewModel.sendMessage(SocketMessage(
+            Utilities.webSocketViewModel!!.sendMessage(SocketMessage(
                 MessageType.PLAYER_READY_SET,
                 MessageContent(Utilities.currentRoomCode),
                 Utilities.USER_LOGIN,
@@ -131,7 +136,7 @@ class RoomFragment : Fragment() {
         view.findViewById<Button>(R.id.notReadyButton).setOnClickListener {
             it.visibility = View.INVISIBLE
             view.findViewById<Button>(R.id.readyButton).visibility = View.VISIBLE
-            Utilities.webSocketViewModel.sendMessage(SocketMessage(
+            Utilities.webSocketViewModel!!.sendMessage(SocketMessage(
                 MessageType.PLAYER_READY_SET,
                 MessageContent(Utilities.currentRoomCode),
                 Utilities.USER_LOGIN,
@@ -174,9 +179,17 @@ class RoomFragment : Fragment() {
         playerCard2.visibility = View.INVISIBLE
     }
 
-    @Subscribe
-    fun handleRealTimeMessage(event: RealTimeEvent?) {
-        // processing of all real-time events
-    }
+    @SuppressLint("NewApi")
+    override fun onDestroy() {
+        super.onDestroy()
 
+        val disconnectMessage: SocketMessage = SocketMessage(
+            MessageType.PLAYER_ROOM_EXIT,
+            MessageContent(Utilities.currentRoomCode, Utilities.USER_LOGIN),
+            Utilities.USER_LOGIN,
+            LocalDateTime.now(),
+            Utilities.HOST_ADDRESS
+        )
+        Utilities.webSocketViewModel!!.sendMessage(disconnectMessage)
+    }
 }

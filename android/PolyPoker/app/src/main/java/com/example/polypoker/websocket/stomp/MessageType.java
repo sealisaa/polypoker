@@ -4,6 +4,7 @@ public enum MessageType {
     PLAYER_ROOM_JOIN(4),
     PLAYER_READY_SET(5),
     PLAYER_ROOM_EXIT(6),
+    CHECK_ROOM_PLAYERS(7),
     ROUND_BEGIN(10),
     DRAW_CARD(11),
     PLAYER_MAKE_BET(12),
@@ -13,6 +14,7 @@ public enum MessageType {
     PAYMENT_TO_PLAYER(16),
     NEXT_STEP_OF_ROUND(17),
     ROUND_END(18),
+    SOCKET_DISCONNECT(100),
     OK(200),
     FAIL(500);
 
