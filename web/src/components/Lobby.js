@@ -25,13 +25,11 @@ class LobbyContent extends React.Component {
         try {
             let ws = new WebSocket('ws://localhost:8080/room');
             ws.onopen = () => {
-                // on connecting, do nothing but log it to the console
                 console.log('connected')
             }
         } catch (e) {
             console.log(e);
         }
-
         UserService.getUserStatistic(this.state.login).then((response) => {
             this.setState({
                 totalGamesPlayed: response.data.totalGamesPlayed,
@@ -43,6 +41,7 @@ class LobbyContent extends React.Component {
     }
 
     render() {
+        let login = this.state.login;
         return (
             <div className="lobby">
                 <div className="lobby__header">
@@ -86,7 +85,7 @@ class LobbyContent extends React.Component {
                         <div className="lobby__donate-pic"></div>
                         <span className="lobby__donate-text">Пополнить баланс</span>
                     </div>
-                    <Link to="/game" className="lobby__find-game">
+                    <Link to="/find-game" state={login} className="lobby__find-game">
                         <div className="lobby__find-game-pic"></div>
                         <span className="lobby__find-game-text">Найти игру</span>
                     </Link>

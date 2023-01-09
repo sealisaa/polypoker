@@ -3,7 +3,7 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-.login {
+.login, .find-game {
     width: 100%;
     height: 100%;
     display: flex;
@@ -11,11 +11,23 @@ body {
     align-items: center;
 }
 
-.login__header {
+.login__header, .find-game__header {
     margin-top: 60px;
 }
 
 .login__main {
+    width: 600px;
+    height: 350px;
+    background-color: #212544;
+    border-radius: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+    position: relative;
+}
+
+.find-game__main {
     width: 600px;
     height: 350px;
     background-color: #212544;
@@ -91,6 +103,33 @@ h2 {
     color: #FFFFFF;
 }
 
+.find-game__main input {
+    outline: none;
+    width: 400px;
+    border: solid 2px #8D92C7;
+    background-color: transparent;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    height: 40px;
+    padding-left: 20px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 20px;
+    color: #FFFFFF;
+}
+
+.find-game__main input:hover {
+    cursor: pointer;
+    color: #FFFFFF;
+}
+
+.find-game__main input::placeholder {
+    color: #FFFFFF;
+}
+
 .login__data input:hover {
     cursor: pointer;
     color: #FFFFFF;
@@ -110,7 +149,7 @@ h2 {
     background-position: 95%, center;
 }
 
-.login__button {
+.login__button, .find-game__button {
     border: none;
     background-color: #F1B779;
     font-family: 'Roboto', sans-serif;
@@ -124,6 +163,11 @@ h2 {
     border-radius: 20px;
     color: #212544;
     margin-bottom: 15px;
+}
+
+.find-game__button {
+    margin-top: auto;
+    margin-bottom: 50px;
 }
 
 .login__settings {
