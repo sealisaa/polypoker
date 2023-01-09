@@ -1,9 +1,13 @@
 package com.beathuntercode.polypokerserver.logic;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude
 public class Player {
 
     private String login;
     private String name;
+    private int currentStake;
     private int cash;
     private Card card1;
     private Card card2;
@@ -26,6 +30,14 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getCurrentStake() {
+        return currentStake;
+    }
+
+    public void setCurrentStake(int currentStake) {
+        this.currentStake = currentStake;
     }
 
     public int getCash() {
@@ -76,9 +88,10 @@ public class Player {
         isBigBlind = bigBlind;
     }
 
-    public Player(String login, String name, int cash) {
+    public Player(String login, String name, int currentStake, int cash) {
         this.login = login;
         this.name = name;
+        this.currentStake = currentStake;
         this.cash = cash;
         isReady = false;
         isSmallBlind = false;

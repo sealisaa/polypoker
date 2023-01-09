@@ -95,6 +95,9 @@ class WebSocketViewModel(private var view: View) : ViewModel() {
 
     fun sendMessage(message: SocketMessage) {
         sendCompletable(mStompClient!!.send(LINK_SOCKET, gson.toJson(message)), gson.toJson(message))
+        if (message.messageType == MessageType.SOCKET_DISCONNECT) {
+            mStompClient?.disconnect()
+        }
     }
 
     private fun sendCompletable(request: Completable, message: String) {

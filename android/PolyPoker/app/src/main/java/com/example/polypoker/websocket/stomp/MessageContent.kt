@@ -3,8 +3,7 @@ package com.example.polypoker.websocket.stomp
 import com.example.polypoker.model.CardNumber
 
 import com.example.polypoker.model.CardSuit
-
-
+import com.example.polypoker.model.Player
 
 
 open class MessageContent {
@@ -12,11 +11,15 @@ open class MessageContent {
 
     private var userLogin: String? = null
 
+    private var userName: String? = null
+
     private var moneyValue: Int? = null
 
     private var cardSuit: CardSuit? = null
 
     private var cardNumber: CardNumber? = null
+
+    private var roomPlayersList: List<Player>? = null
 
     constructor() {
 
@@ -30,9 +33,29 @@ open class MessageContent {
 
     constructor (
         roomCode: Int?,
+        roomPlayersList: List<Player>
+    ) {
+        this.roomCode = roomCode
+        this.roomPlayersList = roomPlayersList
+    }
+
+    constructor (
+        roomCode: Int?,
         moneyValue: Int?,
     ) {
         this.roomCode = roomCode
+        this.moneyValue = moneyValue
+    }
+
+    constructor (
+        roomCode: Int?,
+        userLogin: String?,
+        userName: String?,
+        moneyValue: Int?
+    ) {
+        this.roomCode = roomCode
+        this.userLogin = userLogin
+        this.userName = userName
         this.moneyValue = moneyValue
     }
 
@@ -82,6 +105,14 @@ open class MessageContent {
         this.userLogin = userLogin
     }
 
+    open fun getUserName(): String? {
+        return userName
+    }
+
+    open fun setUserName(userName: String?) {
+        this.userName = userName
+    }
+
     open fun getMoneyValue(): Int? {
         return moneyValue
     }
@@ -104,6 +135,14 @@ open class MessageContent {
 
     open fun setCardNumber(cardNumber: CardNumber?) {
         this.cardNumber = cardNumber
+    }
+
+    open fun getRoomPlayersList(): List<Player>? {
+        return roomPlayersList
+    }
+
+    open fun setRoomPlayersList(roomPlayersList: List<Player>?) {
+        this.roomPlayersList = roomPlayersList
     }
 
 }

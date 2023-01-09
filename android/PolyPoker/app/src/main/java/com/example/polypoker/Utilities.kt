@@ -4,6 +4,7 @@ import android.view.View
 import com.example.polypoker.model.Card
 import com.example.polypoker.model.CardNumber
 import com.example.polypoker.model.CardSuit
+import com.example.polypoker.model.Room
 import com.example.polypoker.websocket.nv.SocketConnectionManager
 import com.example.polypoker.websocket.stomp.WebSocketViewModel
 
@@ -13,6 +14,7 @@ class Utilities {
         var USER_CASH: Int = 0
         lateinit var USER_NAME: String
 
+        lateinit var currentRoom: Room;
 
         const val MAX_PLAYERS_COUNT: Int = 6
 
@@ -22,12 +24,12 @@ class Utilities {
 
         var isPlaying = false
 
-        var currentMainMenuView: View? = null
-        var currentRoomView: View? = null
+        lateinit var currentMainMenuView: View
+        lateinit var currentRoomView: View
 
         lateinit var socketConnectionManager: SocketConnectionManager
 
-        lateinit var webSocketViewModel: WebSocketViewModel
+        var webSocketViewModel: WebSocketViewModel? = null
 
         val cardsMap = mapOf<Card, Int>(
             Card(CardSuit.HEARTS, CardNumber.TWO) to R.drawable.ic_2_of_hearts,
