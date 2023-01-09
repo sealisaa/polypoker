@@ -21,9 +21,18 @@ class LobbyContent extends React.Component {
         }
     }
 
-    componentDidMount(){
+    componentDidMount() {
+        try {
+            let ws = new WebSocket('ws://localhost:8080/room');
+            ws.onopen = () => {
+                // on connecting, do nothing but log it to the console
+                console.log('connected')
+            }
+        } catch (e) {
+            console.log(e);
+        }
+
         UserService.getUserStatistic(this.state.login).then((response) => {
-            console.log(response.data);
             this.setState({
                 totalGamesPlayed: response.data.totalGamesPlayed,
                 winGames: response.data.winGames,
