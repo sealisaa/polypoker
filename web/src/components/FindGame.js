@@ -6,7 +6,7 @@ const FindGame = props => {
     const location = useLocation();
     const login = location.state;
     console.log(login);
-    return <FindGameContent {...props} />
+    return <FindGameContent login={login} {...props} />
 }
 
 class FindGameContent extends React.Component {
@@ -16,7 +16,7 @@ class FindGameContent extends React.Component {
         this.state = {
             message: "",
             success: false,
-            login: "",
+            login: this.props.login,
             game: null
         }
     }

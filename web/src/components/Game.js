@@ -6,8 +6,6 @@ const Game = props => {
     const location = useLocation();
     const login = location.state.login;
     const game = location.state.game;
-    console.log(login);
-    console.log(game);
     return <GameContent login={login} game={game} {...props} />
 }
 
