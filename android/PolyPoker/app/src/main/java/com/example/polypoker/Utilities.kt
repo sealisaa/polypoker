@@ -32,6 +32,8 @@ class Utilities {
         var webSocketViewModel: WebSocketViewModel? = null
 
         val cardsMap = mapOf<Card, Int>(
+            Card() to R.drawable.ic_back_of_a_card,
+
             Card(CardSuit.HEARTS, CardNumber.TWO) to R.drawable.ic_2_of_hearts,
             Card(CardSuit.HEARTS, CardNumber.THREE) to R.drawable.ic_3_of_hearts,
             Card(CardSuit.HEARTS, CardNumber.FOUR) to R.drawable.ic_4_of_hearts,

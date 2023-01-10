@@ -58,6 +58,8 @@ class RoomFragment : Fragment() {
         val retrofitService = RetrofitService()
         val roomApi: RoomApi = retrofitService.retrofit.create(RoomApi::class.java)
 
+
+
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 TODO("Not yet implemented")
@@ -73,7 +75,6 @@ class RoomFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         Utilities.currentRoomView = view
-
 
 
 //        GameManager.playersMap.put(
@@ -182,6 +183,11 @@ class RoomFragment : Fragment() {
     @SuppressLint("NewApi")
     override fun onDestroy() {
         super.onDestroy()
+        Utilities.currentRoom.playersMap.clear()
+        Utilities.isPlaying = false
+        GameManager.TABLE_CARD1 = null
+        GameManager.TABLE_CARD2 = null
+        GameManager.TABLE_CARD3 = null
 
         val disconnectMessage: SocketMessage = SocketMessage(
             MessageType.PLAYER_ROOM_EXIT,

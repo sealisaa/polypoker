@@ -14,33 +14,39 @@ import com.example.polypoker.websocket.stomp.MessageType.*
 import java.time.LocalDateTime
 
 class MessageHandler(
-    private var roomView: View,
     private var roomViewModel: WebSocketViewModel
 ) {
 
+    private lateinit var roomView: View
+
     fun handleMessage(message: SocketMessage) {
-        when (message.messageType) {
-            PLAYER_ROOM_JOIN -> playerRoomJoin(message)
-            PLAYER_READY_SET -> TODO()
-            PLAYER_ROOM_EXIT -> playerRoomExit(message)
-            ROUND_BEGIN -> beginRound(message)
-            DRAW_CARD -> drawCard(message)
-            PLAYER_MAKE_BET -> TODO()
-            PLAYER_MAKE_CHECK -> TODO()
-            PLAYER_MAKE_RISE -> TODO()
-            PLAYER_MAKE_FOLD -> TODO()
-            PAYMENT_TO_PLAYER -> TODO()
-            NEXT_STEP_OF_ROUND -> nextStepOfRound(message)
-            ROUND_END -> TODO()
-            OK -> { }
-            FAIL -> TODO()
-            CHECK_ROOM_PLAYERS -> {
-                if (Utilities.currentRoom.playersMap.size <= 1) checkRoomPlayers(message)
+
+            roomView = Utilities.currentRoomView
+
+            when (message.messageType) {
+                PLAYER_ROOM_JOIN -> playerRoomJoin(message)
+                PLAYER_READY_SET -> TODO()
+                PLAYER_ROOM_EXIT -> playerRoomExit(message)
+                ROUND_BEGIN -> beginRound(message)
+                DRAW_CARD -> drawCard(message)
+                PLAYER_MAKE_BET -> TODO()
+                PLAYER_MAKE_CHECK -> TODO()
+                PLAYER_MAKE_RISE -> TODO()
+                PLAYER_MAKE_FOLD -> TODO()
+                PAYMENT_TO_PLAYER -> TODO()
+                NEXT_STEP_OF_ROUND -> nextStepOfRound(message)
+                ROUND_END -> TODO()
+                OK -> {
+                }
+                FAIL -> TODO()
+                CHECK_ROOM_PLAYERS -> {
+                    if (Utilities.currentRoom.playersMap.size <= 1) checkRoomPlayers(message)
+                }
+                else -> {
+                    TODO()
+                }
             }
-            else -> {
-                TODO()
-            }
-        }
+
     }
 
     private fun playerRoomExit(message: SocketMessage) {
@@ -70,25 +76,28 @@ class MessageHandler(
             }
         }
         else {
-            Utilities.isPlaying = true
-            Utilities.currentRoom = Room(message.content.getRoomCode()!!, 10, 20)
-            Utilities.currentRoom.addFirstPlayer(message)
+            if (message.content.getUserLogin() == Utilities.USER_LOGIN) {
+                Utilities.isPlaying = true
+                Utilities.currentRoom = Room(message.content.getRoomCode()!!, 10, 20)
+                Utilities.currentRoom.playersMap.clear()
+                Utilities.currentRoom.addFirstPlayer(message)
 
-            roomViewModel.sendMessage(
-                SocketMessage(
-                    MessageType.CHECK_ROOM_PLAYERS,
-                    MessageContent(Utilities.currentRoomCode),
-                    Utilities.USER_LOGIN,
-                    LocalDateTime.now(),
-                    Utilities.HOST_ADDRESS
+                roomViewModel.sendMessage(
+                    SocketMessage(
+                        MessageType.CHECK_ROOM_PLAYERS,
+                        MessageContent(Utilities.currentRoomCode),
+                        Utilities.USER_LOGIN,
+                        LocalDateTime.now(),
+                        Utilities.HOST_ADDRESS
+                    )
                 )
-            )
+            }
         }
     }
 
     private fun beginRound(message: SocketMessage) {
         GameManager.currentGameState = GameState.BLINDS
-
+        nextStepOfRound(message)
         roomView.findViewById<Button>(R.id.readyButton).visibility = View.INVISIBLE
         roomView.findViewById<Button>(R.id.notReadyButton).visibility = View.INVISIBLE
         roomView.findViewById<TextView>(R.id.bankMoneyCount).text = "0"
@@ -107,6 +116,16 @@ class MessageHandler(
                     if (player.card2 == null) {
                         drawCardForPlayerRequest(player)
                     }
+                }
+
+                if (GameManager.TABLE_CARD1 == null) {
+                    drawCardForTableRequest()
+                }
+                if (GameManager.TABLE_CARD2 == null) {
+                    drawCardForTableRequest()
+                }
+                if (GameManager.TABLE_CARD3 == null) {
+                    drawCardForTableRequest()
                 }
             }
             GameState.FLOP -> {
@@ -129,41 +148,57 @@ class MessageHandler(
 
     private fun drawCard(message: SocketMessage) {
         val player = GameManager.playersMap[message.content.getUserLogin()]
-        when {
-            player?.card1 == null -> {
-                player?.card1 = Card(
-                    message.content.getCardSuit(),
-                    message.content.getCardNumber()
-                )
-                updateRoomCard(R.id.player1Card1, player?.card1!!)
+        if (player != null) {
+            when {
+                player?.card1 == null -> {
+                    player?.card1 = Card(
+                        message.content.getCardSuit(),
+                        message.content.getCardNumber()
+                    )
+                    if (player.login == Utilities.USER_LOGIN) {
+                        updateRoomCard(R.id.player1Card1, player?.card1!!)
+                    }
+                    else {
+                        updateRoomCard(R.id.player2Card1, Card())
+                    }
+                }
+                player.card2 == null -> {
+                    player.card2 = Card(
+                        message.content.getCardSuit(),
+                        message.content.getCardNumber()
+                    )
+                    if (player.login == Utilities.USER_LOGIN) {
+                        updateRoomCard(R.id.player1Card2, player?.card2!!)
+                    }
+                    else {
+                        updateRoomCard(R.id.player2Card2, Card())
+                    }
+                }
             }
-            player.card2 == null -> {
-                player.card2 = Card(
-                    message.content.getCardSuit(),
-                    message.content.getCardNumber()
-                )
-                updateRoomCard(R.id.player1Card2, player?.card2!!)
-            }
-            GameManager.TABLE_CARD1 == null -> {
-                GameManager.TABLE_CARD1 = Card(
-                    message.content.getCardSuit(),
-                    message.content.getCardNumber()
-                )
-                updateRoomCard(R.id.tableCard1, GameManager.TABLE_CARD1)
-            }
-            GameManager.TABLE_CARD2 == null -> {
-                GameManager.TABLE_CARD2 = Card(
-                    message.content.getCardSuit(),
-                    message.content.getCardNumber()
-                )
-                updateRoomCard(R.id.tableCard2, GameManager.TABLE_CARD2)
-            }
-            GameManager.TABLE_CARD3 == null -> {
-                GameManager.TABLE_CARD3 = Card(
-                    message.content.getCardSuit(),
-                    message.content.getCardNumber()
-                )
-                updateRoomCard(R.id.tableCard3, GameManager.TABLE_CARD3)
+        }
+        else {
+            when {
+                GameManager.TABLE_CARD1 == null -> {
+                    GameManager.TABLE_CARD1 = Card(
+                        message.content.getCardSuit(),
+                        message.content.getCardNumber()
+                    )
+                    updateRoomCard(R.id.tableCard1, GameManager.TABLE_CARD1)
+                }
+                GameManager.TABLE_CARD2 == null -> {
+                    GameManager.TABLE_CARD2 = Card(
+                        message.content.getCardSuit(),
+                        message.content.getCardNumber()
+                    )
+                    updateRoomCard(R.id.tableCard2, GameManager.TABLE_CARD2)
+                }
+                GameManager.TABLE_CARD3 == null -> {
+                    GameManager.TABLE_CARD3 = Card(
+                        message.content.getCardSuit(),
+                        message.content.getCardNumber()
+                    )
+                    updateRoomCard(R.id.tableCard3, GameManager.TABLE_CARD3)
+                }
             }
         }
     }
@@ -201,12 +236,24 @@ class MessageHandler(
         )
     }
 
+    @SuppressLint("NewApi")
     private fun checkRoomPlayers(message: SocketMessage) {
         val roomPlayersList: List<Player> = message.content.getRoomPlayersList()!!
         for (player: Player in roomPlayersList) {
             if (player.login != Utilities.USER_LOGIN && player.login != null) {
-                Utilities.currentRoom.playersMap.put(player.login, player)
-                playerRoomJoin(message)
+                val playerRoomJoinMessage = SocketMessage(
+                    PLAYER_ROOM_JOIN,
+                    MessageContent(
+                        message.content.getRoomCode(),
+                        player.login,
+                        player.name,
+                        player.cash
+                    ),
+                    Utilities.USER_LOGIN,
+                    LocalDateTime.now(),
+                    Utilities.HOST_ADDRESS
+                )
+                playerRoomJoin(playerRoomJoinMessage)
             }
         }
     }
