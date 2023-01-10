@@ -7,6 +7,7 @@ public class Player {
 
     private String login;
     private String name;
+    private int cash;
     private int currentStake;
     private Card card1;
     private Card card2;
@@ -16,9 +17,10 @@ public class Player {
     private TextView cashTextView;
 
 
-    public Player(String login, String name, int currentStake, Card card1, Card card2, ImageView card1ImageView, ImageView card2ImageView, TextView cashTextView) {
+    public Player(String login, String name, int cash, int currentStake, Card card1, Card card2, ImageView card1ImageView, ImageView card2ImageView, TextView cashTextView) {
         this.login = login;
         this.name = name;
+        this.cash = cash;
         this.currentStake = currentStake;
         this.card1 = card1;
         this.card2 = card2;
@@ -41,6 +43,14 @@ public class Player {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getCash() {
+        return cash;
+    }
+
+    public void setCash(int cash) {
+        this.cash = cash;
     }
 
     public int getCurrentStake() {

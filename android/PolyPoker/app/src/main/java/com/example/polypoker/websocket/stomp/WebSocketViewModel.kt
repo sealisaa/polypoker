@@ -27,7 +27,7 @@ class WebSocketViewModel(private var view: View) : ViewModel() {
         const val LINK_SOCKET = "/room/api/socket"
     }
 
-    private val messageHandler: MessageHandler = MessageHandler(view, this)
+    private val messageHandler: MessageHandler = MessageHandler(this)
 
     @SuppressLint("NewApi")
     private val gson: Gson = GsonBuilder().registerTypeAdapter(LocalDateTime::class.java,

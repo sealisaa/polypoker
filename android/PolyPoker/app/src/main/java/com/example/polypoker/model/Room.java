@@ -22,6 +22,7 @@ public class Room {
         this.minBlind = minBlind;
         this.minRaise = minRaise;
         playersMap = new HashMap<>();
+        GameManager.playersMap = playersMap;
     }
 
     public void addFirstPlayer(SocketMessage message) {
@@ -30,6 +31,7 @@ public class Room {
                 new Player(
                         message.getContent().getUserLogin(),
                         message.getContent().getUserName(),
+                        message.getContent().getMoneyValue(),
                         0,
                         null,
                         null,
@@ -45,6 +47,7 @@ public class Room {
                 new Player(
                         message.getContent().getUserLogin(),
                         message.getContent().getUserName(),
+                        message.getContent().getMoneyValue(),
                         0,
                         null,
                         null,
@@ -75,6 +78,7 @@ public class Room {
                 new Player(
                         message.getContent().getUserLogin(),
                         message.getContent().getUserName(),
+                        message.getContent().getMoneyValue(),
                         0,
                         null,
                         null,
@@ -105,6 +109,7 @@ public class Room {
                 new Player(
                         message.getContent().getUserLogin(),
                         message.getContent().getUserName(),
+                        message.getContent().getMoneyValue(),
                         0,
                         null,
                         null,
@@ -135,6 +140,7 @@ public class Room {
                 new Player(
                         message.getContent().getUserLogin(),
                         message.getContent().getUserName(),
+                        message.getContent().getMoneyValue(),
                         0,
                         null,
                         null,
@@ -165,6 +171,7 @@ public class Room {
                 new Player(
                         message.getContent().getUserLogin(),
                         message.getContent().getUserName(),
+                        message.getContent().getMoneyValue(),
                         0,
                         null,
                         null,
