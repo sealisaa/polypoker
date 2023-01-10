@@ -974,3 +974,101 @@ p {
     margin-bottom: 50px;
     margin-top: auto;
 }
+
+.modal {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    animation-name: appear;
+    animation-duration: 300ms;
+}
+
+.modal-dialog {
+    width: 450px;
+    height: 200px;
+    background-color: #8D92C7;
+    border-radius: 50px;
+    position: relative;
+    margin: 0 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: slide-in;
+    animation-duration: 0.5s;
+}
+
+.modal-header, .modal-footer {
+    display: flex;
+    align-items: center;
+}
+
+.modal-header {
+    margin: 50px 50px 25px;
+    justify-content: space-between;
+}
+
+.modal-footer {
+    justify-content: center;
+}
+
+.modal-close {
+    cursor: pointer;
+    padding: 1rem;
+    margin: -1rem -1rem -1rem auto;
+}
+
+.modal-body {
+    overflow: auto;
+}
+
+.modal-content {
+}
+
+.modal-title {
+    margin: 0;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+@keyframes slide-in {
+    from {
+        transform: translateY(-150px);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.button {
+    border: none;
+    background-color: #212544;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    height: 40px;
+    padding-left: 50px;
+    padding-right: 50px;
+    border-radius: 20px;
+    color: #8D92C7;
+    margin-bottom: 15px;
+}
