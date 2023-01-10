@@ -23,7 +23,7 @@ class LobbyContent extends React.Component {
 
     componentDidMount() {
         try {
-            let ws = new WebSocket('ws://localhost:8080/room');
+            let ws = new WebSocket('ws://localhost:8080/room/websocket');
             ws.onopen = () => {
                 console.log('connected')
             }
