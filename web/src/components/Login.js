@@ -20,10 +20,11 @@ class Login extends React.Component {
         UserService.authorizeUser(login, password).then((response) => {
             if (response.data) {
                 this.setState({authorized: true, login: login});
+            } else {
+                this.setState({message: "Неверное имя пользователя или пароль"});
             }
         }).catch(err => {
             this.setState({message: "Неверное имя пользователя или пароль"});
-            console.log(err)
         });
     }
 

@@ -12,7 +12,18 @@ const Game = props => {
 class GameContent extends React.Component {
     constructor(props) {
         super(props);
+        this.flipCards = this.flipCards.bind(this);
     }
+
+    flipCards() {
+        let card1 = document.getElementById("game__card1");
+        let card2 = document.getElementById("game__card2");
+        let card3 = document.getElementById("game__card3");
+        card1.classList.toggle('is-flipped');
+        card2.classList.toggle('is-flipped');
+        card3.classList.toggle('is-flipped');
+    }
+
     render() {
         return (
             <div className="game">
@@ -89,17 +100,17 @@ class GameContent extends React.Component {
                             </div>
                         </div>
                         <div className="game__cards">
-                            <div className="game__card1 flip-card h">
-                                <div className="game__card-back back"></div>
-                                <div className="game__card1-front front"></div>
+                            <div id="game__card1" className="game__card1 flip-card card">
+                                <div className="game__card-back back card__face"></div>
+                                <div className="game__card1-front front card__face"></div>
                             </div>
-                            <div className="game__card2 flip-card h">
-                                <div className="game__card-back back"></div>
-                                <div className="game__card2-front front"></div>
+                            <div id="game__card2" className="game__card2 flip-card card">
+                                <div className="game__card-back back card__face"></div>
+                                <div className="game__card2-front front card__face"></div>
                             </div>
-                            <div className="game__card3 flip-card h">
-                                <div className="game__card-back back"></div>
-                                <div className="game__card3-front front"></div>
+                            <div id="game__card3" className="game__card3 flip-card card">
+                                <div className="game__card-back back card__face"></div>
+                                <div className="game__card3-front front card__face"></div>
                             </div>
                             <div className="game__card4"></div>
                             <div className="game__card5"></div>
@@ -111,7 +122,7 @@ class GameContent extends React.Component {
                     <button className="game__call">CALL</button>
                     <button className="game__raise">RAISE</button>
                     <div className="game__right-nav">
-                        <button className="game__check">CHECK</button>
+                        <button className="game__check" onClick={this.flipCards}>ГОТОВ</button>
                         <div className="game__bank">
                             <div className="game__bank-chip"></div>
                             <span className="game__bank-value">BANK: $ 1.000.000</span>

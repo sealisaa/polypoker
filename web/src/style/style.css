@@ -941,15 +941,7 @@ input:hover {
     perspective: 500px;
 }
 
-.flip-card.h:hover .back, .flip-card.h.flip .back{
-    transform: rotateY(180deg);
-}
-
-.flip-card.h:hover .front, .flip-card.h.flip .front{
-    transform: rotateY(0deg);
-}
-
-.flip-card.h .front{
+.flip-card .front {
     transform: rotateY(-180deg);
 }
 
@@ -960,6 +952,23 @@ input:hover {
     box-sizing: border-box;
     transition: all 0.5s ease-in;
     padding: 10px;
+    backface-visibility: hidden;
+}
+
+.card {
+    transition: transform 1s;
+    transform-style: preserve-3d;
+    cursor: pointer;
+    position: relative;
+}
+
+.card.is-flipped {
+    transform: rotateY(180deg);
+}
+
+.card__face {
+    position: absolute;
+    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
 }
 
