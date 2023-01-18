@@ -3,13 +3,8 @@ package com.beathuntercode.polypokerserver.websocket;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.beathuntercode.polypokerserver.database.controller.UserController;
-import com.beathuntercode.polypokerserver.database.controller.UserStatisticController;
 import com.beathuntercode.polypokerserver.database.model.user.User;
 import com.beathuntercode.polypokerserver.database.model.user.UserDao;
 import com.beathuntercode.polypokerserver.database.model.userstatistic.UserStatistic;
@@ -18,7 +13,6 @@ import com.beathuntercode.polypokerserver.logic.Card;
 import com.beathuntercode.polypokerserver.logic.GameState;
 import com.beathuntercode.polypokerserver.logic.Player;
 import com.beathuntercode.polypokerserver.logic.Room;
-import com.beathuntercode.polypokerserver.logic.RoomsController;
 import com.beathuntercode.polypokerserver.logic.Utilities;
 
 @RestController
@@ -33,9 +27,18 @@ public class MessageHandler {
     public SocketMessage handleMessage(SocketMessage message, UserDao userDao, UserStatisticDao userStatisticDao) {
         Room room = Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode());
         switch (message.getMessageType()) {
-            case PLAYER_MAKE_CHECK,
+            case    PLAYER_MAKE_CHECK,
                     PLAYER_MAKE_FOLD -> {
-                return okMessage(message);
+                return new SocketMessage(
+                        message.getMessageType(),
+                        new MessageContent(
+                                message.getContent().getRoomCode(),
+                                message.getContent().getUserLogin()
+                        ),
+                        message.getReceiver(),
+                        LocalDateTime.now(),
+                        message.getAuthor()
+                );
             }
             case PLAYER_ROOM_JOIN -> {
                 return playerRoomJoin(message, userDao, userStatisticDao);
@@ -52,20 +55,24 @@ public class MessageHandler {
             case ROUND_BEGIN -> {
                 //TODO()
             }
+            case WHO_IS_SMALL_BLIND -> {
+                return whoIsSmallBlind(message, room);
+            }
+            case WHO_IS_BIG_BLIND -> {
+                return whoIsBigBlind(message, room);
+            }
             case DRAW_CARD -> {
                 return drawCard(message, room);
             }
-            case PLAYER_MAKE_BET -> {
-                //TODO()
-            }
-            case PLAYER_MAKE_RISE -> {
-                //TODO()
+            case    PLAYER_MAKE_BET,
+                    PLAYER_MAKE_RAISE -> {
+                return playerMakeBet(message, room);
             }
             case PAYMENT_TO_PLAYER -> {
                 //TODO()
             }
             case NEXT_STEP_OF_ROUND -> {
-                //TODO()
+//                return nextStepOfRound(message, room);
             }
             case ROUND_END -> {
                 //TODO()
@@ -84,6 +91,88 @@ public class MessageHandler {
             }
         }
         return null;
+    }
+//    private SocketMessage nextStepOfRound(SocketMessage incomingMessage, Room room) {
+//        List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
+//        SocketMessage outcomingMessage = null;
+//        for (Player player : roomPlayersList) {
+//            room.getGameManager().increaseBank(player.getCurrentStake());
+//            player.setCurrentStake(0);
+//        }
+//        room.getGameManager().changeGameStateToNext();
+//    }
+
+    private SocketMessage playerMakeBet(SocketMessage incomingMessage, Room room) {
+        room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).increaseStake(
+                incomingMessage.getContent().getMoneyValue()
+        );
+        return new SocketMessage(
+                incomingMessage.getMessageType(),
+                new MessageContent(
+                        incomingMessage.getContent().getRoomCode(),
+                        incomingMessage.getContent().getUserLogin(),
+                        incomingMessage.getContent().getMoneyValue()
+                ),
+                incomingMessage.getReceiver(),
+                LocalDateTime.now(),
+                incomingMessage.getAuthor()
+
+        );
+
+    }
+
+    private SocketMessage whoIsBigBlind(SocketMessage incomingMessage, Room room) {
+        List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
+        SocketMessage outcomingMessage = null;
+        for (int i = 0; i < roomPlayersList.size(); i++) {
+            if (!roomPlayersList.get(i).isBigBlind()) {
+                roomPlayersList.get(i).setBigBlind(true);
+                if (i == 0) {
+                    roomPlayersList.get(roomPlayersList.size() - 1).setBigBlind(false);
+                }
+                else {
+                    roomPlayersList.get(i - 1).setBigBlind(false);
+                }
+                outcomingMessage = new SocketMessage(
+                        incomingMessage.getMessageType(),
+                        new MessageContent(
+                                incomingMessage.getContent().getRoomCode()
+                        ),
+                        incomingMessage.getReceiver(),
+                        LocalDateTime.now(),
+                        incomingMessage.getAuthor()
+                );
+                break;
+            }
+        }
+        return outcomingMessage;
+    }
+
+    private SocketMessage whoIsSmallBlind(SocketMessage incomingMessage, Room room) {
+        List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
+        SocketMessage outcomingMessage = null;
+        for (int i = 0; i < roomPlayersList.size(); i++) {
+            if (!roomPlayersList.get(i).isSmallBlind()) {
+                roomPlayersList.get(i).setSmallBlind(true);
+                if (i == 0) {
+                    roomPlayersList.get(roomPlayersList.size() - 1).setSmallBlind(false);
+                }
+                else {
+                    roomPlayersList.get(i - 1).setSmallBlind(false);
+                }
+                outcomingMessage = new SocketMessage(
+                        incomingMessage.getMessageType(),
+                        new MessageContent(
+                                incomingMessage.getContent().getRoomCode()
+                        ),
+                        incomingMessage.getReceiver(),
+                        LocalDateTime.now(),
+                        incomingMessage.getAuthor()
+                );
+                break;
+            }
+        }
+        return outcomingMessage;
     }
 
     private SocketMessage checkRoomPlayer(SocketMessage message) {

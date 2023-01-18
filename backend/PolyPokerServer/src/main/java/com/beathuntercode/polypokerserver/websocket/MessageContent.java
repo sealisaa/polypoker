@@ -26,7 +26,7 @@ public class MessageContent {
 
     /**
      * For MessageType.
-     *      CHECK_ROOM_PLAYERS(7)
+     *      CHECK_ROOM_PLAYERS
      *
      * Client uses this constructor to send Card request to server
      */
@@ -38,7 +38,7 @@ public class MessageContent {
 
     /**
      * For MessageType.
-     *      PLAYER_ROOM_JOIN(4)
+     *      PLAYER_ROOM_JOIN
      *
      * Client uses this constructor to send Card request to server
      */
@@ -51,15 +51,15 @@ public class MessageContent {
 
     /**
      * For MessageType.
-     *      PLAYER_READY_SET(5),
-     *      PLAYER_ROOM_EXIT(6),
-     *      ROUND_BEGIN(10),
-     *      PLAYER_MAKE_CHECK(13),
-     *      PLAYER_MAKE_FOLD(15),
-     *      NEXT_STEP_OF_ROUND(17),
-     *      ROUND_END(18),
-     *      OK(200),
-     *      FAIL(500)
+     *      PLAYER_READY_SET,
+     *      PLAYER_ROOM_EXIT,
+     *      WHO_IS_SMALL_BLIND,
+     *      WHO_IS_BIG_BLIND,
+     *      ROUND_BEGIN,
+     *      NEXT_STEP_OF_ROUND,
+     *      ROUND_END,
+     *      OK,
+     *      FAIL
      */
     public MessageContent(Integer roomCode) {
         this.roomCode = roomCode;
@@ -67,18 +67,21 @@ public class MessageContent {
 
     /**
      * For MessageType.
-     *      PLAYER_MAKE_BET(12),
-     *      PLAYER_MAKE_RISE(14),
-     *      PAYMENT_TO_PLAYER(16)
+     *      PLAYER_MAKE_BET,
+     *      PLAYER_MAKE_RAISE,
+     *      PAYMENT_TO_PLAYER
      */
-    public MessageContent(Integer roomCode, int moneyValue) {
+    public MessageContent(Integer roomCode, String userLogin, int moneyValue) {
         this.roomCode = roomCode;
+        this.userLogin = userLogin;
         this.moneyValue = moneyValue;
     }
 
     /**
      * For MessageType.
-     *      DRAW_CARD(11)
+     *      DRAW_CARD
+     *      PLAYER_MAKE_CHECK,
+     *      PLAYER_MAKE_FOLD
      *
      * Client uses this constructor to send Card request to server
      */
@@ -89,7 +92,7 @@ public class MessageContent {
 
     /**
      * For MessageType.
-     *      DRAW_CARD(11)
+     *      DRAW_CARD
      *
      * Server uses this constructor to send Card to client
      */
@@ -102,7 +105,7 @@ public class MessageContent {
 
     /**
      * For MessageType.
-     *      DRAW_CARD(11)
+     *      DRAW_CARD
      *
      * Server uses this constructor to send Card to client for table in room
      */

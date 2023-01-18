@@ -51,18 +51,19 @@ public class GameManager {
         return card;
     }
 
-    private void startBlinds() {
-        Player smallBlindPlayer = playersMap.entrySet().stream().filter(entry -> entry.getValue().isSmallBlind()).findFirst().get().getValue();
-        Player bigBlindPlayer = playersMap.entrySet().stream().filter(entry -> entry.getValue().isBigBlind()).findFirst().get().getValue();
-
-        //TODO: Реализовать запросы сервера к клиенту на блайнды
-    }
-
     public GameState getGameState() {
         return gameState;
     }
 
     public void setGameState(GameState gameState) {
         this.gameState = gameState;
+    }
+
+    public void increaseBank(int moneyValue) {
+        bank += moneyValue;
+    }
+
+    public void decreaseBank(int moneyValue) {
+        bank -= moneyValue;
     }
 }
