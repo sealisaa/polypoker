@@ -40,6 +40,14 @@ public class Player {
         this.currentStake = currentStake;
     }
 
+    public void increaseStake(int moneyValue) {
+        currentStake += moneyValue;
+    }
+
+    public void decreaseStake(int moneyValue) {
+        currentStake -= moneyValue;
+    }
+
     public int getCash() {
         return cash;
     }
