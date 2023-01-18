@@ -6,5 +6,6 @@ public enum GameState {
     FLOP,
     TERN,
     RIVER,
-    SHOWDOWN
+    SHOWDOWN,
+    GAMEOVER
 }
