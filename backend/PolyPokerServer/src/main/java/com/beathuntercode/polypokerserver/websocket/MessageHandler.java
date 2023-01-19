@@ -62,6 +62,9 @@ public class MessageHandler {
                 return whoIsBigBlind(message, room);
             }
             case DRAW_CARD -> {
+                if (room.getGameManager().getGameState() == GameState.FLOP) {
+                    return drawOpenCard(message, room);
+                }
                 return drawCard(message, room);
             }
             case    PLAYER_MAKE_BET,
@@ -72,7 +75,7 @@ public class MessageHandler {
                 //TODO()
             }
             case NEXT_STEP_OF_ROUND -> {
-//                return nextStepOfRound(message, room);
+                return nextStepOfRound(message, room);
             }
             case ROUND_END -> {
                 //TODO()
@@ -92,15 +95,52 @@ public class MessageHandler {
         }
         return null;
     }
-//    private SocketMessage nextStepOfRound(SocketMessage incomingMessage, Room room) {
-//        List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
-//        SocketMessage outcomingMessage = null;
-//        for (Player player : roomPlayersList) {
-//            room.getGameManager().increaseBank(player.getCurrentStake());
-//            player.setCurrentStake(0);
-//        }
-//        room.getGameManager().changeGameStateToNext();
-//    }
+
+    private SocketMessage nextStepOfRound(SocketMessage incomingMessage, Room room) {
+        List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
+        SocketMessage outcomingMessage = null;
+        for (Player player : roomPlayersList) {
+            room.getGameManager().increaseBank(player.getCurrentStake());
+            player.setCurrentStake(0);
+        }
+        room.getGameManager().changeGameStateToNext();
+        switch (room.getGameManager().getGameState()) {
+            case FLOP -> {
+                return new SocketMessage(
+                        incomingMessage.getMessageType(),
+                        new MessageContent(
+                                incomingMessage.getContent().getRoomCode()
+                                // Что ещё писать?
+                        ),
+                        incomingMessage.getReceiver(),
+                        LocalDateTime.now(),
+                        incomingMessage.getAuthor()
+                );
+            }
+            default -> {
+                return failMessage(incomingMessage);
+            }
+        }
+    }
+
+    private SocketMessage drawOpenCard(SocketMessage message, Room room) {
+        Card nextOpenCard = room.getGameManager().getFaceUp().get(
+                room.getGameManager().getTimesPlayerAskedForFaceUps(message.getAuthor())
+        );
+        room.getGameManager().incrementTimesPlayerAskedForFaceUps(message.getAuthor());
+        return new SocketMessage(
+                MessageType.DRAW_CARD,
+                new MessageContent(
+                        message.getContent().getRoomCode(),
+                        message.getContent().getUserLogin(),
+                        nextOpenCard.getCardSuit(),
+                        nextOpenCard.getCardNumber()
+                ),
+                message.getReceiver(),
+                LocalDateTime.now(),
+                message.getAuthor()
+        );
+    }
 
     private SocketMessage playerMakeBet(SocketMessage incomingMessage, Room room) {
         room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).increaseStake(
