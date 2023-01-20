@@ -31,7 +31,6 @@ class MessageHandler(
                 DRAW_CARD -> drawCard(message)
                 PLAYER_MAKE_BET -> TODO()
                 PLAYER_MAKE_CHECK -> TODO()
-                PLAYER_MAKE_RISE -> TODO()
                 PLAYER_MAKE_FOLD -> TODO()
                 PAYMENT_TO_PLAYER -> TODO()
                 NEXT_STEP_OF_ROUND -> nextStepOfRound(message)
@@ -42,6 +41,12 @@ class MessageHandler(
                 CHECK_ROOM_PLAYERS -> {
                     if (Utilities.currentRoom.playersMap.size <= 1) checkRoomPlayers(message)
                 }
+                WHO_IS_SMALL_BLIND -> TODO()
+                WHO_IS_BIG_BLIND -> TODO()
+                PLAYER_MUST_MAKE_BET -> TODO()
+                PLAYER_MAKE_RAISE -> TODO()
+                IS_NEXT_STEP_OF_ROUND -> TODO()
+                SOCKET_DISCONNECT -> TODO()
                 else -> {
                     TODO()
                 }

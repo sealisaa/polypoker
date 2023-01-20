@@ -52,10 +52,10 @@ public class MessageContent {
     /**
      * For MessageType.
      *      PLAYER_READY_SET,
-     *      PLAYER_ROOM_EXIT,
      *      WHO_IS_SMALL_BLIND,
      *      WHO_IS_BIG_BLIND,
      *      ROUND_BEGIN,
+     *      IS_NEXT_STEP_OF_ROUND,
      *      NEXT_STEP_OF_ROUND,
      *      ROUND_END,
      *      OK,
@@ -81,7 +81,8 @@ public class MessageContent {
      * For MessageType.
      *      DRAW_CARD
      *      PLAYER_MAKE_CHECK,
-     *      PLAYER_MAKE_FOLD
+     *      PLAYER_MAKE_FOLD,
+     *      PLAYER_ROOM_EXIT,
      *
      * Client uses this constructor to send Card request to server
      */
