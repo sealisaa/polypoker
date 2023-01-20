@@ -98,19 +98,17 @@ public class MessageHandler {
 
     private SocketMessage nextStepOfRound(SocketMessage incomingMessage, Room room) {
         List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
-        SocketMessage outcomingMessage = null;
         for (Player player : roomPlayersList) {
             room.getGameManager().increaseBank(player.getCurrentStake());
             player.setCurrentStake(0);
         }
         room.getGameManager().changeGameStateToNext();
         switch (room.getGameManager().getGameState()) {
-            case FLOP -> {
+            case FLOP, TERN, RIVER, SHOWDOWN -> {
                 return new SocketMessage(
                         incomingMessage.getMessageType(),
                         new MessageContent(
                                 incomingMessage.getContent().getRoomCode()
-                                // Что ещё писать?
                         ),
                         incomingMessage.getReceiver(),
                         LocalDateTime.now(),

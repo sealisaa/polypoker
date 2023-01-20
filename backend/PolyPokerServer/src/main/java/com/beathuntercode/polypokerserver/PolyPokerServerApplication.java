@@ -31,21 +31,12 @@ public class PolyPokerServerApplication {
 				)
 		);
 		Utilities.roomsController.roomsMap.get(1).getPlayersMap().put(
-				"a",
+				"b",
 				new Player(
 						"b",
 						"Sha Sha",
 						0,
 						4134
-				)
-		);
-		Utilities.roomsController.roomsMap.get(1).getPlayersMap().put(
-				"a",
-				new Player(
-						"b",
-						"Sha Sha",
-						0,
-						2313
 				)
 		);
 
