@@ -1,7 +1,9 @@
 package com.beathuntercode.polypokerserver.websocket;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,18 +29,14 @@ public class MessageHandler {
     public SocketMessage handleMessage(SocketMessage message, UserDao userDao, UserStatisticDao userStatisticDao) {
         Room room = Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode());
         switch (message.getMessageType()) {
-            case    PLAYER_MAKE_CHECK,
-                    PLAYER_MAKE_FOLD -> {
-                return new SocketMessage(
-                        message.getMessageType(),
-                        new MessageContent(
-                                message.getContent().getRoomCode(),
-                                message.getContent().getUserLogin()
-                        ),
-                        message.getReceiver(),
-                        LocalDateTime.now(),
-                        message.getAuthor()
-                );
+            case PLAYER_MUST_MAKE_BET -> {
+                return playerMustMakeBet(message, room);
+            }
+            case    PLAYER_MAKE_CHECK -> {
+                return playerMakeCheck(message, room);
+            }
+            case PLAYER_MAKE_FOLD -> {
+                return playerMakeFold(message, room);
             }
             case PLAYER_ROOM_JOIN -> {
                 return playerRoomJoin(message, userDao, userStatisticDao);
@@ -62,7 +60,10 @@ public class MessageHandler {
                 return whoIsBigBlind(message, room);
             }
             case DRAW_CARD -> {
-                if (room.getGameManager().getGameState() == GameState.FLOP) {
+                if (    room.getGameManager().getGameState() == GameState.FLOP ||
+                        room.getGameManager().getGameState() == GameState.TERN ||
+                        room.getGameManager().getGameState() == GameState.RIVER
+                ) {
                     return drawOpenCard(message, room);
                 }
                 return drawCard(message, room);
@@ -72,7 +73,9 @@ public class MessageHandler {
                 return playerMakeBet(message, room);
             }
             case PAYMENT_TO_PLAYER -> {
-                //TODO()
+                paymentToPlayer(message, userDao, userStatisticDao);
+            }
+            case IS_NEXT_STEP_OF_ROUND -> {
             }
             case NEXT_STEP_OF_ROUND -> {
                 return nextStepOfRound(message, room);
@@ -95,6 +98,79 @@ public class MessageHandler {
         }
         return null;
     }
+
+    private SocketMessage playerMustMakeBet(SocketMessage message, Room room) {
+        List<Player> playersList = room.getPlayersMap().values().stream().toList();
+        for (Player player : playersList) {
+            if (!player.isCheck() && !player.isFold()) {
+                if (player.getCurrentStake() < message.getContent().getMoneyValue()) {
+                    return new SocketMessage(
+                            message.getMessageType(),
+                            new MessageContent(
+                                    message.getContent().getRoomCode(),
+                                    player.getLogin(),
+                                    message.getContent().getMoneyValue()
+                            ),
+                            message.getReceiver(),
+                            LocalDateTime.now(),
+                            message.getAuthor()
+                    );
+                }
+            }
+        }
+        return new SocketMessage(
+                MessageType.NEXT_STEP_OF_ROUND,
+                new MessageContent(
+                        message.getContent().getRoomCode()
+                ),
+                message.getReceiver(),
+                LocalDateTime.now(),
+                message.getAuthor()
+        );
+    }
+
+    private SocketMessage playerMakeFold(SocketMessage message, Room room) {
+        room.getPlayersMap().get(message.getContent().getUserLogin()).setFold(true);
+        return new SocketMessage(
+                message.getMessageType(),
+                new MessageContent(
+                        message.getContent().getRoomCode(),
+                        message.getContent().getUserLogin()
+                ),
+                message.getReceiver(),
+                LocalDateTime.now(),
+                message.getAuthor()
+        );
+    }
+
+    private SocketMessage playerMakeCheck(SocketMessage message, Room room) {
+        room.getPlayersMap().get(message.getContent().getUserLogin()).setCheck(true);
+        return new SocketMessage(
+                message.getMessageType(),
+                new MessageContent(
+                        message.getContent().getRoomCode(),
+                        message.getContent().getUserLogin()
+                ),
+                message.getReceiver(),
+                LocalDateTime.now(),
+                message.getAuthor()
+        );
+    }
+
+    private void paymentToPlayer(SocketMessage message, UserDao userDao, UserStatisticDao userStatisticDao) {
+        User user = userDao.getUserByLogin(message.getContent().getUserLogin());
+        UserStatistic oldUserStatistic = userStatisticDao.getUserStatistic(user.getLogin());
+
+        UserStatistic newUserStatistic = new UserStatistic();
+        newUserStatistic.setLogin(user.getLogin());
+        newUserStatistic.setCurrentCoinsCount(oldUserStatistic.getCurrentCoinsCount() + message.getContent().getMoneyValue());
+        newUserStatistic.setTotalEarn(oldUserStatistic.getTotalEarn() + message.getContent().getMoneyValue());
+        newUserStatistic.setWinGames(oldUserStatistic.getWinGames() + 1);
+        newUserStatistic.setTotalGamesPlayed(oldUserStatistic.getTotalGamesPlayed() + 1);
+
+        userStatisticDao.saveUserStatistic(newUserStatistic);
+    }
+
 
     private SocketMessage nextStepOfRound(SocketMessage incomingMessage, Room room) {
         List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();

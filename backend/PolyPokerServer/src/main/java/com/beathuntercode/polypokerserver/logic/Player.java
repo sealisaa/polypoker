@@ -12,6 +12,8 @@ public class Player {
     private Card card1;
     private Card card2;
     private boolean isReady;
+    private boolean isCheck;
+    private boolean isFold;
     private boolean isSmallBlind;
     private boolean isBigBlind;
 
@@ -72,6 +74,22 @@ public class Player {
         this.card2 = card2;
     }
 
+    public boolean isCheck() {
+        return isCheck;
+    }
+
+    public void setCheck(boolean check) {
+        isCheck = check;
+    }
+
+    public boolean isFold() {
+        return isFold;
+    }
+
+    public void setFold(boolean fold) {
+        isFold = fold;
+    }
+
     public boolean isReady() {
         return isReady;
     }
@@ -102,6 +120,8 @@ public class Player {
         this.currentStake = currentStake;
         this.cash = cash;
         isReady = false;
+        isCheck = false;
+        isFold = false;
         isSmallBlind = false;
         isBigBlind = false;
     }
