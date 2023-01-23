@@ -1,0 +1,27 @@
+version: "3"
+services:
+  server:
+    build: ./Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.datasource.url=jdbc:mysql://mysqldb:3306/PolyPokerDB?createDatabaseIfNotExist=true
+      - spring.datasource.username=root
+      - spring.datasource.password=polypoker
+    networks:
+      - springmysql-net
+    depends_on:
+      - mysqldb
+
+  mysqldb:
+    image: mysql:8.0
+    networks:
+      - springmysql-net
+    environment:
+      - MYSQL_ROOT_PASSWORD=polypoker
+      - MYSQL_DATABASE=polypokerdb
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=polypoker
+
+networks:
+  springmysql-net:
