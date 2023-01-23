@@ -2,6 +2,7 @@ import React from 'react';
 import '../style/style.css';
 import {Link, useLocation} from "react-router-dom";
 import UserService from "../services/UserService";
+import ws from "../websocket/websocketConfig";
 
 const Lobby = props => {
     const location = useLocation();
@@ -23,9 +24,8 @@ class LobbyContent extends React.Component {
 
     componentDidMount() {
         try {
-            let ws = new WebSocket('ws://localhost:8080/room/websocket');
             ws.onopen = () => {
-                console.log('connected')
+                console.log('lobby connected');
             }
         } catch (e) {
             console.log(e);
