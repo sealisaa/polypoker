@@ -1,7 +1,6 @@
 import React from 'react';
 import '../style/style.css';
 import {Link, useLocation} from "react-router-dom";
-import ws from "../websocket/websocketConfig";
 
 const Game = props => {
     const location = useLocation();
@@ -17,13 +16,6 @@ class GameContent extends React.Component {
     }
 
     componentDidMount() {
-        try {
-            ws.onopen = () => {
-                console.log('game connected');
-            }
-        } catch (e) {
-            console.log(e);
-        }
     }
 
     flipCards() {

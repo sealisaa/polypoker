@@ -2,7 +2,6 @@ import React from 'react';
 import '../style/style.css';
 import {Link, useLocation} from "react-router-dom";
 import UserService from "../services/UserService";
-import ws from "../websocket/websocketConfig";
 
 const Lobby = props => {
     const location = useLocation();
@@ -23,13 +22,6 @@ class LobbyContent extends React.Component {
     }
 
     componentDidMount() {
-        try {
-            ws.onopen = () => {
-                console.log('lobby connected');
-            }
-        } catch (e) {
-            console.log(e);
-        }
         UserService.getUserStatistic(this.state.login).then((response) => {
             this.setState({
                 totalGamesPlayed: response.data.totalGamesPlayed,
