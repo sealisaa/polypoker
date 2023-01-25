@@ -15,6 +15,9 @@ class GameContent extends React.Component {
         this.flipCards = this.flipCards.bind(this);
     }
 
+    componentDidMount() {
+    }
+
     flipCards() {
         let card1 = document.getElementById("game__card1");
         let card2 = document.getElementById("game__card2");

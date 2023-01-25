@@ -1,12 +1,54 @@
 import React from 'react';
 import '../style/style.css';
 import {Navigate, useLocation} from 'react-router-dom';
+import Stomp from 'stompjs';
+import SockJS from 'sockjs-client';
+
+let sockJS = new SockJS("http://10.0.0.18:8080/room");
+let stompClient = Stomp.over(sockJS);
 
 const FindGame = props => {
     const location = useLocation();
     const login = location.state;
-    console.log(login);
     return <FindGameContent login={login} {...props} />
+}
+
+const onConnected = () => {
+    console.log("connected");
+    stompClient.subscribe(
+        "/room/user",
+        onMessageReceived
+    );
+}
+
+const onError = (error) => {
+    console.log(error);
+}
+
+const onMessageReceived = (message) => {
+    console.log(message.body);
+}
+
+const sendMessage = (login) => {
+    let currentDate = getCurrentDate();
+    let ip = '26.118.51.73:8080';
+    const message = {
+        author: login,
+        content:
+            {
+                roomCode: 1,
+                userLogin: login
+            },
+        messageType: "PLAYER_ROOM_JOIN",
+        datetime: currentDate,
+        receiver: "ws://" + ip + "/room/websocket"
+    };
+    stompClient.send("/room/api/socket", {}, JSON.stringify(message));
+};
+
+const getCurrentDate = () => {
+    let date = new Date();
+    return date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-' + ("0" + date.getDay()).slice(-2) + 'T' + ("0" + date.getHours()).slice(-2) + ':' + ("0" + date.getMinutes()).slice(-2) + ':' + ("0" + date.getSeconds()).slice(-2) + '.' + ("0" + date.getMilliseconds()).slice(-2);
 }
 
 class FindGameContent extends React.Component {
@@ -21,12 +63,13 @@ class FindGameContent extends React.Component {
         }
     }
 
+    componentDidMount() {
+        stompClient.connect({}, onConnected, onError);
+    }
+
     findGame() {
         let game = document.getElementById("game").value;
-        // тут запрос
-        // в случае ошибки:
-        // this.setState({message: "Идентификатор не найден :("});
-        this.setState({game: game, success: true});
+        sendMessage(this.state.login);
     }
 
     render() {
