@@ -608,7 +608,7 @@ input:hover {
     align-items: flex-start;
 }
 
-.game__user5 {
+.game__active-user {
     position: absolute;
     bottom: -130px;
     left: 440px;
@@ -728,7 +728,7 @@ input:hover {
     margin-left: 5px;
 }
 
-.game__user5-cards {
+.game__active-user-cards {
     display: flex;
     flex-direction: row;
     align-items: center;

@@ -1,11 +1,7 @@
 import React from 'react';
 import '../style/style.css';
 import {Navigate, useLocation} from 'react-router-dom';
-import Stomp from 'stompjs';
-import SockJS from 'sockjs-client';
-
-let sockJS = new SockJS("http://10.0.0.18:8080/room");
-let stompClient = Stomp.over(sockJS);
+import stompClient from "../websocket/websocketConfig";
 
 const FindGame = props => {
     const location = useLocation();
@@ -13,30 +9,14 @@ const FindGame = props => {
     return <FindGameContent login={login} {...props} />
 }
 
-const onConnected = () => {
-    console.log("connected");
-    stompClient.subscribe(
-        "/room/user",
-        onMessageReceived
-    );
-}
-
-const onError = (error) => {
-    console.log(error);
-}
-
-const onMessageReceived = (message) => {
-    console.log(message.body);
-}
-
-const sendMessage = (login) => {
+const sendMessage = (login, game) => {
     let currentDate = getCurrentDate();
     let ip = '26.118.51.73:8080';
     const message = {
         author: login,
         content:
             {
-                roomCode: 1,
+                roomCode: game,
                 userLogin: login
             },
         messageType: "PLAYER_ROOM_JOIN",
@@ -55,28 +35,45 @@ class FindGameContent extends React.Component {
     constructor(props) {
         super(props);
         this.findGame = this.findGame.bind(this);
+        this.onMessageReceived = this.onMessageReceived.bind(this);
         this.state = {
             message: "",
             success: false,
             login: this.props.login,
-            game: null
+            roomInfo: null,
+            connection: false
         }
     }
 
     componentDidMount() {
-        stompClient.connect({}, onConnected, onError);
+        stompClient.subscribe(
+            "/room/user",
+            this.onMessageReceived
+        );
+        this.setState({connection: true});
     }
 
     findGame() {
         let game = document.getElementById("game").value;
-        sendMessage(this.state.login);
+        if (game === '1') {
+            sendMessage(this.state.login, game);
+        }
+    }
+
+    onMessageReceived(message) {
+        let messageJSON = JSON.parse(message.body);
+        if (messageJSON.messageType === 'PLAYER_ROOM_JOIN' && messageJSON.content.userLogin === this.state.login) {
+            this.setState({
+                roomInfo: messageJSON,
+                success: true
+            });
+        }
     }
 
     render() {
         if (this.state.success) {
-            const login = this.state.login;
-            const game = this.state.game;
-            return <Navigate to="/game" state={{login, game}} />
+            const roomInfo = this.state.roomInfo;
+            return <Navigate to="/game" state={{ roomInfo }} />
         }
         return (
             <div className="find-game">

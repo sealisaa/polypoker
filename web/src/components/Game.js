@@ -1,21 +1,52 @@
 import React from 'react';
 import '../style/style.css';
 import {Link, useLocation} from "react-router-dom";
+import stompClient from "../websocket/websocketConfig";
 
 const Game = props => {
     const location = useLocation();
-    const login = location.state.login;
-    const game = location.state.game;
-    return <GameContent login={login} game={game} {...props} />
+    const roomInfo = location.state.roomInfo;
+    return <GameContent roomInfo={roomInfo} {...props} />
 }
+
+const onError = (error) => {
+    console.log(error);
+}
+
+const sendMessage = (login, game) => {
+    const message = {
+        author: login,
+        content:
+            {
+                roomCode: game,
+                userLogin: login
+            },
+        messageType: "PLAYER_ROOM_JOIN"
+    };
+    stompClient.send("/room/api/socket", {}, JSON.stringify(message));
+};
 
 class GameContent extends React.Component {
     constructor(props) {
         super(props);
         this.flipCards = this.flipCards.bind(this);
+        this.onMessageReceived = this.onMessageReceived.bind(this);
+        this.state = {
+            roomCode: this.props.roomInfo.content.roomCode,
+            activeUser: this.props.roomInfo.content.userLogin,
+            roomPlayersList: []
+        };
     }
 
     componentDidMount() {
+        stompClient.subscribe(
+            "/room/user",
+            this.onMessageReceived
+        );
+    }
+
+    onMessageReceived(message) {
+        console.log(message);
     }
 
     flipCards() {
@@ -36,6 +67,17 @@ class GameContent extends React.Component {
                 </div>
                 <div className="game__main">
                     <div className="game__table">
+                        <div className="game__active-user">
+                            <div className="game__user-info">
+                                <div className="game__active-user-avatar"></div>
+                                <span className="game__user-login">You</span>
+                                <span className="game__user-balance">$ 100.000</span>
+                            </div>
+                            <div className="game__active-user-cards">
+                                <div className="game__user-card game__active-user-card1"></div>
+                                <div className="game__user-card game__active-user-card2"></div>
+                            </div>
+                        </div>
                         <div className="game__user1">
                             <div className="game__user-info">
                                 <div className="game__user-avatar game__user-avatar1"></div>
@@ -78,17 +120,6 @@ class GameContent extends React.Component {
                             <div className="game__user4-cards">
                                 <div className="game__user-card"></div>
                                 <div className="game__user-card"></div>
-                            </div>
-                        </div>
-                        <div className="game__user5">
-                            <div className="game__user-info">
-                                <div className="game__active-user-avatar"></div>
-                                <span className="game__user-login">You</span>
-                                <span className="game__user-balance">$ 100.000</span>
-                            </div>
-                            <div className="game__user5-cards">
-                                <div className="game__user-card game__active-user-card1"></div>
-                                <div className="game__user-card game__active-user-card2"></div>
                             </div>
                         </div>
                         <div className="game__user6">
