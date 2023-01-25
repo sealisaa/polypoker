@@ -3,7 +3,7 @@ import '../style/style.css';
 import {Link, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
 
-const Modal = ({visible = false, btn}) => {
+const Modal = ({visible = false, btn, text}) => {
     if (!visible) {
         return null
     }
@@ -11,8 +11,8 @@ const Modal = ({visible = false, btn}) => {
         <div className='modal'>
             <div className='game__modal'>
                 <div className="game__modal-dialog">
-                    <h3 className="game__modal-header">Поставьте малый блайнд</h3>
-                    <input className="modal-input" type="text" id="smallBlind" placeholder="Размер ставки"/>
+                    <h3 className="game__modal-header">{text}</h3>
+                    <input className="modal-input" type="text" id="bet" placeholder="Размер ставки"/>
                     {btn}
                 </div>
             </div>
@@ -61,11 +61,16 @@ class GameContent extends React.Component {
         this.beginRound = this.beginRound.bind(this);
         this.getSmallBlind = this.getSmallBlind.bind(this);
         this.setSmallBlind = this.setSmallBlind.bind(this);
-        this.openSmallBlindModal = this.openSmallBlindModal.bind(this);
         this.submitSmallBlind = this.submitSmallBlind.bind(this);
         this.showPlayersBet = this.showPlayersBet.bind(this);
         this.getBigBlind = this.getBigBlind.bind(this);
+        this.setBigBlind = this.setBigBlind.bind(this);
+        this.submitBigBlind = this.submitBigBlind.bind(this);
+        this.openModal = this.openModal.bind(this);
+        this.makeBet = this.makeBet.bind(this);
         this.state = {
+            modalData: 0,
+            modalText: "",
             change: false,
             isModal: false,
             connected: stompClient.connected,
@@ -124,6 +129,9 @@ class GameContent extends React.Component {
         }
         if (messageJSON.messageType === 'PLAYER_MAKE_BET') {
             this.showPlayersBet(messageJSON.content.userLogin, messageJSON.content.moneyValue);
+        }
+        if (messageJSON.messageType === 'WHO_IS_BIG_BLIND' && messageJSON.content.userLogin === this.state.activePlayerLogin) {
+            this.setBigBlind();
         }
     }
 
@@ -208,6 +216,7 @@ class GameContent extends React.Component {
     }
 
     getSmallBlind() {
+        console.log("getSmallBlind");
         let currentDate = getCurrentDate();
         let message = {
             messageType: "WHO_IS_SMALL_BLIND",
@@ -228,8 +237,10 @@ class GameContent extends React.Component {
     }
 
     setSmallBlind() {
+        console.log("setSmallBlind");
         this.state.activePlayer.smallBlind = true;
-        this.openSmallBlindModal();
+        this.setState({modalData: 1, modalText: "Поставьте малый блайнд"});
+        this.openModal();
     }
 
     flipCards() {
@@ -241,12 +252,20 @@ class GameContent extends React.Component {
         card3.classList.toggle('is-flipped');
     }
 
-    openSmallBlindModal() {
-        this.setState({isModal: true});
+    makeBet() {
+        let bet = document.getElementById("bet").value;
+        switch (this.state.modalData) {
+            case 1:
+                this.submitSmallBlind(bet);
+                break;
+            case 2:
+                this.submitBigBlind(bet)
+                break;
+        }
     }
 
-    submitSmallBlind() {
-        let smallBlind = document.getElementById("smallBlind").value;
+    submitSmallBlind(bet) {
+        console.log("submitSmallBlind");
         let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_BET",
@@ -254,19 +273,66 @@ class GameContent extends React.Component {
                 {
                     roomCode: this.state.roomCode,
                     userLogin: this.state.activePlayerLogin,
-                    moneyValue: smallBlind
+                    moneyValue: bet
                 },
             author: this.state.activePlayerLogin,
             datetime: currentDate,
             receiver: "ws://192.168.1.116:8080/room/websocket"
         }
-        sendMessage(message);
         this.setState({isModal: false});
-
+        sendMessage(message);
+        this.getBigBlind();
     }
 
     getBigBlind() {
+        console.log("getBigBlind");
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "WHO_IS_BIG_BLIND",
+            content:
+                {   roomCode: this.state.roomCode,
+                    userLogin: null,
+                    userName: null,
+                    moneyValue: 0,
+                    cardSuit: null,
+                    cardNumber: null,
+                    roomPlayersList: null
+                },
+            author: this.state.activePlayerLogin,
+            dateTime: currentDate,
+            receiver: "ws://192.168.1.116:8080/room/websocket"
+        }
+        sendMessage(message);
+    }
 
+    setBigBlind() {
+        console.log("setBigBlind");
+        this.state.activePlayer.bigBlind = true;
+        this.setState({modalData: 2, modalText: "Поставьте большой блайнд"});
+        this.openModal();
+    }
+
+    submitBigBlind(bet) {
+        console.log("submitBigBlind");
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "PLAYER_MAKE_BET",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                    userLogin: this.state.activePlayerLogin,
+                    moneyValue: bet
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "ws://192.168.1.116:8080/room/websocket"
+        }
+        this.setState({isModal: false});
+        sendMessage(message);
+    }
+
+    openModal() {
+        this.setState({isModal: true});
     }
 
     showPlayersBet(userLogin, moneyValue) {
@@ -296,7 +362,8 @@ class GameContent extends React.Component {
             <div className="game">
                 <Modal
                     visible={this.state.isModal}
-                    btn={<button className="game__modal-button" onClick={this.submitSmallBlind}>Ок</button>}
+                    btn={<button className="game__modal-button" onClick={this.makeBet}>Ок</button>}
+                    text={this.state.modalText}
                 />
                 <div className="game__header">
                     <Link to="/lobby"><button className="game__home-button"></button></Link>
