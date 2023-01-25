@@ -250,7 +250,8 @@ public class MessageHandler {
                 outcomingMessage = new SocketMessage(
                         incomingMessage.getMessageType(),
                         new MessageContent(
-                                incomingMessage.getContent().getRoomCode()
+                                incomingMessage.getContent().getRoomCode(),
+                                roomPlayersList.get(i).getLogin()
                         ),
                         incomingMessage.getReceiver(),
                         LocalDateTime.now(),
