@@ -20,28 +20,5 @@ public class PolyPokerServerApplication {
 
 	private static void initRoomForTest() {
 		Utilities.roomsController.createRoom(1, 10, 20);
-
-		Utilities.roomsController.roomsMap.get(1).getPlayersMap().put(
-				"a",
-				new Player(
-						"a",
-						"Sh Sh",
-						0,
-						4534
-				)
-		);
-		Utilities.roomsController.roomsMap.get(1).getPlayersMap().put(
-				"b",
-				new Player(
-						"b",
-						"Sha Sha",
-						0,
-						4134
-				)
-		);
-
-		for (Player player : Utilities.roomsController.roomsMap.get(1).getPlayersMap().values()) {
-			player.setReady(true);
-		}
 	}
 }
