@@ -3,50 +3,153 @@ import '../style/style.css';
 import {Link, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
 
+const onSocketOpen = () => {
+    console.log("open");
+}
+
+stompClient.onOpen = onSocketOpen;
+
 const Game = props => {
     const location = useLocation();
     const roomInfo = location.state.roomInfo;
     return <GameContent roomInfo={roomInfo} {...props} />
 }
 
-const onError = (error) => {
-    console.log(error);
-}
-
-const sendMessage = (login, game) => {
-    const message = {
-        author: login,
-        content:
-            {
-                roomCode: game,
-                userLogin: login
-            },
-        messageType: "PLAYER_ROOM_JOIN"
-    };
+const sendMessage = (message) => {
+    console.log(message);
     stompClient.send("/room/api/socket", {}, JSON.stringify(message));
 };
+
+const getCurrentDate = () => {
+    let date = new Date();
+    return date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-' + ("0" + date.getDay()).slice(-2) + 'T' + ("0" + date.getHours()).slice(-2) + ':' + ("0" + date.getMinutes()).slice(-2) + ':' + ("0" + date.getSeconds()).slice(-2) + '.' + ("0" + date.getMilliseconds()).slice(-2);
+}
 
 class GameContent extends React.Component {
     constructor(props) {
         super(props);
         this.flipCards = this.flipCards.bind(this);
         this.onMessageReceived = this.onMessageReceived.bind(this);
+        this.checkRoomPlayers = this.checkRoomPlayers.bind(this);
+        this.updateRoomPlayers = this.updateRoomPlayers.bind(this);
         this.state = {
             roomCode: this.props.roomInfo.content.roomCode,
             activeUser: this.props.roomInfo.content.userLogin,
-            roomPlayersList: []
+            activePlayer: {
+                login: "",
+                name: "",
+                currentStake: 0,
+                cash: 0,
+                card1: null,
+                card2: null,
+                smallBlind: false,
+                bigBlind: false,
+                ready: false
+            },
+            player1: {
+                present: false,
+                login: "",
+                name: "",
+                currentStake: 0,
+                cash: 0,
+                card1: null,
+                card2: null,
+                smallBlind: false,
+                bigBlind: false,
+                ready: false
+            },
+            player2: {
+                present: false,
+                login: "",
+                name: "",
+                currentStake: 0,
+                cash: 0,
+                card1: null,
+                card2: null,
+                smallBlind: false,
+                bigBlind: false,
+                ready: false
+            },
+            player3: {
+                present: false,
+                login: "",
+                name: "",
+                currentStake: 0,
+                cash: 0,
+                card1: null,
+                card2: null,
+                smallBlind: false,
+                bigBlind: false,
+                ready: false
+            },
+            player4: {
+                present: false,
+                login: "",
+                name: "",
+                currentStake: 0,
+                cash: 0,
+                card1: null,
+                card2: null,
+                smallBlind: false,
+                bigBlind: false,
+                ready: false
+            },
+            player5: {
+                present: false,
+                login: "",
+                name: "",
+                currentStake: 0,
+                cash: 0,
+                card1: null,
+                card2: null,
+                smallBlind: false,
+                bigBlind: false,
+                ready: false
+            },
         };
     }
 
     componentDidMount() {
-        stompClient.subscribe(
-            "/room/user",
-            this.onMessageReceived
-        );
+        // if (this.state.connected) {
+        //     stompClient.subscribe(
+        //         "/room/user",
+        //         this.onMessageReceived
+        //     );
+        //     this.checkRoomPlayers();
+        // }
     }
 
     onMessageReceived(message) {
-        console.log(message);
+        let messageJSON = JSON.parse(message.body);
+        let roomPlayers = messageJSON.content.roomPlayersList;
+        if (messageJSON.messageType === 'CHECK_ROOM_PLAYERS' && messageJSON.content.roomCode === this.state.roomCode) {
+            this.updateRoomPlayers(roomPlayers);
+        }
+    }
+
+    updateRoomPlayers(players) {
+        for (let i = 0; i < 6; i++) {
+            if (players[i]) {
+                let player = players[i];
+                if (player.login !== this.state.activeUser) {
+                    console.log(player.login);
+                }
+            }
+        }
+    }
+
+    checkRoomPlayers() {
+        let currentDate = getCurrentDate();
+        let message = {messageType: "CHECK_ROOM_PLAYERS",
+            content:
+                {
+                    "roomCode": this.state.roomCode
+                },
+            author: this.state.activeUser,
+            datetime: currentDate,
+            receiver: "ws://192.168.1.116:8080/room/websocket"
+        }
+        sendMessage(message);
     }
 
     flipCards() {
@@ -59,6 +162,12 @@ class GameContent extends React.Component {
     }
 
     render() {
+        let activePlayer = this.state.activePlayer;
+        let player1 = this.state.player1;
+        let player2 = this.state.player2;
+        let player3 = this.state.player3;
+        let player4 = this.state.player4;
+        let player5 = this.state.player5;
         return (
             <div className="game">
                 <div className="game__header">
@@ -71,68 +180,68 @@ class GameContent extends React.Component {
                             <div className="game__user-info">
                                 <div className="game__active-user-avatar"></div>
                                 <span className="game__user-login">You</span>
-                                <span className="game__user-balance">$ 100.000</span>
+                                <span className="game__user-balance">$ {activePlayer.cash}</span>
                             </div>
                             <div className="game__active-user-cards">
                                 <div className="game__user-card game__active-user-card1"></div>
                                 <div className="game__user-card game__active-user-card2"></div>
                             </div>
                         </div>
-                        <div className="game__user1">
+                        {player1.present ? <div className="game__user1">
                             <div className="game__user-info">
                                 <div className="game__user-avatar game__user-avatar1"></div>
-                                <span className="game__user-login">Mattew</span>
-                                <span className="game__user-balance">$ 1.000</span>
+                                <span className="game__user-login">{player1.login}</span>
+                                <span className="game__user-balance">$ {player1.cash}</span>
                             </div>
                             <div className="game__user1-cards">
                                 <div className="game__user-card"></div>
                                 <div className="game__user-card"></div>
                             </div>
-                        </div>
-                        <div className="game__user2">
+                        </div> : null}
+                        {player3.present ? <div className="game__user3">
                             <div className="game__user-info">
-                                <div className="game__user-avatar game__user-avatar2"></div>
-                                <span className="game__user-login">Angela</span>
-                                <span className="game__user-balance">$ 3.000</span>
+                                <div className="game__user-avatar game__user-avatar3"></div>
+                                <span className="game__user-login">{player3.login}</span>
+                                <span className="game__user-balance">$ {player3.cash}</span>
                             </div>
-                            <div className="game__user2-cards">
-                                <div className="game__user-card"></div>
-                                <div className="game__user-card"></div>
-                            </div>
-                        </div>
-                        <div className="game__user3">
                             <div className="game__user3-cards">
                                 <div className="game__user-card"></div>
                                 <div className="game__user-card"></div>
                             </div>
-                            <div className="game__user-info">
-                                <div className="game__user-avatar game__user-avatar3"></div>
-                                <span className="game__user-login">Justin</span>
-                                <span className="game__user-balance">$ 58.000</span>
+                        </div> : null}
+                        {player2.present ? <div className="game__user2">
+                            <div className="game__user2-cards">
+                                <div className="game__user-card"></div>
+                                <div className="game__user-card"></div>
                             </div>
-                        </div>
-                        <div className="game__user4">
+                            <div className="game__user-info">
+                                <div className="game__user-avatar game__user-avatar2"></div>
+                                <span className="game__user-login">{player2.login}</span>
+                                <span className="game__user-balance">$ {player2.cash}</span>
+                            </div>
+                        </div> : null}
+                        { player4.present ? <div className="game__user4">
                             <div className="game__user-info">
                                 <div className="game__user-avatar game__user-avatar4"></div>
-                                <span className="game__user-login">Kim</span>
-                                <span className="game__user-balance">$ 15.000</span>
+                                <span className="game__user-login">{player4.login}</span>
+                                <span className="game__user-balance">$ {player4.cash}</span>
                             </div>
                             <div className="game__user4-cards">
                                 <div className="game__user-card"></div>
                                 <div className="game__user-card"></div>
                             </div>
-                        </div>
-                        <div className="game__user6">
+                        </div> : null}
+                        { player5.present ? <div className="game__user6">
                             <div className="game__user6-cards">
                                 <div className="game__user-card"></div>
                                 <div className="game__user-card"></div>
                             </div>
                             <div className="game__user-info">
                                 <div className="game__user-avatar game__user-avatar6"></div>
-                                <span className="game__user-login">Ed</span>
-                                <span className="game__user-balance">$ 13.000</span>
+                                <span className="game__user-login">{player5.login}</span>
+                                <span className="game__user-balance">$ {player5.cash}</span>
                             </div>
-                        </div>
+                        </div> : null}
                         <div className="game__cards">
                             <div id="game__card1" className="game__card1 flip-card card">
                                 <div className="game__card-back back card__face"></div>

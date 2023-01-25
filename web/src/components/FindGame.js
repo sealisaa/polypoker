@@ -36,21 +36,23 @@ class FindGameContent extends React.Component {
         super(props);
         this.findGame = this.findGame.bind(this);
         this.onMessageReceived = this.onMessageReceived.bind(this);
+        this.onConnected = this.onConnected.bind(this);
         this.state = {
+            connected: false,
             message: "",
             success: false,
             login: this.props.login,
-            roomInfo: null,
-            connection: false
+            roomInfo: null
         }
+        stompClient.connectCallback = this.onConnected;
     }
 
-    componentDidMount() {
+    onConnected() {
+        this.setState({connected: true});
         stompClient.subscribe(
             "/room/user",
             this.onMessageReceived
         );
-        this.setState({connection: true});
     }
 
     findGame() {

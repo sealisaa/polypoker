@@ -583,7 +583,7 @@ input:hover {
     align-items: flex-start;
 }
 
-.game__user2 {
+.game__user3 {
     position: absolute;
     top: -80px;
     left: 440px;
@@ -592,7 +592,7 @@ input:hover {
     align-items: flex-start;
 }
 
-.game__user3 {
+.game__user2 {
     position: absolute;
     right: 0;
     display: flex;
@@ -641,14 +641,14 @@ input:hover {
     background-position: 0 10px;
 }
 
-.game__user-avatar2 {
+.game__user-avatar3 {
     background-image: url("../img/Angela.svg");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: 0 -5px;
 }
 
-.game__user-avatar3 {
+.game__user-avatar2 {
     background-image: url("../img/Justin.svg");
     background-size: contain;
     background-repeat: no-repeat;
@@ -704,7 +704,7 @@ input:hover {
     margin-left: 5px;
 }
 
-.game__user2-cards {
+.game__user3-cards {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -712,7 +712,7 @@ input:hover {
     margin-left: 5px;
 }
 
-.game__user3-cards {
+.game__user2-cards {
     display: flex;
     flex-direction: row;
     align-items: center;
