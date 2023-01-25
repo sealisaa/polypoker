@@ -3,11 +3,18 @@ import '../style/style.css';
 import {Link, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
 
-const onSocketOpen = () => {
-    console.log("open");
-}
-
-stompClient.onOpen = onSocketOpen;
+const defaultPlayerInfo = {
+    present: false,
+    login: "",
+    name: "",
+    currentStake: 0,
+    cash: 0,
+    card1: null,
+    card2: null,
+    smallBlind: false,
+    bigBlind: false,
+    ready: false
+};
 
 const Game = props => {
     const location = useLocation();
@@ -32,7 +39,9 @@ class GameContent extends React.Component {
         this.onMessageReceived = this.onMessageReceived.bind(this);
         this.checkRoomPlayers = this.checkRoomPlayers.bind(this);
         this.updateRoomPlayers = this.updateRoomPlayers.bind(this);
+        this.onConnected = this.onConnected.bind(this);
         this.state = {
+            connected: stompClient.connected,
             roomCode: this.props.roomInfo.content.roomCode,
             activeUser: this.props.roomInfo.content.userLogin,
             activePlayer: {
@@ -46,77 +55,31 @@ class GameContent extends React.Component {
                 bigBlind: false,
                 ready: false
             },
-            player1: {
-                present: false,
-                login: "",
-                name: "",
-                currentStake: 0,
-                cash: 0,
-                card1: null,
-                card2: null,
-                smallBlind: false,
-                bigBlind: false,
-                ready: false
-            },
-            player2: {
-                present: false,
-                login: "",
-                name: "",
-                currentStake: 0,
-                cash: 0,
-                card1: null,
-                card2: null,
-                smallBlind: false,
-                bigBlind: false,
-                ready: false
-            },
-            player3: {
-                present: false,
-                login: "",
-                name: "",
-                currentStake: 0,
-                cash: 0,
-                card1: null,
-                card2: null,
-                smallBlind: false,
-                bigBlind: false,
-                ready: false
-            },
-            player4: {
-                present: false,
-                login: "",
-                name: "",
-                currentStake: 0,
-                cash: 0,
-                card1: null,
-                card2: null,
-                smallBlind: false,
-                bigBlind: false,
-                ready: false
-            },
-            player5: {
-                present: false,
-                login: "",
-                name: "",
-                currentStake: 0,
-                cash: 0,
-                card1: null,
-                card2: null,
-                smallBlind: false,
-                bigBlind: false,
-                ready: false
-            },
+            players: [
+                defaultPlayerInfo,
+                defaultPlayerInfo,
+                defaultPlayerInfo,
+                defaultPlayerInfo,
+                defaultPlayerInfo,
+            ],
         };
+        if (stompClient.connected) {
+            stompClient.subscribe(
+                "/room/user",
+                this.onMessageReceived
+            );
+            this.checkRoomPlayers();
+        }
+        stompClient.connectCallback = this.onConnected;
     }
 
-    componentDidMount() {
-        // if (this.state.connected) {
-        //     stompClient.subscribe(
-        //         "/room/user",
-        //         this.onMessageReceived
-        //     );
-        //     this.checkRoomPlayers();
-        // }
+    onConnected() {
+        this.setState({connected: true});
+        stompClient.subscribe(
+            "/room/user",
+            this.onMessageReceived
+        );
+        this.checkRoomPlayers();
     }
 
     onMessageReceived(message) {
@@ -128,14 +91,46 @@ class GameContent extends React.Component {
     }
 
     updateRoomPlayers(players) {
+        console.log(players);
+        let currentPlayersList = [];
         for (let i = 0; i < 6; i++) {
             if (players[i]) {
                 let player = players[i];
                 if (player.login !== this.state.activeUser) {
-                    console.log(player.login);
+                    let newPlayer = {
+                        present: true,
+                        login: player.login,
+                        name: player.name,
+                        currentStake: player.currentStake,
+                        cash: player.cash,
+                        card1: player.card1,
+                        card2: player.card2,
+                        smallBlind: player.smallBlind,
+                        bigBlind: player.bigBlind,
+                        ready: player.ready
+                    };
+                    currentPlayersList.push(newPlayer);
+                } else {
+                    this.setState({
+                        activePlayer: {
+                            login: player.login,
+                            name: player.name,
+                            currentStake: player.currentStake,
+                            cash: player.cash,
+                            card1: player.card1,
+                            card2: player.card2,
+                            smallBlind: player.smallBlind,
+                            bigBlind: player.bigBlind,
+                            ready: player.ready
+                        }
+                    })
                 }
+            } else {
+                currentPlayersList.push(defaultPlayerInfo);
             }
         }
+        console.log(currentPlayersList);
+        this.setState({players: currentPlayersList});
     }
 
     checkRoomPlayers() {
@@ -163,11 +158,11 @@ class GameContent extends React.Component {
 
     render() {
         let activePlayer = this.state.activePlayer;
-        let player1 = this.state.player1;
-        let player2 = this.state.player2;
-        let player3 = this.state.player3;
-        let player4 = this.state.player4;
-        let player5 = this.state.player5;
+        let player1 = this.state.players[0];
+        let player2 = this.state.players[1];
+        let player3 = this.state.players[2];
+        let player4 = this.state.players[3];
+        let player5 = this.state.players[4];
         return (
             <div className="game">
                 <div className="game__header">

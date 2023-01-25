@@ -38,11 +38,17 @@ class FindGameContent extends React.Component {
         this.onMessageReceived = this.onMessageReceived.bind(this);
         this.onConnected = this.onConnected.bind(this);
         this.state = {
-            connected: false,
+            connected: stompClient.connected,
             message: "",
             success: false,
             login: this.props.login,
             roomInfo: null
+        }
+        if (stompClient.connected) {
+            stompClient.subscribe(
+                "/room/user",
+                this.onMessageReceived
+            );
         }
         stompClient.connectCallback = this.onConnected;
     }
@@ -56,9 +62,11 @@ class FindGameContent extends React.Component {
     }
 
     findGame() {
-        let game = document.getElementById("game").value;
-        if (game === '1') {
-            sendMessage(this.state.login, game);
+        if (this.state.connected) {
+            let game = document.getElementById("game").value;
+            if (game === '1') {
+                sendMessage(this.state.login, game);
+            }
         }
     }
 
