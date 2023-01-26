@@ -2,7 +2,6 @@ import React from 'react';
 import '../style/style.css';
 import {Navigate, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
-import { ReactSVG } from 'react-svg';
 
 const Modal = ({visible = false, btn, text}) => {
     if (!visible) {
@@ -54,14 +53,19 @@ class GameContent extends React.Component {
         this.setBigBlind = this.setBigBlind.bind(this);
         this.submitBigBlind = this.submitBigBlind.bind(this);
         this.openModal = this.openModal.bind(this);
-        this.makeBet = this.makeBet.bind(this);
+        this.confirmBet = this.confirmBet.bind(this);
         this.exitRoom = this.exitRoom.bind(this);
         this.isNextStepOfRound = this.isNextStepOfRound.bind(this);
         this.nextStepOfRound = this.nextStepOfRound.bind(this);
         this.preflop = this.preflop.bind(this);
         this.drawCard = this.drawCard.bind(this);
         this.handleTabClose = this.handleTabClose.bind(this);
+        this.addNewPlayer = this.addNewPlayer.bind(this);
+        this.playerMustMakeBet = this.playerMustMakeBet.bind(this);
+        this.makeBet = this.makeBet.bind(this);
+        this.submitBet = this.submitBet.bind(this);
         this.state = {
+            maxBet: 0,
             lastMessage: "",
             gameState: "",
             exit: false,
@@ -93,15 +97,15 @@ class GameContent extends React.Component {
                 this.onMessageReceived,
                 {id: "poker"}
             );
-            this.checkRoomPlayers();
         }
         stompClient.connectCallback = this.onConnected;
         window.addEventListener('beforeunload', this.handleTabClose);
+        this.checkRoomPlayers();
     }
 
     handleTabClose(event) {
-        event.preventDefault();
         this.exitRoom();
+        event.preventDefault();
     };
 
     onConnected() {
@@ -112,11 +116,6 @@ class GameContent extends React.Component {
             this.onMessageReceived,
             {id: "poker"}
         );
-        this.checkRoomPlayers();
-    }
-
-    showCard() {
-
     }
 
     onMessageReceived(message) {
@@ -127,6 +126,9 @@ class GameContent extends React.Component {
         let roomPlayers = messageJSON.content.roomPlayersList;
         if (messageJSON.messageType === 'CHECK_ROOM_PLAYERS') {
             this.updateRoomPlayers(roomPlayers);
+        }
+        if (messageJSON.messageType === 'PLAYER_ROOM_JOIN' && messageJSON.content.userLogin !== this.state.activePlayerLogin) {
+            this.addNewPlayer(messageJSON.content);
         }
         if (messageJSON.messageType === 'ROUND_BEGIN') {
             this.beginRound();
@@ -150,6 +152,10 @@ class GameContent extends React.Component {
         }
         if (messageJSON.messageType === 'DRAW_CARD') {
             this.drawCard(messageJSON.content.userLogin, messageJSON.content.cardSuit, messageJSON.content.cardNumber);
+        }
+        if (messageJSON.messageType === 'PLAYER_MUST_MAKE_BET' && messageJSON.content.userLogin === this.state.activePlayerLogin) {
+            console.log("player must make bet");
+            this.makeBet();
         }
     }
 
@@ -189,11 +195,27 @@ class GameContent extends React.Component {
                         }
                     })
                 }
-            } else {
-                currentPlayersList.push(null);
             }
         }
         this.setState({players: currentPlayersList});
+    }
+
+    addNewPlayer(player) {
+        let newPlayer = {
+            present: true,
+            login: player.login,
+            name: player.name,
+            currentStake: 0,
+            newStake: 0,
+            cash: player.moneyValue,
+            card1: null,
+            card2: null,
+            smallBlind: false,
+            bigBlind: false,
+            ready: false
+        };
+        this.state.players.push(newPlayer);
+        this.setState({change: true});
     }
 
     checkRoomPlayers() {
@@ -278,6 +300,31 @@ class GameContent extends React.Component {
     }
 
     makeBet() {
+        console.log("make bet");
+        let min = this.state.maxBet - this.state.activePlayer.currentStake;
+        this.setState({modalData: 3, modalText: "Сделайте ставку (минимум: " + min + ")"});
+        this.openModal();
+    }
+
+    submitBet(bet) {
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "PLAYER_MAKE_BET",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                    userLogin: this.state.activePlayerLogin,
+                    moneyValue: bet
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "receiver"
+        }
+        this.setState({isModal: false});
+        sendMessage(message);
+    }
+
+    confirmBet() {
         let bet = document.getElementById("bet").value;
         switch (this.state.modalData) {
             case 1:
@@ -285,6 +332,9 @@ class GameContent extends React.Component {
                 break;
             case 2:
                 this.submitBigBlind(bet)
+                break;
+            case 3:
+                this.submitBet(bet)
                 break;
         }
     }
@@ -405,7 +455,6 @@ class GameContent extends React.Component {
             }
             sendMessage(message);
         }
-        this.setState({change: true});
     }
 
     drawCard(userLogin, cardSuit, cardNumber) {
@@ -415,19 +464,25 @@ class GameContent extends React.Component {
             } else if (this.state.activePlayer.card2 === null) {
                 this.state.activePlayer.card2 = {cardSuit, cardNumber};
             }
+            this.setState({change: true});
             return;
         }
-        for (let i = 0; i < 5; i++) {
-            if (!this.state.players[i]) {
-                continue;
-            }
-            if (this.state.players[i].login === userLogin) {
-                if (this.state.players[i].card1 === null) {
-                    this.state.players[i].card1 = {cardSuit, cardNumber};
-                } else if (this.state.players[i].card2 === null) {
-                    this.state.players[i].card2 = {cardSuit, cardNumber};
+        for (let i = 0; i < this.state.players.length; i++) {
+            if (this.state.players[i]) {
+                if (this.state.players[i].login === userLogin) {
+                    if (this.state.players[i].card1 === null) {
+                        this.state.players[i].card1 = {cardSuit, cardNumber};
+                        this.setState({change: true});
+                    } else if (this.state.players[i].card2 === null) {
+                        this.state.players[i].card2 = {cardSuit, cardNumber};
+                        this.setState({change: true});
+                        if (i === this.state.players.length - 1) {
+                            console.log("preflop ended");
+                            this.playerMustMakeBet();
+                        }
+                    }
+                    return;
                 }
-                return;
             }
         }
     }
@@ -440,6 +495,9 @@ class GameContent extends React.Component {
         if (userLogin === this.state.activePlayerLogin) {
             this.state.activePlayer.newStake = moneyValue;
             this.state.activePlayer.currentStake += moneyValue;
+            if (this.state.maxBet < this.state.activePlayer.currentStake) {
+                this.setState({maxBet: this.state.activePlayer.currentStake});
+            }
             this.setState({change: true});
             return;
         }
@@ -447,10 +505,29 @@ class GameContent extends React.Component {
             if (this.state.players[i].login === userLogin) {
                 this.state.players[i].newStake = moneyValue;
                 this.state.players[i].currentStake += moneyValue;
+                if (this.state.maxBet < this.state.players[i].currentStake) {
+                    this.setState({maxBet: this.state.players[i].currentStake});
+                }
                 this.setState({change: true});
                 return;
             }
         }
+    }
+
+    playerMustMakeBet() {
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "PLAYER_MUST_MAKE_BET",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                    moneyValue: this.state.maxBet
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "receiver"
+        }
+        sendMessage(message);
     }
 
     exitRoom() {
@@ -485,7 +562,7 @@ class GameContent extends React.Component {
             <div className="game">
                 <Modal
                     visible={this.state.isModal}
-                    btn={<button className="game__modal-button" onClick={this.makeBet}>Ок</button>}
+                    btn={<button className="game__modal-button" onClick={this.confirmBet}>Ок</button>}
                     text={this.state.modalText}
                 />
                 <div className="game__header">
@@ -494,7 +571,6 @@ class GameContent extends React.Component {
                 </div>
                 <div className="game__main">
                     <div className="game__table">
-
                         <div className="game__active-user">
                             <div className="game__user-stake">
                                 <div className="game__user-current-stake">
@@ -513,9 +589,14 @@ class GameContent extends React.Component {
                                 <span className="game__user-balance">$ {activePlayer.cash}</span>
                             </div>
                             <div className="game__active-user-cards">
-                                {/*<ReactSVG src="../img/cards/HEARTS_ACE.svg" />*/}
-                                {/*<img className="game__user-card" src={require('../img/cards/HEARTS_ACE.svg')} alt="activeUser-card1"/>*/}
-                                <div className="game__user-card game__active-user-card2"></div>
+                                {activePlayer.card1 ?
+                                    <img className="game__user-card" src={require("../img/cards/" + activePlayer.card1.cardSuit + "_" + activePlayer.card1.cardNumber + ".png")} />
+                                    : <img className="game__user-card" src={require("../img/back.png")}/>
+                                }
+                                {activePlayer.card2 ?
+                                    <img className="game__user-card" src={require("../img/cards/" + activePlayer.card2.cardSuit + "_" + activePlayer.card2.cardNumber + ".png")} />
+                                    : <img className="game__user-card" src={require("../img/back.png")}/>
+                                }
                             </div>
                         </div>
 
@@ -537,8 +618,8 @@ class GameContent extends React.Component {
                                 <span className="game__user-balance">$ {player1.cash}</span>
                             </div>
                             <div className="game__user1-cards">
-                                <div className="game__user-card"></div>
-                                <div className="game__user-card"></div>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
                             </div>
                         </div> : null}
 
@@ -560,15 +641,15 @@ class GameContent extends React.Component {
                                 <span className="game__user-balance">$ {player3.cash}</span>
                             </div>
                             <div className="game__user3-cards">
-                                <div className="game__user-card"></div>
-                                <div className="game__user-card"></div>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
                             </div>
                         </div> : null}
 
                         {player2 ? <div className="game__user2">
                             <div className="game__user2-cards">
-                                <div className="game__user-card"></div>
-                                <div className="game__user-card"></div>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
                             </div>
                             <div className="game__user-stake">
                                 <div className="game__user-current-stake">
@@ -606,15 +687,15 @@ class GameContent extends React.Component {
                                 <span className="game__user-balance">$ {player4.cash}</span>
                             </div>
                             <div className="game__user4-cards">
-                                <div className="game__user-card"></div>
-                                <div className="game__user-card"></div>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
                             </div>
                         </div> : null}
 
                         { player5 ? <div className="game__user6">
                             <div className="game__user6-cards">
-                                <div className="game__user-card"></div>
-                                <div className="game__user-card"></div>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
+                                <img className="game__user-card" src={require("../img/back.png")}/>
                             </div>
                             <div className="game__user-stake">
                                 <div className="game__user-current-stake">
