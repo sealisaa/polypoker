@@ -237,6 +237,7 @@ public class MessageHandler {
 
     private SocketMessage whoIsBigBlind(SocketMessage incomingMessage, Room room) {
         List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
+        roomPlayersList.get(0).setBigBlind(true);
         SocketMessage outcomingMessage = null;
         for (int i = 0; i < roomPlayersList.size(); i++) {
             if (!roomPlayersList.get(i).isBigBlind()) {
