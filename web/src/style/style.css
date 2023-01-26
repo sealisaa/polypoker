@@ -5,7 +5,7 @@ body {
 
 .login, .find-game {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -235,7 +235,7 @@ input:hover {
 
 .register__main {
     width: 100%;
-    height: 600px;
+    height: 100vh;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -325,6 +325,7 @@ input:hover {
 }
 
 .lobby {
+    height: 100vh;
     margin: 25px 50px;
 }
 
@@ -530,6 +531,7 @@ input:hover {
 
 .game {
     margin: 25px 50px;
+    height: 100vh;
 }
 
 .game__header {
