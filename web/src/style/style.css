@@ -340,10 +340,10 @@ input:hover {
     height: 75px;
     border-radius: 38px;
     background-color: #8D92C7;
-    background-image: url("../img/Angela.svg");
+    background-image: url("../img/kitty.png");
     background-repeat: no-repeat;
     background-position: center;
-    background-size: contain;
+    background-size: 75%;
 }
 
 .lobby__username {
@@ -635,38 +635,38 @@ input:hover {
 }
 
 .game__user-avatar1 {
-    background-image: url("../img/Mattew.svg");
-    background-size: contain;
+    background-image: url("../img/kitty.png");
+    background-size: 75%;
     background-repeat: no-repeat;
-    background-position: 0 10px;
+    background-position: center;
 }
 
 .game__user-avatar3 {
-    background-image: url("../img/Angela.svg");
-    background-size: contain;
+    background-image: url("../img/kitty.png");
+    background-size: 75%;
     background-repeat: no-repeat;
-    background-position: 0 -5px;
+    background-position: center;
 }
 
 .game__user-avatar2 {
-    background-image: url("../img/Justin.svg");
-    background-size: contain;
+    background-image: url("../img/kitty.png");
+    background-size: 75%;
     background-repeat: no-repeat;
-    background-position: -7px 10px;
+    background-position: center;
 }
 
 .game__user-avatar4 {
-    background-image: url("../img/Kim.svg");
-    background-size: contain;
+    background-image: url("../img/kitty.png");
+    background-size: 75%;
     background-repeat: no-repeat;
-    background-position: bottom;
+    background-position: center;
 }
 
 .game__user-avatar6 {
-    background-image: url("../img/Ed.svg");
-    background-size: contain;
+    background-image: url("../img/kitty.png");
+    background-size: 75%;
     background-repeat: no-repeat;
-    background-position: bottom;
+    background-position: center;
 }
 
 .game__active-user-avatar {
@@ -675,10 +675,10 @@ input:hover {
     border-radius: 60px;
     background-color: #F1B779;
     margin-bottom: 10px;
-    background-image: url("../img/Mary.svg");
-    background-size: contain;
+    background-image: url("../img/kitty.png");
+    background-size: 75%;
     background-repeat: no-repeat;
-    background-position: 10px;
+    background-position: center;
 }
 
 .game__user-info {

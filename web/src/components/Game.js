@@ -1,6 +1,6 @@
 import React from 'react';
 import '../style/style.css';
-import {Link, Navigate, useLocation} from "react-router-dom";
+import {Navigate, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
 
 const Modal = ({visible = false, btn, text}) => {
@@ -69,7 +69,12 @@ class GameContent extends React.Component {
         this.openModal = this.openModal.bind(this);
         this.makeBet = this.makeBet.bind(this);
         this.exitRoom = this.exitRoom.bind(this);
+        this.isNextStepOfRound = this.isNextStepOfRound.bind(this);
+        this.nextStepOfRound = this.nextStepOfRound.bind(this);
+        this.preflop = this.preflop.bind(this);
+        this.drawCard = this.drawCard.bind(this);
         this.state = {
+            gameState: "",
             exit: false,
             modalData: 0,
             modalText: "",
@@ -119,8 +124,11 @@ class GameContent extends React.Component {
 
     onMessageReceived(message) {
         let messageJSON = JSON.parse(message.body);
+        if (messageJSON.content.roomCode !== this.state.roomCode) {
+            return;
+        }
         let roomPlayers = messageJSON.content.roomPlayersList;
-        if (messageJSON.messageType === 'CHECK_ROOM_PLAYERS' && messageJSON.content.roomCode === this.state.roomCode) {
+        if (messageJSON.messageType === 'CHECK_ROOM_PLAYERS') {
             this.updateRoomPlayers(roomPlayers);
         }
         if (messageJSON.messageType === 'ROUND_BEGIN') {
@@ -137,6 +145,15 @@ class GameContent extends React.Component {
         }
         if (messageJSON.messageType === 'PLAYER_ROOM_EXIT') {
             this.checkRoomPlayers();
+        }
+        if (messageJSON.messageType === 'NEXT_STEP_OF_ROUND') {
+            console.log("next round");
+            if (this.state.gameState !== "preflop") {
+                this.nextStepOfRound();
+            }
+        }
+        if (messageJSON.messageType === 'DRAW_CARD') {
+            this.drawCard(messageJSON.content.userLogin, messageJSON.content.cardSuit, messageJSON.content.cardNumber);
         }
     }
 
@@ -193,7 +210,7 @@ class GameContent extends React.Component {
                 },
             author: this.state.activePlayerLogin,
             datetime: currentDate,
-            receiver: "ws://192.168.1.116:8080/room/websocket"
+            receiver: "receiver"
         }
         sendMessage(message);
     }
@@ -208,7 +225,7 @@ class GameContent extends React.Component {
                 },
             author: this.state.activePlayerLogin,
             datetime: currentDate,
-            receiver: "ws://192.168.1.116:8080/room/websocket"
+            receiver: "receiver"
         }
         sendMessage(message);
         let readyBtn = document.getElementById("readyBtn");
@@ -235,7 +252,7 @@ class GameContent extends React.Component {
                 },
             author: this.state.activePlayerLogin,
             dateTime: currentDate,
-            receiver: "ws://192.168.1.116:8080/room/websocket"
+            receiver: "receiver"
         }
         sendMessage(message);
     }
@@ -279,7 +296,7 @@ class GameContent extends React.Component {
                 },
             author: this.state.activePlayerLogin,
             datetime: currentDate,
-            receiver: "ws://192.168.1.116:8080/room/websocket"
+            receiver: "receiver"
         }
         this.setState({isModal: false});
         sendMessage(message);
@@ -301,7 +318,7 @@ class GameContent extends React.Component {
                 },
             author: this.state.activePlayerLogin,
             dateTime: currentDate,
-            receiver: "ws://192.168.1.116:8080/room/websocket"
+            receiver: "receiver"
         }
         sendMessage(message);
     }
@@ -324,10 +341,91 @@ class GameContent extends React.Component {
                 },
             author: this.state.activePlayerLogin,
             datetime: currentDate,
-            receiver: "ws://192.168.1.116:8080/room/websocket"
+            receiver: "receiver"
         }
         this.setState({isModal: false});
         sendMessage(message);
+        this.isNextStepOfRound();
+    }
+
+    isNextStepOfRound() {
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "IS_NEXT_STEP_OF_ROUND",
+            content:
+                {
+                    roomCode: this.state.roomCode
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "receiver"
+        }
+        sendMessage(message);
+    }
+
+    nextStepOfRound() {
+        this.setState({gameState: "preflop"});
+        this.preflop();
+    }
+
+    preflop() {
+        for (let i = 0; i < 2; i++) {
+            let currentDate = getCurrentDate();
+            let message = {
+                messageType: "DRAW_CARD",
+                content:
+                    {
+                        roomCode: this.state.roomCode,
+                        userLogin: this.state.activePlayerLogin
+                    },
+                author: this.state.activePlayerLogin,
+                datetime: currentDate,
+                receiver: "receiver"
+            }
+            sendMessage(message);
+        }
+        for (let i = 0; i < 5; i++) {
+            if (this.state.players[i] !== null) {
+                for (let i = 0; i < 2; i++) {
+                    let currentDate = getCurrentDate();
+                    let message = {
+                        messageType: "DRAW_CARD",
+                        content:
+                            {
+                                roomCode: this.state.roomCode,
+                                userLogin: this.state.players[i].userLogin
+                            },
+                        author: this.state.players[i].userLogin,
+                        datetime: currentDate,
+                        receiver: "receiver"
+                    }
+                    sendMessage(message);
+                }
+            }
+        }
+        this.setState({change: true});
+        console.log(this.state);
+    }
+
+    drawCard(userLogin, cardSuit, cardNumber) {
+        if (userLogin === this.state.activePlayerLogin) {
+            if (this.state.activePlayer.card1 === null) {
+                this.state.activePlayer.card1 = {cardSuit, cardNumber};
+            } else {
+                this.state.activePlayer.card2 = {cardSuit, cardNumber};
+            }
+            return;
+        }
+        for (let i = 0; i < 5; i++) {
+            if (this.state.players[i].login === userLogin) {
+                if (this.state.players[i].card1 === null) {
+                    this.state.players[i].card1 = {cardSuit, cardNumber};
+                } else {
+                    this.state.players[i].card2 = {cardSuit, cardNumber};
+                }
+                return;
+            }
+        }
     }
 
     openModal() {
@@ -346,6 +444,7 @@ class GameContent extends React.Component {
                 this.state.players[i].newStake = moneyValue;
                 this.state.players[i].currentStake += moneyValue;
                 this.setState({change: true});
+                return;
             }
         }
     }
@@ -361,7 +460,7 @@ class GameContent extends React.Component {
                 },
             author: this.state.activePlayerLogin,
             datetime: currentDate,
-            receiver: "ws://192.168.1.116:8080/room/websocket"
+            receiver: "receiver"
         };
         sendMessage(message);
         this.setState({exit: true});
