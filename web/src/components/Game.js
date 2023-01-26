@@ -216,7 +216,6 @@ class GameContent extends React.Component {
     }
 
     getSmallBlind() {
-        console.log("getSmallBlind");
         let currentDate = getCurrentDate();
         let message = {
             messageType: "WHO_IS_SMALL_BLIND",
@@ -237,7 +236,6 @@ class GameContent extends React.Component {
     }
 
     setSmallBlind() {
-        console.log("setSmallBlind");
         this.state.activePlayer.smallBlind = true;
         this.setState({modalData: 1, modalText: "Поставьте малый блайнд"});
         this.openModal();
@@ -265,7 +263,6 @@ class GameContent extends React.Component {
     }
 
     submitSmallBlind(bet) {
-        console.log("submitSmallBlind");
         let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_BET",
@@ -285,7 +282,6 @@ class GameContent extends React.Component {
     }
 
     getBigBlind() {
-        console.log("getBigBlind");
         let currentDate = getCurrentDate();
         let message = {
             messageType: "WHO_IS_BIG_BLIND",
@@ -306,14 +302,12 @@ class GameContent extends React.Component {
     }
 
     setBigBlind() {
-        console.log("setBigBlind");
         this.state.activePlayer.bigBlind = true;
         this.setState({modalData: 2, modalText: "Поставьте большой блайнд"});
         this.openModal();
     }
 
     submitBigBlind(bet) {
-        console.log("submitBigBlind");
         let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_BET",
