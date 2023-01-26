@@ -20,20 +20,6 @@ const Modal = ({visible = false, btn, text}) => {
     )
 }
 
-const defaultPlayerInfo = {
-    present: false,
-    login: "",
-    name: "",
-    newStake: 0,
-    currentStake: 0,
-    cash: 0,
-    card1: null,
-    card2: null,
-    smallBlind: false,
-    bigBlind: false,
-    ready: false
-};
-
 const Game = props => {
     const location = useLocation();
     const roomInfo = location.state.roomInfo;
@@ -97,13 +83,7 @@ class GameContent extends React.Component {
                 bigBlind: false,
                 ready: false
             },
-            players: [
-                defaultPlayerInfo,
-                defaultPlayerInfo,
-                defaultPlayerInfo,
-                defaultPlayerInfo,
-                defaultPlayerInfo,
-            ],
+            players: [],
         };
         if (stompClient.connected) {
             stompClient.unsubscribe("poker");
@@ -134,6 +114,10 @@ class GameContent extends React.Component {
         this.checkRoomPlayers();
     }
 
+    showCard() {
+
+    }
+
     onMessageReceived(message) {
         let messageJSON = JSON.parse(message.body);
         if (messageJSON.content.roomCode !== this.state.roomCode) {
@@ -159,7 +143,6 @@ class GameContent extends React.Component {
             this.checkRoomPlayers();
         }
         if (messageJSON.messageType === 'NEXT_STEP_OF_ROUND') {
-            console.log("next round");
             if (this.state.gameState !== "preflop") {
                 this.nextStepOfRound();
             }
@@ -206,7 +189,7 @@ class GameContent extends React.Component {
                     })
                 }
             } else {
-                currentPlayersList.push(defaultPlayerInfo);
+                currentPlayersList.push(null);
             }
         }
         this.setState({players: currentPlayersList});
@@ -250,6 +233,7 @@ class GameContent extends React.Component {
     }
 
     beginRound() {
+        this.setState({gameState: "roundBegin"});
         this.getSmallBlind();
     }
 
@@ -420,27 +404,7 @@ class GameContent extends React.Component {
             }
             sendMessage(message);
         }
-        for (let i = 0; i < 5; i++) {
-            if (this.state.players[i] !== null) {
-                for (let i = 0; i < 2; i++) {
-                    let currentDate = getCurrentDate();
-                    let message = {
-                        messageType: "DRAW_CARD",
-                        content:
-                            {
-                                roomCode: this.state.roomCode,
-                                userLogin: this.state.players[i].userLogin
-                            },
-                        author: this.state.players[i].userLogin,
-                        datetime: currentDate,
-                        receiver: "receiver"
-                    }
-                    sendMessage(message);
-                }
-            }
-        }
         this.setState({change: true});
-        console.log(this.state);
     }
 
     drawCard(userLogin, cardSuit, cardNumber) {
@@ -453,6 +417,9 @@ class GameContent extends React.Component {
             return;
         }
         for (let i = 0; i < 5; i++) {
+            if (!this.state.players[i]) {
+                continue;
+            }
             if (this.state.players[i].login === userLogin) {
                 if (this.state.players[i].card1 === null) {
                     this.state.players[i].card1 = {cardSuit, cardNumber};
@@ -462,7 +429,6 @@ class GameContent extends React.Component {
                 return;
             }
         }
-        console.log(this.state);
     }
 
     openModal() {
@@ -551,7 +517,7 @@ class GameContent extends React.Component {
                             </div>
                         </div>
 
-                        {player1.present ? <div className="game__user1">
+                        {player1 ? <div className="game__user1">
                             <div className="game__user-stake">
                                 <div className="game__user-current-stake">
                                     $ {player1.currentStake}
@@ -574,7 +540,7 @@ class GameContent extends React.Component {
                             </div>
                         </div> : null}
 
-                        {player3.present ? <div className="game__user3">
+                        {player3 ? <div className="game__user3">
                             <div className="game__user-stake">
                                 <div className="game__user-current-stake">
                                     $ {player3.currentStake}
@@ -597,7 +563,7 @@ class GameContent extends React.Component {
                             </div>
                         </div> : null}
 
-                        {player2.present ? <div className="game__user2">
+                        {player2 ? <div className="game__user2">
                             <div className="game__user2-cards">
                                 <div className="game__user-card"></div>
                                 <div className="game__user-card"></div>
@@ -620,7 +586,7 @@ class GameContent extends React.Component {
                             </div>
                         </div> : null}
 
-                        { player4.present ? <div className="game__user4">
+                        { player4 ? <div className="game__user4">
                             <div className="game__user-stake">
                                 <div className="game__user-current-stake">
                                     $ {player4.currentStake}
@@ -643,7 +609,7 @@ class GameContent extends React.Component {
                             </div>
                         </div> : null}
 
-                        { player5.present ? <div className="game__user6">
+                        { player5 ? <div className="game__user6">
                             <div className="game__user6-cards">
                                 <div className="game__user-card"></div>
                                 <div className="game__user-card"></div>
@@ -689,7 +655,10 @@ class GameContent extends React.Component {
                     <button className="game__call">CALL</button>
                     <button className="game__raise">RAISE</button>
                     <div className="game__right-nav">
-                        <button id="readyBtn" className="game__ready" onClick={this.getReady}>ГОТОВ</button>
+                        { this.state.gameState === "" ?
+                            <button id="readyBtn" className="game__ready" onClick={this.getReady}>ГОТОВ</button>
+                            : null
+                        }
                         <div className="game__bank">
                             <div className="game__bank-chip"></div>
                             <span className="game__bank-value">BANK: $ 1.000.000</span>
