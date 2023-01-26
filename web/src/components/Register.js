@@ -70,26 +70,28 @@ class Register extends React.Component {
             return <Navigate to="/" />
         }
         return (
-            <div className="register__main">
-                <Modal
-                    visible={this.state.isModal}
-                    title='Пользователь успешно зарегистрирован'
-                    footer={<button className="button" onClick={this.onClose}>Ок</button>}
-                    onClose={this.onClose}
-                />
-                <div className="register__left">
-                    <h2>Регистрация</h2>
-                    <div className="register__name">
-                        <input type="text" id="name" placeholder="Имя"/>
-                        <input type="text" id="surname" placeholder="Фамилия"/>
+            <div className="register">
+                <div className="register__main">
+                    <Modal
+                        visible={this.state.isModal}
+                        title='Пользователь успешно зарегистрирован'
+                        footer={<button className="button" onClick={this.onClose}>Ок</button>}
+                        onClose={this.onClose}
+                    />
+                    <div className="register__left">
+                        <h2>Регистрация</h2>
+                        <div className="register__name">
+                            <input type="text" id="name" placeholder="Имя"/>
+                            <input type="text" id="surname" placeholder="Фамилия"/>
+                        </div>
+                        <input type="text" id="login" placeholder="Логин"/>
+                        <input type="password" id="password" placeholder="Пароль"/>
+                        <input type="password" id="password2" placeholder="Пароль еще раз"/>
+                        <button className="register__button" onClick={this.saveUser}>Зарегистрироваться</button>
+                        <p>{this.state.message}</p>
                     </div>
-                    <input type="text" id="login" placeholder="Логин"/>
-                    <input type="password" id="password" placeholder="Пароль"/>
-                    <input type="password" id="password2" placeholder="Пароль еще раз"/>
-                    <button className="register__button" onClick={this.saveUser}>Зарегистрироваться</button>
-                    <p>{this.state.message}</p>
-                </div>
-                <div className="register__right">
+                    <div className="register__right">
+                    </div>
                 </div>
             </div>
         )

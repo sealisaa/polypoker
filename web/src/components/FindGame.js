@@ -94,10 +94,10 @@ class FindGameContent extends React.Component {
                 <div className="find-game__header">
                     <h2>Найти игру</h2>
                 </div>
-                <div className="chip"></div>
-                <div className="card1"></div>
-                <div className="card2"></div>
                 <div className="find-game__main">
+                    <div className="chip"></div>
+                    <div className="card1"></div>
+                    <div className="card2"></div>
                     <div>
                         <p>Введите идентификатор комнаты</p>
                         <input type="text" id="game" placeholder="Идентификатор комнаты"/>

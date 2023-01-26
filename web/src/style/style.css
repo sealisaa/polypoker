@@ -9,10 +9,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .login__header, .find-game__header {
-    margin-top: 60px;
 }
 
 .login__main {
@@ -45,8 +45,9 @@ body {
     background-size: contain;
     background: url("../img/chip-heart.svg") no-repeat center;
     position: absolute;
-    top: 300px;
-    left: 275px;
+    z-index: -1;
+    left: -100px;
+    top: 150px;
 }
 
 .card1 {
@@ -56,10 +57,11 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    position: absolute;
-    top: 230px;
-    right: 270px;
     rotate: 30deg;
+    position: absolute;
+    z-index: -1;
+    right: -120px;
+    top: 75px;
 }
 
 .card2 {
@@ -70,9 +72,9 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     position: absolute;
-    top: 280px;
-    right: 270px;
-    z-index: -1;
+    top: 125px;
+    right: -125px;
+    z-index: -2;
     rotate: 60deg;
 }
 
@@ -233,8 +235,15 @@ input:hover {
     cursor: pointer;
 }
 
-.register__main {
+.register {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register__main {
+    width: 1400px;
     height: 100vh;
     display: flex;
     flex-direction: row;
@@ -244,16 +253,19 @@ input:hover {
 
 .register__right {
     width: 40%;
-    height: 450px;
+    height: 100vh;
     background: url("../img/pic.svg") no-repeat center;
-    background-size: contain;
+    background-size: 80%;
+    background-repeat: no-repeat;
 }
 
 .register__left {
     width: 40%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .register__left input {
@@ -281,12 +293,6 @@ input:hover {
 .register__left input::placeholder {
     color: #FFFFFF;
 }
-
-/*.register__left input[type=password] {*/
-/*    background: url(../img/show.png), #6DB3F2;*/
-/*    background-size: 30px;*/
-/*    background-position: 95%, center;*/
-/*}*/
 
 .register__button {
     border: none;
@@ -324,9 +330,19 @@ input:hover {
     text-decoration: none;
 }
 
-.lobby {
+.lobby-container {
+    width: 100%;
     height: 100vh;
-    margin: 25px 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.lobby {
+    height: max-content;
+    width: 1300px;
+    margin: 25px 25px;
 }
 
 .lobby__header {
@@ -383,7 +399,7 @@ input:hover {
     border: none;
 }
 
-.lobby__statistics {
+.lobby__statistics, .lobby__actions {
     margin-top: 25px;
     height: 200px;
     display: flex;
@@ -422,7 +438,6 @@ input:hover {
 }
 
 .lobby__all-games-content, .lobby__win-games-content, .lobby__money-earned-content{
-    padding-left: 25px;
 }
 
 .lobby__all-games-content {
@@ -452,14 +467,6 @@ input:hover {
     line-height: 28px;
     font-weight: 700;
     letter-spacing: -0.6px;
-}
-
-.lobby__actions {
-    margin-top: 25px;
-    height: 200px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
 }
 
 .lobby__donate, .lobby__find-game, .lobby__create-game {
@@ -529,9 +536,23 @@ input:hover {
     background-image: url("../img/create-game.svg");
 }
 
-.game {
-    margin: 25px 50px;
+.game-container {
+    width: 100%;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.game {
+    width: 1320px;
+    padding: 25px;
+    height: 580px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .game__header {
@@ -815,6 +836,7 @@ input:hover {
 }
 
 .game__actions {
+    width: 100%;
     margin-top: 75px;
     display: flex;
     align-items: center;

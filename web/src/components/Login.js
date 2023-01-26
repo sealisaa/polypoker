@@ -38,10 +38,10 @@ class Login extends React.Component {
                 <div className="login__header">
                     <h2>Вход</h2>
                 </div>
-                <div className="chip"></div>
-                <div className="card1"></div>
-                <div className="card2"></div>
                 <div className="login__main">
+                    <div className="chip"></div>
+                    <div className="card1"></div>
+                    <div className="card2"></div>
                     <div className="login__data">
                         <input type="text" id="login" placeholder="Логин"/>
                         <input type="password" id="password" placeholder="Пароль"/>

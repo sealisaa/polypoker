@@ -559,192 +559,194 @@ class GameContent extends React.Component {
             return <Navigate to="/lobby" state={login} />
         }
         return (
-            <div className="game">
-                <Modal
-                    visible={this.state.isModal}
-                    btn={<button className="game__modal-button" onClick={this.confirmBet}>Ок</button>}
-                    text={this.state.modalText}
-                />
-                <div className="game__header">
-                    <button className="game__home-button" onClick={this.exitRoom}></button>
-                    <button className="game__menu-button"></button>
-                </div>
-                <div className="game__main">
-                    <div className="game__table">
-                        <div className="game__active-user">
-                            <div className="game__user-stake">
-                                <div className="game__user-current-stake">
-                                    $ {activePlayer.currentStake}
-                                </div>
-                                {activePlayer.newStake !== 0 ?
-                                    <div className="game__user-new-stake">
-                                        + {activePlayer.newStake}
+            <div className="game-container">
+                <div className="game">
+                    <Modal
+                        visible={this.state.isModal}
+                        btn={<button className="game__modal-button" onClick={this.confirmBet}>Ок</button>}
+                        text={this.state.modalText}
+                    />
+                    <div className="game__header">
+                        <button className="game__home-button" onClick={this.exitRoom}></button>
+                        <button className="game__menu-button"></button>
+                    </div>
+                    <div className="game__main">
+                        <div className="game__table">
+                            <div className="game__active-user">
+                                <div className="game__user-stake">
+                                    <div className="game__user-current-stake">
+                                        $ {activePlayer.currentStake}
                                     </div>
-                                    : null
-                                }
-                            </div>
-                            <div className="game__user-info">
-                                <div className="game__active-user-avatar"></div>
-                                <span className="game__user-login">You</span>
-                                <span className="game__user-balance">$ {activePlayer.cash}</span>
-                            </div>
-                            <div className="game__active-user-cards">
-                                {activePlayer.card1 ?
-                                    <img className="game__user-card" src={require("../img/cards/" + activePlayer.card1.cardSuit + "_" + activePlayer.card1.cardNumber + ".png")} />
-                                    : <img className="game__user-card" src={require("../img/back.png")}/>
-                                }
-                                {activePlayer.card2 ?
-                                    <img className="game__user-card" src={require("../img/cards/" + activePlayer.card2.cardSuit + "_" + activePlayer.card2.cardNumber + ".png")} />
-                                    : <img className="game__user-card" src={require("../img/back.png")}/>
-                                }
-                            </div>
-                        </div>
-
-                        {player1 ? <div className="game__user1">
-                            <div className="game__user-stake">
-                                <div className="game__user-current-stake">
-                                    $ {player1.currentStake}
+                                    {activePlayer.newStake !== 0 ?
+                                        <div className="game__user-new-stake">
+                                            + {activePlayer.newStake}
+                                        </div>
+                                        : null
+                                    }
                                 </div>
-                                {player1.newStake !== 0 ?
-                                    <div className="game__user-new-stake">
-                                        + {player1.newStake}
-                                    </div>
-                                    : null
-                                }
-                            </div>
-                            <div className="game__user-info">
-                                <div className="game__user-avatar game__user-avatar1"></div>
-                                <span className="game__user-login">{player1.login}</span>
-                                <span className="game__user-balance">$ {player1.cash}</span>
-                            </div>
-                            <div className="game__user1-cards">
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                            </div>
-                        </div> : null}
-
-                        {player3 ? <div className="game__user3">
-                            <div className="game__user-stake">
-                                <div className="game__user-current-stake">
-                                    $ {player3.currentStake}
+                                <div className="game__user-info">
+                                    <div className="game__active-user-avatar"></div>
+                                    <span className="game__user-login">You</span>
+                                    <span className="game__user-balance">$ {activePlayer.cash}</span>
                                 </div>
-                                {player3.newStake !== 0 ?
-                                    <div className="game__user-new-stake">
-                                        + {player3.newStake}
-                                    </div>
-                                    : null
-                                }
-                            </div>
-                            <div className="game__user-info">
-                                <div className="game__user-avatar game__user-avatar3"></div>
-                                <span className="game__user-login">{player3.login}</span>
-                                <span className="game__user-balance">$ {player3.cash}</span>
-                            </div>
-                            <div className="game__user3-cards">
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                            </div>
-                        </div> : null}
-
-                        {player2 ? <div className="game__user2">
-                            <div className="game__user2-cards">
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                            </div>
-                            <div className="game__user-stake">
-                                <div className="game__user-current-stake">
-                                    $ {player2.currentStake}
+                                <div className="game__active-user-cards">
+                                    {activePlayer.card1 ?
+                                        <img className="game__user-card" src={require("../img/cards/" + activePlayer.card1.cardSuit + "_" + activePlayer.card1.cardNumber + ".png")} />
+                                        : <img className="game__user-card" src={require("../img/back.png")}/>
+                                    }
+                                    {activePlayer.card2 ?
+                                        <img className="game__user-card" src={require("../img/cards/" + activePlayer.card2.cardSuit + "_" + activePlayer.card2.cardNumber + ".png")} />
+                                        : <img className="game__user-card" src={require("../img/back.png")}/>
+                                    }
                                 </div>
-                                {player2.newStake !== 0 ?
-                                    <div className="game__user-new-stake">
-                                        + {player2.newStake}
-                                    </div>
-                                    : null
-                                }
                             </div>
-                            <div className="game__user-info">
-                                <div className="game__user-avatar game__user-avatar2"></div>
-                                <span className="game__user-login">{player2.login}</span>
-                                <span className="game__user-balance">$ {player2.cash}</span>
-                            </div>
-                        </div> : null}
 
-                        { player4 ? <div className="game__user4">
-                            <div className="game__user-stake">
-                                <div className="game__user-current-stake">
-                                    $ {player4.currentStake}
+                            {player1 ? <div className="game__user1">
+                                <div className="game__user-stake">
+                                    <div className="game__user-current-stake">
+                                        $ {player1.currentStake}
+                                    </div>
+                                    {player1.newStake !== 0 ?
+                                        <div className="game__user-new-stake">
+                                            + {player1.newStake}
+                                        </div>
+                                        : null
+                                    }
                                 </div>
-                                {player4.newStake !== 0 ?
-                                    <div className="game__user-new-stake">
-                                        + {player4.newStake}
-                                    </div>
-                                    : null
-                                }
-                            </div>
-                            <div className="game__user-info">
-                                <div className="game__user-avatar game__user-avatar4"></div>
-                                <span className="game__user-login">{player4.login}</span>
-                                <span className="game__user-balance">$ {player4.cash}</span>
-                            </div>
-                            <div className="game__user4-cards">
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                            </div>
-                        </div> : null}
-
-                        { player5 ? <div className="game__user6">
-                            <div className="game__user6-cards">
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                                <img className="game__user-card" src={require("../img/back.png")}/>
-                            </div>
-                            <div className="game__user-stake">
-                                <div className="game__user-current-stake">
-                                    $ {player5.currentStake}
+                                <div className="game__user-info">
+                                    <div className="game__user-avatar game__user-avatar1"></div>
+                                    <span className="game__user-login">{player1.login}</span>
+                                    <span className="game__user-balance">$ {player1.cash}</span>
                                 </div>
-                                {player5.newStake !== 0 ?
-                                    <div className="game__user-new-stake">
-                                        + {player5.newStake}
-                                    </div>
-                                    : null
-                                }
-                            </div>
-                            <div className="game__user-info">
-                                <div className="game__user-avatar game__user-avatar6"></div>
-                                <span className="game__user-login">{player5.login}</span>
-                                <span className="game__user-balance">$ {player5.cash}</span>
-                            </div>
-                        </div> : null}
+                                <div className="game__user1-cards">
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                </div>
+                            </div> : null}
 
-                        <div className="game__cards">
-                            <div id="game__card1" className="game__card1 flip-card card">
-                                <div className="game__card-back back card__face"></div>
-                                <div className="game__card1-front front card__face"></div>
+                            {player3 ? <div className="game__user3">
+                                <div className="game__user-stake">
+                                    <div className="game__user-current-stake">
+                                        $ {player3.currentStake}
+                                    </div>
+                                    {player3.newStake !== 0 ?
+                                        <div className="game__user-new-stake">
+                                            + {player3.newStake}
+                                        </div>
+                                        : null
+                                    }
+                                </div>
+                                <div className="game__user-info">
+                                    <div className="game__user-avatar game__user-avatar3"></div>
+                                    <span className="game__user-login">{player3.login}</span>
+                                    <span className="game__user-balance">$ {player3.cash}</span>
+                                </div>
+                                <div className="game__user3-cards">
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                </div>
+                            </div> : null}
+
+                            {player2 ? <div className="game__user2">
+                                <div className="game__user2-cards">
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                </div>
+                                <div className="game__user-stake">
+                                    <div className="game__user-current-stake">
+                                        $ {player2.currentStake}
+                                    </div>
+                                    {player2.newStake !== 0 ?
+                                        <div className="game__user-new-stake">
+                                            + {player2.newStake}
+                                        </div>
+                                        : null
+                                    }
+                                </div>
+                                <div className="game__user-info">
+                                    <div className="game__user-avatar game__user-avatar2"></div>
+                                    <span className="game__user-login">{player2.login}</span>
+                                    <span className="game__user-balance">$ {player2.cash}</span>
+                                </div>
+                            </div> : null}
+
+                            { player4 ? <div className="game__user4">
+                                <div className="game__user-stake">
+                                    <div className="game__user-current-stake">
+                                        $ {player4.currentStake}
+                                    </div>
+                                    {player4.newStake !== 0 ?
+                                        <div className="game__user-new-stake">
+                                            + {player4.newStake}
+                                        </div>
+                                        : null
+                                    }
+                                </div>
+                                <div className="game__user-info">
+                                    <div className="game__user-avatar game__user-avatar4"></div>
+                                    <span className="game__user-login">{player4.login}</span>
+                                    <span className="game__user-balance">$ {player4.cash}</span>
+                                </div>
+                                <div className="game__user4-cards">
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                </div>
+                            </div> : null}
+
+                            { player5 ? <div className="game__user6">
+                                <div className="game__user6-cards">
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                    <img className="game__user-card" src={require("../img/back.png")}/>
+                                </div>
+                                <div className="game__user-stake">
+                                    <div className="game__user-current-stake">
+                                        $ {player5.currentStake}
+                                    </div>
+                                    {player5.newStake !== 0 ?
+                                        <div className="game__user-new-stake">
+                                            + {player5.newStake}
+                                        </div>
+                                        : null
+                                    }
+                                </div>
+                                <div className="game__user-info">
+                                    <div className="game__user-avatar game__user-avatar6"></div>
+                                    <span className="game__user-login">{player5.login}</span>
+                                    <span className="game__user-balance">$ {player5.cash}</span>
+                                </div>
+                            </div> : null}
+
+                            <div className="game__cards">
+                                <div id="game__card1" className="game__card1 flip-card card">
+                                    <div className="game__card-back back card__face"></div>
+                                    <div className="game__card1-front front card__face"></div>
+                                </div>
+                                <div id="game__card2" className="game__card2 flip-card card">
+                                    <div className="game__card-back back card__face"></div>
+                                    <div className="game__card2-front front card__face"></div>
+                                </div>
+                                <div id="game__card3" className="game__card3 flip-card card">
+                                    <div className="game__card-back back card__face"></div>
+                                    <div className="game__card3-front front card__face"></div>
+                                </div>
+                                <div className="game__card4"></div>
+                                <div className="game__card5"></div>
                             </div>
-                            <div id="game__card2" className="game__card2 flip-card card">
-                                <div className="game__card-back back card__face"></div>
-                                <div className="game__card2-front front card__face"></div>
-                            </div>
-                            <div id="game__card3" className="game__card3 flip-card card">
-                                <div className="game__card-back back card__face"></div>
-                                <div className="game__card3-front front card__face"></div>
-                            </div>
-                            <div className="game__card4"></div>
-                            <div className="game__card5"></div>
                         </div>
                     </div>
-                </div>
-                <div className="game__actions">
-                    <button className="game__fold">FOLD</button>
-                    <button className="game__call">CALL</button>
-                    <button className="game__raise">RAISE</button>
-                    <div className="game__right-nav">
-                        { this.state.gameState === "" ?
-                            <button id="readyBtn" className="game__ready" onClick={this.getReady}>ГОТОВ</button>
-                            : null
-                        }
-                        <div className="game__bank">
-                            <div className="game__bank-chip"></div>
-                            <span className="game__bank-value">BANK: $ 1.000.000</span>
+                    <div className="game__actions">
+                        <button className="game__fold">FOLD</button>
+                        <button className="game__call">CALL</button>
+                        <button className="game__raise">RAISE</button>
+                        <div className="game__right-nav">
+                            { this.state.gameState === "" ?
+                                <button id="readyBtn" className="game__ready" onClick={this.getReady}>ГОТОВ</button>
+                                : null
+                            }
+                            <div className="game__bank">
+                                <div className="game__bank-chip"></div>
+                                <span className="game__bank-value">BANK: $ 1.000.000</span>
+                            </div>
                         </div>
                     </div>
                 </div>
