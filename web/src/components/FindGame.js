@@ -45,9 +45,11 @@ class FindGameContent extends React.Component {
             roomInfo: null
         }
         if (stompClient.connected) {
+            stompClient.unsubscribe("poker");
             stompClient.subscribe(
                 "/room/user",
-                this.onMessageReceived
+                this.onMessageReceived,
+                {id: "poker"}
             );
         }
         stompClient.connectCallback = this.onConnected;
@@ -55,9 +57,11 @@ class FindGameContent extends React.Component {
 
     onConnected() {
         this.setState({connected: true});
+        stompClient.unsubscribe("poker");
         stompClient.subscribe(
             "/room/user",
-            this.onMessageReceived
+            this.onMessageReceived,
+            {id: "poker"}
         );
     }
 

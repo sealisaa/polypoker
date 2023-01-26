@@ -73,7 +73,9 @@ class GameContent extends React.Component {
         this.nextStepOfRound = this.nextStepOfRound.bind(this);
         this.preflop = this.preflop.bind(this);
         this.drawCard = this.drawCard.bind(this);
+        this.handleTabClose = this.handleTabClose.bind(this);
         this.state = {
+            lastMessage: "",
             gameState: "",
             exit: false,
             modalData: 0,
@@ -104,20 +106,30 @@ class GameContent extends React.Component {
             ],
         };
         if (stompClient.connected) {
+            stompClient.unsubscribe("poker");
             stompClient.subscribe(
                 "/room/user",
-                this.onMessageReceived
+                this.onMessageReceived,
+                {id: "poker"}
             );
             this.checkRoomPlayers();
         }
         stompClient.connectCallback = this.onConnected;
+        window.addEventListener('beforeunload', this.handleTabClose);
     }
+
+    handleTabClose(event) {
+        event.preventDefault();
+        this.exitRoom();
+    };
 
     onConnected() {
         this.setState({connected: true});
+        stompClient.unsubscribe("poker");
         stompClient.subscribe(
             "/room/user",
-            this.onMessageReceived
+            this.onMessageReceived,
+            {id: "poker"}
         );
         this.checkRoomPlayers();
     }
@@ -216,6 +228,9 @@ class GameContent extends React.Component {
     }
 
     getReady() {
+        if (this.state.lastMessage === "PLAYER_READY_SET") {
+            return;
+        }
         let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_READY_SET",
@@ -228,6 +243,7 @@ class GameContent extends React.Component {
             receiver: "receiver"
         }
         sendMessage(message);
+        this.setState({lastMessage: "PLAYER_READY_SET"});
         let readyBtn = document.getElementById("readyBtn");
         readyBtn.innerText = "НЕ ГОТОВ";
         readyBtn.className = "game__not-ready";
@@ -238,6 +254,9 @@ class GameContent extends React.Component {
     }
 
     getSmallBlind() {
+        if (this.state.lastMessage === "WHO_IS_SMALL_BLIND") {
+            return;
+        }
         let currentDate = getCurrentDate();
         let message = {
             messageType: "WHO_IS_SMALL_BLIND",
@@ -255,6 +274,7 @@ class GameContent extends React.Component {
             receiver: "receiver"
         }
         sendMessage(message);
+        this.setState({lastMessage: "WHO_IS_SMALL_BLIND"});
     }
 
     setSmallBlind() {
@@ -285,6 +305,9 @@ class GameContent extends React.Component {
     }
 
     submitSmallBlind(bet) {
+        if (this.state.lastMessage === "PLAYER_MAKE_BET") {
+            return;
+        }
         let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_BET",
@@ -300,10 +323,14 @@ class GameContent extends React.Component {
         }
         this.setState({isModal: false});
         sendMessage(message);
+        this.setState({lastMessage: "PLAYER_MAKE_BET"});
         this.getBigBlind();
     }
 
     getBigBlind() {
+        if (this.state.lastMessage === "WHO_IS_BIG_BLIND") {
+            return;
+        }
         let currentDate = getCurrentDate();
         let message = {
             messageType: "WHO_IS_BIG_BLIND",
@@ -321,6 +348,7 @@ class GameContent extends React.Component {
             receiver: "receiver"
         }
         sendMessage(message);
+        this.setState({lastMessage: "WHO_IS_BIG_BLIND"});
     }
 
     setBigBlind() {
@@ -330,6 +358,9 @@ class GameContent extends React.Component {
     }
 
     submitBigBlind(bet) {
+        if (this.state.lastMessage === "PLAYER_MAKE_BET") {
+            return;
+        }
         let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_BET",
@@ -345,10 +376,14 @@ class GameContent extends React.Component {
         }
         this.setState({isModal: false});
         sendMessage(message);
+        this.setState({lastMessage: "PLAYER_MAKE_BET"});
         this.isNextStepOfRound();
     }
 
     isNextStepOfRound() {
+        if (this.state.lastMessage === "IS_NEXT_STEP_OF_ROUND") {
+            return;
+        }
         let currentDate = getCurrentDate();
         let message = {
             messageType: "IS_NEXT_STEP_OF_ROUND",
@@ -361,6 +396,7 @@ class GameContent extends React.Component {
             receiver: "receiver"
         }
         sendMessage(message);
+        this.setState({lastMessage: "IS_NEXT_STEP_OF_ROUND"});
     }
 
     nextStepOfRound() {
@@ -411,7 +447,7 @@ class GameContent extends React.Component {
         if (userLogin === this.state.activePlayerLogin) {
             if (this.state.activePlayer.card1 === null) {
                 this.state.activePlayer.card1 = {cardSuit, cardNumber};
-            } else {
+            } else if (this.state.activePlayer.card2 === null) {
                 this.state.activePlayer.card2 = {cardSuit, cardNumber};
             }
             return;
@@ -420,12 +456,13 @@ class GameContent extends React.Component {
             if (this.state.players[i].login === userLogin) {
                 if (this.state.players[i].card1 === null) {
                     this.state.players[i].card1 = {cardSuit, cardNumber};
-                } else {
+                } else if (this.state.players[i].card2 === null) {
                     this.state.players[i].card2 = {cardSuit, cardNumber};
                 }
                 return;
             }
         }
+        console.log(this.state);
     }
 
     openModal() {

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const URL = 'http://10.0.0.18:8080/';
+const URL = 'http://26.118.51.73:8080/';
 const SAVE_USER_URL = URL + 'user/save';
 const USER_URL = URL + 'user/';
 const AUTH_USER_URL = URL + 'user/auth';
