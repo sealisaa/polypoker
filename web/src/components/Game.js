@@ -1,6 +1,6 @@
 import React from 'react';
 import '../style/style.css';
-import {Link, useLocation} from "react-router-dom";
+import {Link, Navigate, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
 
 const Modal = ({visible = false, btn, text}) => {
@@ -68,7 +68,9 @@ class GameContent extends React.Component {
         this.submitBigBlind = this.submitBigBlind.bind(this);
         this.openModal = this.openModal.bind(this);
         this.makeBet = this.makeBet.bind(this);
+        this.exitRoom = this.exitRoom.bind(this);
         this.state = {
+            exit: false,
             modalData: 0,
             modalText: "",
             change: false,
@@ -132,6 +134,9 @@ class GameContent extends React.Component {
         }
         if (messageJSON.messageType === 'WHO_IS_BIG_BLIND' && messageJSON.content.userLogin === this.state.activePlayerLogin) {
             this.setBigBlind();
+        }
+        if (messageJSON.messageType === 'PLAYER_ROOM_EXIT') {
+            this.checkRoomPlayers();
         }
     }
 
@@ -345,6 +350,23 @@ class GameContent extends React.Component {
         }
     }
 
+    exitRoom() {
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType:"PLAYER_ROOM_EXIT",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                    userLogin: this.state.activePlayerLogin
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "ws://192.168.1.116:8080/room/websocket"
+        };
+        sendMessage(message);
+        this.setState({exit: true});
+    }
+
     render() {
         let activePlayer = this.state.activePlayer;
         let player1 = this.state.players[0];
@@ -352,6 +374,10 @@ class GameContent extends React.Component {
         let player3 = this.state.players[2];
         let player4 = this.state.players[3];
         let player5 = this.state.players[4];
+        if (this.state.exit) {
+            const login = this.state.activePlayerLogin;
+            return <Navigate to="/lobby" state={login} />
+        }
         return (
             <div className="game">
                 <Modal
@@ -360,7 +386,7 @@ class GameContent extends React.Component {
                     text={this.state.modalText}
                 />
                 <div className="game__header">
-                    <Link to="/lobby"><button className="game__home-button"></button></Link>
+                    <button className="game__home-button" onClick={this.exitRoom}></button>
                     <button className="game__menu-button"></button>
                 </div>
                 <div className="game__main">
