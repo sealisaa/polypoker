@@ -2,6 +2,7 @@ import React from 'react';
 import '../style/style.css';
 import {Navigate, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
+import { ReactSVG } from 'react-svg';
 
 const Modal = ({visible = false, btn, text}) => {
     if (!visible) {
@@ -512,7 +513,8 @@ class GameContent extends React.Component {
                                 <span className="game__user-balance">$ {activePlayer.cash}</span>
                             </div>
                             <div className="game__active-user-cards">
-                                <div className="game__user-card game__active-user-card1"></div>
+                                {/*<ReactSVG src="../img/cards/HEARTS_ACE.svg" />*/}
+                                {/*<img className="game__user-card" src={require('../img/cards/HEARTS_ACE.svg')} alt="activeUser-card1"/>*/}
                                 <div className="game__user-card game__active-user-card2"></div>
                             </div>
                         </div>
