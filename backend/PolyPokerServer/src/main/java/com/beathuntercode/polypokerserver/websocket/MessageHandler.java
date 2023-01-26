@@ -76,6 +76,7 @@ public class MessageHandler {
                 paymentToPlayer(message, userDao, userStatisticDao);
             }
             case IS_NEXT_STEP_OF_ROUND -> {
+                return isNextStepOfRound(message, room);
             }
             case NEXT_STEP_OF_ROUND -> {
                 return nextStepOfRound(message, room);
@@ -84,7 +85,7 @@ public class MessageHandler {
                 //TODO()
             }
             case SOCKET_DISCONNECT -> {
-                room.getPlayersMap().remove(message.getAuthor());
+                room.removePlayerFromRoom(message.getAuthor());
             }
             case OK -> {
                 //TODO()
@@ -99,22 +100,49 @@ public class MessageHandler {
         return null;
     }
 
+    private SocketMessage isNextStepOfRound(SocketMessage message, Room room) {
+        room.getGameManager().changeGameStateToNext();
+        return new SocketMessage(
+                MessageType.NEXT_STEP_OF_ROUND,
+                new MessageContent(
+                        message.getContent().getRoomCode()
+                ),
+                message.getReceiver(),
+                LocalDateTime.now(),
+                message.getAuthor()
+        );
+    }
+
     private SocketMessage playerMustMakeBet(SocketMessage message, Room room) {
         List<Player> playersList = room.getPlayersMap().values().stream().toList();
         for (Player player : playersList) {
             if (!player.isCheck() && !player.isFold()) {
                 if (player.getCurrentStake() < message.getContent().getMoneyValue()) {
-                    return new SocketMessage(
-                            message.getMessageType(),
-                            new MessageContent(
-                                    message.getContent().getRoomCode(),
-                                    player.getLogin(),
-                                    message.getContent().getMoneyValue()
-                            ),
-                            message.getReceiver(),
-                            LocalDateTime.now(),
-                            message.getAuthor()
-                    );
+                    if (player.isMustMakeBet()) {
+                        player.setMustMakeBet(false);
+                        return new SocketMessage(
+                                message.getMessageType(),
+                                new MessageContent(
+                                        message.getContent().getRoomCode(),
+                                        player.getLogin(),
+                                        message.getContent().getMoneyValue()
+                                ),
+                                message.getReceiver(),
+                                LocalDateTime.now(),
+                                message.getAuthor()
+                        );
+                    }
+                    else {
+                        return new SocketMessage(
+                                MessageType.OK,
+                                new MessageContent(
+                                        message.getContent().getRoomCode()
+                                ),
+                                message.getReceiver(),
+                                LocalDateTime.now(),
+                                message.getAuthor()
+                        );
+                    }
                 }
             }
         }
@@ -171,7 +199,6 @@ public class MessageHandler {
         userStatisticDao.saveUserStatistic(newUserStatistic);
     }
 
-
     private SocketMessage nextStepOfRound(SocketMessage incomingMessage, Room room) {
         List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
         for (Player player : roomPlayersList) {
@@ -220,6 +247,7 @@ public class MessageHandler {
         room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).increaseStake(
                 incomingMessage.getContent().getMoneyValue()
         );
+        room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).setMustMakeBet(true);
         return new SocketMessage(
                 incomingMessage.getMessageType(),
                 new MessageContent(
@@ -236,58 +264,87 @@ public class MessageHandler {
     }
 
     private SocketMessage whoIsBigBlind(SocketMessage incomingMessage, Room room) {
-        List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
-        roomPlayersList.get(0).setBigBlind(true);
         SocketMessage outcomingMessage = null;
-        for (int i = 0; i < roomPlayersList.size(); i++) {
-            if (!roomPlayersList.get(i).isBigBlind()) {
-                roomPlayersList.get(i).setBigBlind(true);
-                if (i == 0) {
-                    roomPlayersList.get(roomPlayersList.size() - 1).setBigBlind(false);
+        if (!room.isBigBlindSet()) {
+            List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
+            roomPlayersList.get(0).setBigBlind(true);
+            for (int i = 0; i < roomPlayersList.size(); i++) {
+                if (!roomPlayersList.get(i).isBigBlind()) {
+                    roomPlayersList.get(i).setBigBlind(true);
+                    room.setBigBlindPlayer(roomPlayersList.get(i));
+                    if (i == 0) {
+                        roomPlayersList.get(roomPlayersList.size() - 1).setBigBlind(false);
+                    } else {
+                        roomPlayersList.get(i - 1).setBigBlind(false);
+                    }
+                    room.setBigBlindSet(true);
+                    outcomingMessage = new SocketMessage(
+                            incomingMessage.getMessageType(),
+                            new MessageContent(
+                                    incomingMessage.getContent().getRoomCode(),
+                                    roomPlayersList.get(i).getLogin()
+                            ),
+                            incomingMessage.getReceiver(),
+                            LocalDateTime.now(),
+                            incomingMessage.getAuthor()
+                    );
+                    break;
                 }
-                else {
-                    roomPlayersList.get(i - 1).setBigBlind(false);
-                }
-                outcomingMessage = new SocketMessage(
-                        incomingMessage.getMessageType(),
-                        new MessageContent(
-                                incomingMessage.getContent().getRoomCode(),
-                                roomPlayersList.get(i).getLogin()
-                        ),
-                        incomingMessage.getReceiver(),
-                        LocalDateTime.now(),
-                        incomingMessage.getAuthor()
-                );
-                break;
             }
+        }
+        else {
+            outcomingMessage = new SocketMessage(
+                    MessageType.OK,
+                    new MessageContent(
+                            incomingMessage.getContent().getRoomCode(),
+                            room.getBigBlindPlayer().getLogin()
+                    ),
+                    incomingMessage.getReceiver(),
+                    LocalDateTime.now(),
+                    incomingMessage.getAuthor()
+            );
         }
         return outcomingMessage;
     }
 
     private SocketMessage whoIsSmallBlind(SocketMessage incomingMessage, Room room) {
-        List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
         SocketMessage outcomingMessage = null;
-        for (int i = 0; i < roomPlayersList.size(); i++) {
-            if (!roomPlayersList.get(i).isSmallBlind()) {
-                roomPlayersList.get(i).setSmallBlind(true);
-                if (i == 0) {
-                    roomPlayersList.get(roomPlayersList.size() - 1).setSmallBlind(false);
+        if (!room.isSmallBlindSet()) {
+            List<Player> roomPlayersList = room.getPlayersMap().values().stream().toList();
+            for (int i = 0; i < roomPlayersList.size(); i++) {
+                if (!roomPlayersList.get(i).isSmallBlind()) {
+                    roomPlayersList.get(i).setSmallBlind(true);
+                    room.setSmallBlindPlayer(roomPlayersList.get(i));
+                    if (i == 0) {
+                        roomPlayersList.get(roomPlayersList.size() - 1).setSmallBlind(false);
+                    } else {
+                        roomPlayersList.get(i - 1).setSmallBlind(false);
+                    }
+                    room.setSmallBlindSet(true);
+                    outcomingMessage = new SocketMessage(
+                            incomingMessage.getMessageType(),
+                            new MessageContent(
+                                    incomingMessage.getContent().getRoomCode(),
+                                    roomPlayersList.get(i).getLogin()
+                            ),
+                            incomingMessage.getReceiver(),
+                            LocalDateTime.now(),
+                            incomingMessage.getAuthor()
+                    );
+                    break;
                 }
-                else {
-                    roomPlayersList.get(i - 1).setSmallBlind(false);
-                }
-                outcomingMessage = new SocketMessage(
-                        incomingMessage.getMessageType(),
-                        new MessageContent(
-                                incomingMessage.getContent().getRoomCode(),
-                                roomPlayersList.get(i).getLogin()
-                        ),
-                        incomingMessage.getReceiver(),
-                        LocalDateTime.now(),
-                        incomingMessage.getAuthor()
-                );
-                break;
             }
+        }
+        else {
+            outcomingMessage = new SocketMessage(
+                    MessageType.OK,
+                    new MessageContent(
+                            incomingMessage.getContent().getRoomCode()
+                    ),
+                    incomingMessage.getReceiver(),
+                    LocalDateTime.now(),
+                    incomingMessage.getAuthor()
+            );
         }
         return outcomingMessage;
     }
@@ -396,7 +453,7 @@ public class MessageHandler {
 
 
     private SocketMessage playerRoomExit(SocketMessage message, Room room) {
-        room.getPlayersMap().remove(message.getAuthor());
+        room.removePlayerFromRoom(message.getAuthor());
         return new SocketMessage(
                 MessageType.PLAYER_ROOM_EXIT,
                 new MessageContent(message.getContent().getRoomCode(), message.getContent().getUserLogin()),

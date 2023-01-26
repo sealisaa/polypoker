@@ -172,4 +172,17 @@ public class MessageContent {
     public void setRoomPlayersList(List<Player> roomPlayersList) {
         this.roomPlayersList = roomPlayersList;
     }
+
+    @Override
+    public String toString() {
+        return "MessageContent{" +
+                "roomCode=" + roomCode +
+                ", userLogin='" + userLogin + '\'' +
+                ", userName='" + userName + '\'' +
+                ", moneyValue=" + moneyValue +
+                ", cardSuit=" + cardSuit +
+                ", cardNumber=" + cardNumber +
+                ", roomPlayersList=" + roomPlayersList +
+                '}';
+    }
 }

@@ -9,6 +9,14 @@ public class Room {
     private int roomCode;
     private int minBlind;
     private int minRaise;
+    private Map<String, Player> playersMap;
+    private GameManager gameManager;
+
+    private boolean isSmallBlindSet;
+    private boolean isBigBlindSet;
+
+    private Player smallBlindPlayer;
+    private Player bigBlindPlayer;
 
     public int getRoomCode() {
         return roomCode;
@@ -46,21 +54,65 @@ public class Room {
         return gameManager;
     }
 
+    public boolean isSmallBlindSet() {
+        return isSmallBlindSet;
+    }
+
+    public void setSmallBlindSet(boolean smallBlindSet) {
+        isSmallBlindSet = smallBlindSet;
+    }
+
+    public boolean isBigBlindSet() {
+        return isBigBlindSet;
+    }
+
+    public void setBigBlindSet(boolean bigBlindSet) {
+        isBigBlindSet = bigBlindSet;
+    }
+
     public void setGameManager(GameManager gameManager) {
         this.gameManager = gameManager;
     }
 
-    private Map<String, Player> playersMap;
+    public Player getSmallBlindPlayer() {
+        return smallBlindPlayer;
+    }
 
-    private GameManager gameManager;
+    public void setSmallBlindPlayer(Player smallBlindPlayer) {
+        this.smallBlindPlayer = smallBlindPlayer;
+    }
+
+    public Player getBigBlindPlayer() {
+        return bigBlindPlayer;
+    }
+
+    public void setBigBlindPlayer(Player bigBlindPlayer) {
+        this.bigBlindPlayer = bigBlindPlayer;
+    }
+
+    public void removePlayerFromRoom(String playerLogin) {
+        playersMap.remove(playerLogin);
+        if (playersMap.size() == 0) {
+            System.out.println("--------------- RESTART ROOM ---------------");
+            initRoom();
+        }
+    }
+
+    public void initRoom() {
+        playersMap = new HashMap<>();
+        gameManager = new GameManager(playersMap);
+        isSmallBlindSet = false;
+        isBigBlindSet = false;
+        smallBlindPlayer = null;
+        bigBlindPlayer = null;
+    }
 
     public Room(int roomCode, int minBlind, int minRaise) {
         this.roomCode = roomCode;
         this.minBlind = minBlind;
         this.minRaise = minRaise;
 
-        playersMap = new HashMap<>();
-        gameManager = new GameManager(playersMap);
+        initRoom();
     }
 
 }

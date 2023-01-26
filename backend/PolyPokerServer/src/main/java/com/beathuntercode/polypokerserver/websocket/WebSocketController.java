@@ -31,7 +31,10 @@ public class WebSocketController {
     @MessageMapping("/socket")
     @SendTo("/room/user")
     public SocketMessage sendMessage(@Payload SocketMessage message) {
-        return messageHandler.handleMessage(message, userDao, userStatisticDao);
+        System.out.println("[RECEIVE MESSAGE] -> " + message.toString());
+        SocketMessage messageToSend = messageHandler.handleMessage(message, userDao, userStatisticDao);
+        System.out.println("[SEND MESSAGE] -> " + messageToSend.toString());
+        return messageToSend;
     }
 
 }

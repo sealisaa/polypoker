@@ -17,6 +17,7 @@ public class Player {
     private boolean isSmallBlind;
     private boolean isBigBlind;
 
+    private boolean mustMakeBet;
 
     public String getLogin() {
         return login;
@@ -114,6 +115,14 @@ public class Player {
         isBigBlind = bigBlind;
     }
 
+    public boolean isMustMakeBet() {
+        return mustMakeBet;
+    }
+
+    public void setMustMakeBet(boolean mustMakeBet) {
+        this.mustMakeBet = mustMakeBet;
+    }
+
     public Player(String login, String name, int currentStake, int cash) {
         this.login = login;
         this.name = name;
@@ -124,6 +133,7 @@ public class Player {
         isFold = false;
         isSmallBlind = false;
         isBigBlind = false;
+        mustMakeBet = true;
     }
 
 }

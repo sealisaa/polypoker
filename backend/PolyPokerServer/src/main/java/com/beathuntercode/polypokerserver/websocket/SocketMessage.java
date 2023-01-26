@@ -67,4 +67,15 @@ public class SocketMessage {
     public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
+
+    @Override
+    public String toString() {
+        return "SocketMessage{" +
+                "messageType=" + messageType +
+                ", content=" + content +
+                ", author='" + author + '\'' +
+                ", dateTime=" + dateTime +
+                ", receiver='" + receiver + '\'' +
+                '}';
+    }
 }
