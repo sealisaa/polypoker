@@ -763,10 +763,9 @@ input:hover {
 
 .game__user-new-stake {
     border-radius: 10px;
-    padding: 10px;
+    padding: 10px 15px;
     white-space: nowrap;
     color: #F1B779;
-    border: solid 2px #F1B779;
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
     font-weight: 700;
@@ -774,10 +773,11 @@ input:hover {
 
 .game__user-current-stake {
     border-radius: 10px;
-    padding: 10px;
+    padding: 10px 15px;
     white-space: nowrap;
     /*background-color: #212544;*/
     color: #F1B779;
+    border: solid 2px #F1B779;
     font-family: 'Roboto', sans-serif;
     font-size: 16px;
     font-weight: 700;
@@ -843,7 +843,7 @@ input:hover {
     align-items: center;
 }
 
-.game__fold, .game__call, .game__raise {
+.game__fold, .game__call, .game__bet {
     border: none;
     width: 125px;
     height: 70px;
@@ -893,7 +893,7 @@ input:hover {
     margin-right: 25px;
 }
 
-.game__fold:hover, .game__call:hover, .game__raise:hover {
+.game__fold:hover, .game__call:hover {
     background-color: #F1B779;
     color: #212544;
 }
@@ -1020,7 +1020,6 @@ input:hover {
     height: 100%;
     box-sizing: border-box;
     transition: all 0.5s ease-in;
-    padding: 10px;
     backface-visibility: hidden;
 }
 
@@ -1242,4 +1241,21 @@ p {
 
 .game__modal-dialog h3 {
     color: #212544;
+}
+
+.game__bet-active {
+    border: none;
+    width: 125px;
+    height: 70px;
+    background-color: #F1B779;
+    border-radius: 20px;
+    margin-right: 25px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #212544;
+}
+
+.game__bet-active:hover {
+    cursor: pointer;
 }

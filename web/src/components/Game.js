@@ -59,6 +59,8 @@ class GameContent extends React.Component {
         this.nextStepOfRound = this.nextStepOfRound.bind(this);
         this.preflop = this.preflop.bind(this);
         this.flop = this.flop.bind(this);
+        this.tern = this.tern.bind(this);
+        this.river = this.river.bind(this);
         this.drawCard = this.drawCard.bind(this);
         this.handleTabClose = this.handleTabClose.bind(this);
         this.addNewPlayer = this.addNewPlayer.bind(this);
@@ -66,6 +68,7 @@ class GameContent extends React.Component {
         this.makeBet = this.makeBet.bind(this);
         this.submitBet = this.submitBet.bind(this);
         this.state = {
+            mustMakeBet: false,
             card1: null,
             card2: null,
             card3: null,
@@ -156,11 +159,10 @@ class GameContent extends React.Component {
             this.nextStepOfRound(messageJSON.content.gameState, messageJSON.content.moneyValue);
         }
         if (messageJSON.messageType === 'DRAW_CARD') {
-            this.drawCard(messageJSON.content.userLogin, messageJSON.content.cardSuit, messageJSON.content.cardNumber, messageJSON.receiver);
+            this.drawCard(messageJSON.content.userLogin, messageJSON.content.cardsList, messageJSON.receiver);
         }
         if (messageJSON.messageType === 'PLAYER_MUST_MAKE_BET' && messageJSON.content.userLogin === this.state.activePlayerLogin) {
-            console.log("player must make bet");
-            this.makeBet();
+            this.makeBet(messageJSON.content.moneyValue);
         }
     }
 
@@ -291,24 +293,20 @@ class GameContent extends React.Component {
 
     setSmallBlind() {
         this.state.activePlayer.smallBlind = true;
-        this.setState({modalData: 1, modalText: "Поставьте малый блайнд"});
-        this.openModal();
+        this.setState({mustMakeBet: true, modalData: 1, modalText: "Поставьте малый блайнд"});
     }
 
     flipCards() {
         let card1 = document.getElementById("game__card1");
         let card2 = document.getElementById("game__card2");
         let card3 = document.getElementById("game__card3");
-        card1.classList.toggle('is-flipped');
-        card2.classList.toggle('is-flipped');
-        card3.classList.toggle('is-flipped');
+        card1.classList.add('is-flipped');
+        card2.classList.add('is-flipped');
+        card3.classList.add('is-flipped');
     }
 
-    makeBet() {
-        console.log("make bet");
-        let min = this.state.maxBet - this.state.activePlayer.currentStake;
-        this.setState({modalData: 3, modalText: "Сделайте ставку (минимум: " + min + ")"});
-        this.openModal();
+    makeBet(moneyValue) {
+        this.setState({mustMakeBet: true, modalData: 3, modalText: "Сделайте ставку (минимум: " + moneyValue + ")"});
     }
 
     submitBet(bet) {
@@ -326,7 +324,7 @@ class GameContent extends React.Component {
             datetime: currentDate,
             receiver: "receiver"
         }
-        this.setState({isModal: false});
+        this.setState({mustMakeBet: false, isModal: false});
         sendMessage(message);
     }
 
@@ -363,7 +361,7 @@ class GameContent extends React.Component {
             datetime: currentDate,
             receiver: "receiver"
         }
-        this.setState({isModal: false});
+        this.setState({mustMakeBet: false, isModal: false});
         sendMessage(message);
         this.setState({lastMessage: "PLAYER_MAKE_BET"});
         this.getBigBlind();
@@ -395,8 +393,7 @@ class GameContent extends React.Component {
 
     setBigBlind() {
         this.state.activePlayer.bigBlind = true;
-        this.setState({modalData: 2, modalText: "Поставьте большой блайнд"});
-        this.openModal();
+        this.setState({mustMakeBet: true, modalData: 2, modalText: "Поставьте большой блайнд"});
     }
 
     submitBigBlind(bet) {
@@ -417,7 +414,7 @@ class GameContent extends React.Component {
             datetime: currentDate,
             receiver: "receiver"
         }
-        this.setState({isModal: false});
+        this.setState({mustMakeBet: false, isModal: false});
         sendMessage(message);
         this.setState({lastMessage: "PLAYER_MAKE_BET"});
         this.isNextStepOfRound();
@@ -445,12 +442,20 @@ class GameContent extends React.Component {
     nextStepOfRound(gameState, moneyValue) {
         switch(gameState) {
             case "PREFLOP":
-                this.setState({gameState: "PREFLOP"});
+                this.setState({gameState: "PREFLOP", bank: moneyValue});
                 this.preflop();
                 break;
             case "FLOP":
                 this.setState({gameState: "FLOP", bank: moneyValue});
                 this.flop();
+                break;
+            case "TERN":
+                this.setState({gameState: "TERN", bank: moneyValue});
+                this.tern();
+                break;
+            case "RIVER":
+                this.setState({gameState: "RIVER", bank: moneyValue});
+                this.river();
                 break;
         }
     }
@@ -472,6 +477,13 @@ class GameContent extends React.Component {
     }
 
     flop() {
+        this.state.maxBet = 0;
+        this.state.activePlayer.currentStake = 0;
+        this.state.activePlayer.newStake = 0;
+        for (let i = 0; i < this.state.players.length; i++) {
+            this.state.players[i].currentStake = 0;
+            this.state.players[i].newStake = 0;
+        }
         let currentDate = getCurrentDate();
         let message = {
             messageType: "DRAW_CARD",
@@ -487,43 +499,70 @@ class GameContent extends React.Component {
         sendMessage(message);
     }
 
-    drawCard(userLogin, cardSuit, cardNumber, receiver) {
+    tern() {
+        this.state.maxBet = 0;
+        this.state.activePlayer.currentStake = 0;
+        this.state.activePlayer.newStake = 0;
+        for (let i = 0; i < this.state.players.length; i++) {
+            this.state.players[i].currentStake = 0;
+            this.state.players[i].newStake = 0;
+        }
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "DRAW_CARD",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                    userLogin: null
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "receiver"
+        }
+        sendMessage(message);
+    }
+
+    river() {
+        this.state.maxBet = 0;
+        this.state.activePlayer.currentStake = 0;
+        this.state.activePlayer.newStake = 0;
+        for (let i = 0; i < this.state.players.length; i++) {
+            this.state.players[i].currentStake = 0;
+            this.state.players[i].newStake = 0;
+        }
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "DRAW_CARD",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                    userLogin: null
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "receiver"
+        }
+        sendMessage(message);
+    }
+
+    drawCard(userLogin, cardsList, receiver) {
         if (userLogin) {
-            console.log("карта пользователя");
+            let card1 = cardsList[0];
+            let card2 = cardsList[1];
             if (userLogin === this.state.activePlayerLogin) {
-                if (this.state.activePlayer.card1 === null) {
-                    this.state.activePlayer.card1 = {cardSuit, cardNumber};
-                    let currentDate = getCurrentDate();
-                    let message = {
-                        messageType: "DRAW_CARD",
-                        content:
-                            {
-                                roomCode: this.state.roomCode,
-                                userLogin: this.state.activePlayerLogin
-                            },
-                        author: this.state.activePlayerLogin,
-                        datetime: currentDate,
-                        receiver: "receiver"
-                    }
-                    sendMessage(message);
-                } else if (this.state.activePlayer.card2 === null) {
-                    this.state.activePlayer.card2 = {cardSuit, cardNumber};
-                }
+                this.state.activePlayer.card1 = { cardSuit: card1.cardSuit, cardNumber: card1.cardNumber};
+                this.state.activePlayer.card2 = { cardSuit: card2.cardSuit, cardNumber: card2.cardNumber};
                 this.setState({change: true});
                 return;
             }
             for (let i = 0; i < this.state.players.length; i++) {
                 if (this.state.players[i]) {
                     if (this.state.players[i].login === userLogin) {
-                        if (this.state.players[i].card1 === null) {
-                            this.state.players[i].card1 = {cardSuit, cardNumber};
-                            this.setState({change: true});
-                        } else if (this.state.players[i].card2 === null) {
-                            this.state.players[i].card2 = {cardSuit, cardNumber};
-                            this.setState({change: true});
-                            if (i === this.state.players.length - 1) {
-                                this.playerMustMakeBet();
-                            }
+                        this.state.players[i].card1 = { cardSuit: card1.cardSuit, cardNumber: card1.cardNumber};
+                        this.state.players[i].card2 = { cardSuit: card2.cardSuit, cardNumber: card2.cardNumber};
+                        this.setState({change: true});
+                        if (i === this.state.players.length - 1) {
+                            this.playerMustMakeBet();
                         }
                         return;
                     }
@@ -533,41 +572,21 @@ class GameContent extends React.Component {
             if (receiver !== this.state.activePlayerLogin) {
                 return;
             }
-            if (!this.state.card1) {
-                this.setState({card1: {cardSuit, cardNumber}});
-                let currentDate = getCurrentDate();
-                let message = {
-                    messageType: "DRAW_CARD",
-                    content:
-                        {
-                            roomCode: this.state.roomCode,
-                            userLogin: null
-                        },
-                    author: this.state.activePlayerLogin,
-                    datetime: currentDate,
-                    receiver: "receiver"
-                }
-                sendMessage(message);
-            } else if (!this.state.card2) {
-                this.setState({card2: {cardSuit, cardNumber}});
-                let currentDate = getCurrentDate();
-                let message = {
-                    messageType: "DRAW_CARD",
-                    content:
-                        {
-                            roomCode: this.state.roomCode,
-                            userLogin: null
-                        },
-                    author: this.state.activePlayerLogin,
-                    datetime: currentDate,
-                    receiver: "receiver"
-                }
-                sendMessage(message);
-            } else if (!this.state.card3) {
-                this.setState({card3: {cardSuit, cardNumber}});
+            let card1 = cardsList[0];
+            let card2 = cardsList[1];
+            let card3 = cardsList[2];
+            this.state.card1 = { cardSuit: card1.cardSuit, cardNumber: card1.cardNumber};
+            this.state.card2 = { cardSuit: card2.cardSuit, cardNumber: card2.cardNumber};
+            this.state.card3 = { cardSuit: card3.cardSuit, cardNumber: card3.cardNumber};
+            this.flipCards();
+            if (cardsList[3]) {
+                this.state.card4 = { cardSuit: cardsList[3].cardSuit, cardNumber: cardsList[3].cardNumber};
             }
-            console.log(this.state);
+            if (cardsList[4]) {
+                this.state.card5 = { cardSuit: cardsList[4].cardSuit, cardNumber: cardsList[4].cardNumber};
+            }
             this.setState({change: true});
+            this.playerMustMakeBet();
         }
     }
 
@@ -608,8 +627,7 @@ class GameContent extends React.Component {
             messageType: "PLAYER_MUST_MAKE_BET",
             content:
                 {
-                    roomCode: this.state.roomCode,
-                    moneyValue: this.state.maxBet
+                    roomCode: this.state.roomCode
                 },
             author: this.state.activePlayerLogin,
             datetime: currentDate,
@@ -835,8 +853,12 @@ class GameContent extends React.Component {
                             </div> : null}
 
                             <div className="game__cards">
+
                                 {this.state.card1 ?
-                                    <img className="game__card1" src={require("../img/cards/" + this.state.card1.cardSuit + "_" + this.state.card1.cardNumber + ".png")} />
+                                    <div id="game__card1" className="game__card1 flip-card card">
+                                        <img className="game__card-back back card__face" src={require("../img/cards/" + this.state.card1.cardSuit + "_" + this.state.card1.cardNumber + ".png")}></img>
+                                        <img className="game__card1-front front card__face" src={require("../img/back.png")}></img>
+                                    </div>
                                     : <div className="game__card1"></div>
                                 }
                                 {this.state.card2 ?
@@ -847,15 +869,24 @@ class GameContent extends React.Component {
                                     <img className="game__card3" src={require("../img/cards/" + this.state.card3.cardSuit + "_" + this.state.card3.cardNumber + ".png")} />
                                     : <div className="game__card3"></div>
                                 }
-                                <div className="game__card4"></div>
-                                <div className="game__card5"></div>
+                                {this.state.card4 ?
+                                    <img className="game__card4" src={require("../img/cards/" + this.state.card4.cardSuit + "_" + this.state.card4.cardNumber + ".png")} />
+                                    : <div className="game__card4"></div>
+                                }
+                                {this.state.card5 ?
+                                    <img className="game__card5" src={require("../img/cards/" + this.state.card5.cardSuit + "_" + this.state.card5.cardNumber + ".png")} />
+                                    : <div className="game__card5"></div>
+                                }
                             </div>
                         </div>
                     </div>
                     <div className="game__actions">
                         <button className="game__fold">FOLD</button>
+                        {this.state.mustMakeBet ?
+                            <button className="game__bet-active" onClick={this.openModal}>BET</button>
+                            : <button className="game__bet">BET</button>
+                        }
                         <button className="game__call">CALL</button>
-                        <button className="game__raise">RAISE</button>
                         <div className="game__right-nav">
                             { this.state.gameState === "" ?
                                 <button id="readyBtn" className="game__ready" onClick={this.getReady}>ГОТОВ</button>
