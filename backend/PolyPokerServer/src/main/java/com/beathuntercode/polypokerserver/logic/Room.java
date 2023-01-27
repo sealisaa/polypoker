@@ -92,6 +92,7 @@ public class Room {
 
     public void removePlayerFromRoom(String playerLogin) {
         playersMap.remove(playerLogin);
+        gameManager.getTimesPlayerAskedForFaceUps().remove(playerLogin);
         if (playersMap.size() == 0) {
             System.out.println("--------------- RESTART ROOM ---------------");
             initRoom();

@@ -1,6 +1,6 @@
 package com.beathuntercode.polypokerserver.logic;
 
-public enum CardSuit {
+public enum SUIT {
     HEARTS(1),
     DIAMONDS(2),
     CLUBS(3),
@@ -8,7 +8,7 @@ public enum CardSuit {
 
     public final int value;
 
-    CardSuit(int value) {
+    SUIT(int value) {
         this.value = value;
     }
 }

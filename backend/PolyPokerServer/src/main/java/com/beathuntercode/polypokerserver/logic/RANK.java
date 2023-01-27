@@ -1,6 +1,6 @@
 package com.beathuntercode.polypokerserver.logic;
 
-public enum CardNumber {
+public enum RANK {
 
     TWO(2),
     THREE(3),
@@ -18,7 +18,11 @@ public enum CardNumber {
 
     public final int value;
 
-    CardNumber(int value) {
+    RANK(int value) {
         this.value = value;
+    }
+
+    public int getValue() {
+        return value;
     }
 }

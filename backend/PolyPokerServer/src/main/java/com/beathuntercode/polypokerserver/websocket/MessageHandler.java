@@ -1,10 +1,12 @@
 package com.beathuntercode.polypokerserver.websocket;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.beathuntercode.polypokerserver.database.model.user.User;
@@ -105,7 +107,9 @@ public class MessageHandler {
         return new SocketMessage(
                 MessageType.NEXT_STEP_OF_ROUND,
                 new MessageContent(
-                        message.getContent().getRoomCode()
+                        message.getContent().getRoomCode(),
+                        room.getGameManager().getGameState(),
+                        room.getGameManager().getBank()
                 ),
                 message.getReceiver(),
                 LocalDateTime.now(),
@@ -115,47 +119,58 @@ public class MessageHandler {
 
     private SocketMessage playerMustMakeBet(SocketMessage message, Room room) {
         List<Player> playersList = room.getPlayersMap().values().stream().toList();
+        List<Integer> playersStakesList = new ArrayList<>();
         for (Player player : playersList) {
-            if (!player.isCheck() && !player.isFold()) {
-                if (player.getCurrentStake() < message.getContent().getMoneyValue()) {
-                    if (player.isMustMakeBet()) {
-                        player.setMustMakeBet(false);
-                        return new SocketMessage(
-                                message.getMessageType(),
-                                new MessageContent(
-                                        message.getContent().getRoomCode(),
-                                        player.getLogin(),
-                                        message.getContent().getMoneyValue()
-                                ),
-                                message.getReceiver(),
-                                LocalDateTime.now(),
-                                message.getAuthor()
-                        );
-                    }
-                    else {
-                        return new SocketMessage(
-                                MessageType.OK,
-                                new MessageContent(
-                                        message.getContent().getRoomCode()
-                                ),
-                                message.getReceiver(),
-                                LocalDateTime.now(),
-                                message.getAuthor()
-                        );
+            playersStakesList.add(player.getCurrentStake());
+        }
+        int maxCurrentStake = playersStakesList.stream().max(Comparator.naturalOrder()).get();
+        if (maxCurrentStake == 0) { // если нужна ставка в начале этапа игры
+            return new SocketMessage(
+                    message.getMessageType(),
+                    new MessageContent(
+                            message.getContent().getRoomCode(),
+                            playersList.get(0).getLogin(),
+                            maxCurrentStake - playersList.get(0).getCurrentStake()
+                    ),
+                    message.getReceiver(),
+                    LocalDateTime.now(),
+                    message.getAuthor()
+            );
+        }
+        else { // если нужна ставка в процессе этапа игры
+            for (Player player : playersList) {
+                if (!player.isCheck() && !player.isFold()) {
+                    if (player.getCurrentStake() < maxCurrentStake) {
+                        if (player.isMustMakeBet()) {
+                            player.setMustMakeBet(false);
+                            return new SocketMessage(
+                                    message.getMessageType(),
+                                    new MessageContent(
+                                            message.getContent().getRoomCode(),
+                                            player.getLogin(),
+                                            maxCurrentStake - player.getCurrentStake()
+                                    ),
+                                    message.getReceiver(),
+                                    LocalDateTime.now(),
+                                    message.getAuthor()
+                            );
+                        } else {
+                            return new SocketMessage(
+                                    MessageType.OK,
+                                    new MessageContent(
+                                            message.getContent().getRoomCode()
+                                    ),
+                                    message.getReceiver(),
+                                    LocalDateTime.now(),
+                                    message.getAuthor()
+                            );
+                        }
                     }
                 }
             }
         }
-        return new SocketMessage(
-                MessageType.NEXT_STEP_OF_ROUND,
-                new MessageContent(
-                        message.getContent().getRoomCode(),
-                        room.getGameManager().getBank()
-                ),
-                message.getReceiver(),
-                LocalDateTime.now(),
-                message.getAuthor()
-        );
+
+        return nextStepOfRound(message, room);
     }
 
     private SocketMessage playerMakeFold(SocketMessage message, Room room) {
@@ -210,9 +225,11 @@ public class MessageHandler {
         switch (room.getGameManager().getGameState()) {
             case FLOP, TERN, RIVER, SHOWDOWN -> {
                 return new SocketMessage(
-                        incomingMessage.getMessageType(),
+                        MessageType.NEXT_STEP_OF_ROUND,
                         new MessageContent(
-                                incomingMessage.getContent().getRoomCode()
+                                incomingMessage.getContent().getRoomCode(),
+                                room.getGameManager().getGameState(),
+                                room.getGameManager().getBank()
                         ),
                         incomingMessage.getReceiver(),
                         LocalDateTime.now(),
@@ -226,17 +243,13 @@ public class MessageHandler {
     }
 
     private SocketMessage drawOpenCard(SocketMessage message, Room room) {
-        Card nextOpenCard = room.getGameManager().getFaceUp().get(
-                room.getGameManager().getTimesPlayerAskedForFaceUps(message.getAuthor())
-        );
         room.getGameManager().incrementTimesPlayerAskedForFaceUps(message.getAuthor());
         return new SocketMessage(
                 MessageType.DRAW_CARD,
                 new MessageContent(
                         message.getContent().getRoomCode(),
                         message.getContent().getUserLogin(),
-                        nextOpenCard.getCardSuit(),
-                        nextOpenCard.getCardNumber()
+                        room.getGameManager().getFaceUp()
                 ),
                 message.getReceiver(),
                 LocalDateTime.now(),
@@ -377,6 +390,7 @@ public class MessageHandler {
         );
         if (Utilities.roomsController.roomsMap.containsKey(message.getContent().getRoomCode())) {
             Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode()).getPlayersMap().put(user.getLogin(), player);
+            Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode()).getGameManager().getTimesPlayerAskedForFaceUps().put(user.getLogin(), 0);
             System.out.println(Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode()).getPlayersMap());
             return new SocketMessage(
                     MessageType.PLAYER_ROOM_JOIN,
@@ -424,32 +438,30 @@ public class MessageHandler {
     }
 
     private SocketMessage drawCard(SocketMessage message, Room room) {
-        Card randomCard = room.getGameManager().dealRandomCard();
+        Card randomCard1 = room.getGameManager().dealRandomCard();
+        Card randomCard2 = room.getGameManager().dealRandomCard();
         if (message.getContent().getUserLogin() != null) {
+            if (    room.getPlayersMap().get(message.getContent().getUserLogin()).getCard1() == null ||
+                    room.getPlayersMap().get(message.getContent().getUserLogin()).getCard2() == null) {
+                room.getPlayersMap().get(message.getContent().getUserLogin()).setCard1(randomCard1);
+                room.getPlayersMap().get(message.getContent().getUserLogin()).setCard2(randomCard2);
+            }
             return new SocketMessage(
                     MessageType.DRAW_CARD,
                     new MessageContent(
                             message.getContent().getRoomCode(),
                             message.getContent().getUserLogin(),
-                            randomCard.getCardSuit(),
-                            randomCard.getCardNumber()
+                            new ArrayList<Card>(Arrays.asList(
+                                    room.getPlayersMap().get(message.getContent().getUserLogin()).getCard1(),
+                                    room.getPlayersMap().get(message.getContent().getUserLogin()).getCard2())
+                            )
                     ),
                     message.getReceiver(),
                     LocalDateTime.now(),
                     message.getAuthor()
             );
         } else {
-            return new SocketMessage(
-                    MessageType.DRAW_CARD,
-                    new MessageContent(
-                            message.getContent().getRoomCode(),
-                            randomCard.getCardSuit(),
-                            randomCard.getCardNumber()
-                    ),
-                    message.getReceiver(),
-                    LocalDateTime.now(),
-                    message.getAuthor()
-            );
+            return failMessage(message);
         }
     }
 

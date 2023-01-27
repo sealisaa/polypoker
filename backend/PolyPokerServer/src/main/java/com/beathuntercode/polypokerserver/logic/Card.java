@@ -2,29 +2,37 @@ package com.beathuntercode.polypokerserver.logic;
 
 import java.util.Objects;
 
-public class Card {
-    private CardSuit cardSuit;
-    private CardNumber cardNumber;
+public class Card implements Comparable {
+    private SUIT suit;
+    private RANK rank;
 
-    public CardSuit getCardSuit() {
-        return cardSuit;
+    public SUIT getSuit() {
+        return suit;
     }
 
-    public void setCardSuit(CardSuit cardSuit) {
-        this.cardSuit = cardSuit;
+    public void setSuit(SUIT SUIT) {
+        this.suit = SUIT;
     }
 
-    public CardNumber getCardNumber() {
-        return cardNumber;
+    public RANK getRank() {
+        return rank;
     }
 
-    public void setCardNumber(CardNumber cardNumber) {
-        this.cardNumber = cardNumber;
+    public void setRank(RANK RANK) {
+        this.rank = RANK;
     }
 
-    public Card(CardSuit cardSuit, CardNumber cardNumber) {
-        this.cardSuit = cardSuit;
-        this.cardNumber = cardNumber;
+    public Card(SUIT suit, RANK rank) {
+        this.suit = suit;
+        this.rank = rank;
+    }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "cardSuit=" + suit +
+                ", cardNumber=" + rank +
+                '}';
     }
 
     @Override
@@ -32,11 +40,23 @@ public class Card {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
-        return cardSuit == card.cardSuit && cardNumber == card.cardNumber;
+        return suit == card.suit && rank == card.rank;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cardSuit, cardNumber);
+        return Objects.hash(suit, rank);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if(this == o) return 0;
+        if(o == null || getClass() != o.getClass()) return 0;
+
+        Card card = (Card) o;
+
+        if(rank.getValue() > card.rank.getValue()) return -1;
+        if(rank.getValue() < card.rank.getValue()) return 1;
+        return 0;
     }
 }

@@ -1,10 +1,10 @@
 package com.beathuntercode.polypokerserver.websocket;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.beathuntercode.polypokerserver.logic.Card;
-import com.beathuntercode.polypokerserver.logic.CardNumber;
-import com.beathuntercode.polypokerserver.logic.CardSuit;
+import com.beathuntercode.polypokerserver.logic.GameState;
 import com.beathuntercode.polypokerserver.logic.Player;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -12,15 +12,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class MessageContent {
 
     private Integer roomCode;
+    private GameState gameState;
     private String userLogin;
     private String userName;
     private BetType betType;
     private int moneyValue;
-
-    private CardSuit cardSuit;
-    private CardNumber cardNumber;
-
     private List<Player> roomPlayersList;
+    private List<Card> cardsList;
 
     public MessageContent() {
     }
@@ -65,7 +63,6 @@ public class MessageContent {
      *      WHO_IS_SMALL_BLIND,
      *      WHO_IS_BIG_BLIND,
      *      ROUND_BEGIN,
-     *      IS_NEXT_STEP_OF_ROUND,
      *      NEXT_STEP_OF_ROUND,
      *      ROUND_END,
      *      OK,
@@ -77,6 +74,17 @@ public class MessageContent {
 
     /**
      * For MessageType.
+     *      IS_NEXT_STEP_OF_ROUND,
+     */
+    public MessageContent(Integer roomCode, GameState gameState, int moneyValue) {
+        this.roomCode = roomCode;
+        this.gameState = gameState;
+        this.moneyValue = moneyValue;
+    }
+
+    /**
+     * For MessageType.
+     *
      *      PLAYER_MAKE_RAISE,
      *      PAYMENT_TO_PLAYER
      */
@@ -118,11 +126,10 @@ public class MessageContent {
      *
      * Server uses this constructor to send Card to client
      */
-    public MessageContent(Integer roomCode, String userLogin, CardSuit cardSuit, CardNumber cardNumber) {
+    public MessageContent(Integer roomCode, String userLogin, List<Card> cardsList) {
         this.roomCode = roomCode;
         this.userLogin = userLogin;
-        this.cardSuit = cardSuit;
-        this.cardNumber = cardNumber;
+        this.cardsList = cardsList;
     }
 
     /**
@@ -131,12 +138,18 @@ public class MessageContent {
      *
      * Server uses this constructor to send Card to client for table in room
      */
-    public MessageContent(Integer roomCode, CardSuit cardSuit, CardNumber cardNumber) {
+    public MessageContent(Integer roomCode, ArrayList<Card> cardsList) {
         this.roomCode = roomCode;
-        this.cardSuit = cardSuit;
-        this.cardNumber = cardNumber;
+        this.cardsList = cardsList;
     }
 
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
 
     public Integer getRoomCode() {
         return roomCode;
@@ -162,28 +175,12 @@ public class MessageContent {
         this.moneyValue = moneyValue;
     }
 
-    public CardSuit getCardSuit() {
-        return cardSuit;
-    }
-
     public BetType getBetType() {
         return betType;
     }
 
     public void setBetType(BetType betType) {
         this.betType = betType;
-    }
-
-    public void setCardSuit(CardSuit cardSuit) {
-        this.cardSuit = cardSuit;
-    }
-
-    public CardNumber getCardNumber() {
-        return cardNumber;
-    }
-
-    public void setCardNumber(CardNumber cardNumber) {
-        this.cardNumber = cardNumber;
     }
 
     public String getUserName() {
@@ -202,16 +199,25 @@ public class MessageContent {
         this.roomPlayersList = roomPlayersList;
     }
 
+    public List<Card> getCardsList() {
+        return cardsList;
+    }
+
+    public void setCardsList(List<Card> cardsList) {
+        this.cardsList = cardsList;
+    }
+
     @Override
     public String toString() {
         return "MessageContent{" +
                 "roomCode=" + roomCode +
+                ", gameState=" + gameState +
                 ", userLogin='" + userLogin + '\'' +
                 ", userName='" + userName + '\'' +
+                ", betType=" + betType +
                 ", moneyValue=" + moneyValue +
-                ", cardSuit=" + cardSuit +
-                ", cardNumber=" + cardNumber +
                 ", roomPlayersList=" + roomPlayersList +
+                ", cardsList=" + cardsList +
                 '}';
     }
 }

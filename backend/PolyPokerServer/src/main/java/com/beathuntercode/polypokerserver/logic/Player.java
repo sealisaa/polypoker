@@ -11,6 +11,7 @@ public class Player {
     private int cash;
     private Card card1;
     private Card card2;
+    private HAND_RANK HANDRANK;
     private boolean isReady;
     private boolean isCheck;
     private boolean isFold;
@@ -75,6 +76,14 @@ public class Player {
         this.card2 = card2;
     }
 
+    public HAND_RANK getCardCombination() {
+        return HANDRANK;
+    }
+
+    public void setCardCombination(HAND_RANK HANDRANK) {
+        this.HANDRANK = HANDRANK;
+    }
+
     public boolean isCheck() {
         return isCheck;
     }
@@ -134,6 +143,15 @@ public class Player {
         isSmallBlind = false;
         isBigBlind = false;
         mustMakeBet = true;
+    }
+
+    public void defineCardCombination() {
+        if (card1.getRank() == card2.getRank()) {
+
+        }
+        else {
+            HANDRANK = HAND_RANK.HIGH_CARD;
+        }
     }
 
 }
