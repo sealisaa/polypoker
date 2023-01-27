@@ -5,9 +5,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.beathuntercode.polypokerserver.logic.Card;
-import com.beathuntercode.polypokerserver.logic.HAND_RANK;
-import com.beathuntercode.polypokerserver.logic.RANK;
-import com.beathuntercode.polypokerserver.logic.SUIT;
+import com.beathuntercode.polypokerserver.logic.HandRank;
+import com.beathuntercode.polypokerserver.logic.Rank;
+import com.beathuntercode.polypokerserver.logic.Suit;
 
 public class HandRanker {
     public static final int FULL_HAND = 5;
@@ -19,7 +19,7 @@ public class HandRanker {
     public static final int PAIR = 2;
     public static final int HIGH_CARD = 1;
 
-    public static final List<EnumSet<RANK>> STRAIGHTS = setPossibleStraights();
+    public static final List<EnumSet<Rank>> STRAIGHTS = setPossibleStraights();
     private static final HandRanker instance = new HandRanker();
 
     public static HandRanker getInstance() {
@@ -31,42 +31,46 @@ public class HandRanker {
 
     private HandRanker() {}
 
-    private static List<EnumSet<RANK>> setPossibleStraights() {
-        List<EnumSet<RANK>> straights =  EnumSet.range(RANK.TWO, RANK.TEN).stream()
-                .map(rank -> EnumSet.range(rank, RANK.values()[rank.ordinal() + STRAIGHT - 1]))
+    private static List<EnumSet<Rank>> setPossibleStraights() {
+        List<EnumSet<Rank>> straights =  EnumSet.range(Rank.TWO, Rank.TEN).stream()
+                .map(rank -> EnumSet.range(rank, Rank.values()[rank.ordinal() + STRAIGHT - 1]))
                 .collect(toList());
         Collections.reverse(straights);
-        straights.add(EnumSet.of(RANK.ACE, RANK.TWO, RANK.THREE, RANK.FOUR, RANK.FIVE));
+        straights.add(EnumSet.of(Rank.ACE, Rank.TWO, Rank.THREE, Rank.FOUR, Rank.FIVE));
         return Collections.unmodifiableList(straights);
     }
 
     public PokerHand getRank(List<Card> allCards) {
         if(allCards.size() != 7) throw new IllegalArgumentException("You have to pass 7 cards");
 
-        if(isStraightFlush(allCards) ||
+        if(     isStraightFlush(allCards) ||
                 isFourOfAKind(allCards) ||
                 isFullHouse(allCards) ||
                 isFlush(allCards, true) ||
                 isStraight(allCards) ||
                 isSet(allCards) ||
                 isTwoPair(allCards) ||
-                isPair(allCards) ||
-                isHighCard(allCards)) {}
+                isPair(allCards)) {
+        }
+        else {  // if isHighCard(allCards)
+            Collections.sort(allCards);
+            pokerHand = new PokerHand(HandRank.HIGH_CARD, new ArrayList<>(Arrays.asList(allCards.get(0))));
+        }
         return pokerHand;
     }
 
 
     private boolean isStraightFlush(List<Card> allCards) {
         if(isFlush(allCards, false) && isStraight(handCards)) {
-            pokerHand = new PokerHand(HAND_RANK.STRAIGHT_FLUSH, handCards);
+            pokerHand = new PokerHand(HandRank.STRAIGHT_FLUSH, handCards);
             return true;
         }
         return false;
     }
 
     private boolean isFlush(List<Card> allCards, boolean finalResult) {
-        Map<SUIT, Long> suitsMap = getSuitMap(allCards);
-        SUIT popularSuit = getMostPopularSuit(suitsMap);
+        Map<Suit, Long> suitsMap = getSuitMap(allCards);
+        Suit popularSuit = getMostPopularSuit(suitsMap);
 
         if(suitsMap.get(popularSuit) >= FLUSH) {
 
@@ -77,7 +81,7 @@ public class HandRanker {
                         .limit(FULL_HAND)
                         .collect(Collectors.toList());
 
-                pokerHand = new PokerHand(HAND_RANK.FLUSH, handCards);
+                pokerHand = new PokerHand(HandRank.FLUSH, handCards);
             } else {
                 handCards = allCards.stream()
                         .filter(c -> c.getSuit() == popularSuit)
@@ -89,17 +93,17 @@ public class HandRanker {
     }
 
     private boolean isStraight(List<Card> allCards) {
-        EnumSet<RANK> ranks = allCards.stream()
+        EnumSet<Rank> ranks = allCards.stream()
                 .map(Card::getRank)
-                .collect(toCollection(() -> EnumSet.noneOf(RANK.class)));
+                .collect(toCollection(() -> EnumSet.noneOf(Rank.class)));
 
-        for(Set<RANK> straight : STRAIGHTS) {
+        for(Set<Rank> straight : STRAIGHTS) {
             if(ranks.containsAll(straight))  {
                 handCards = allCards.stream()
                         .filter(c -> straight.contains(c.getRank()))
                         .collect(toList());
 
-                pokerHand = new PokerHand(HAND_RANK.STRAIGHT, handCards);
+                pokerHand = new PokerHand(HandRank.STRAIGHT, handCards);
                 return true;
             }
         }
@@ -111,7 +115,7 @@ public class HandRanker {
 
         if(handCards.size() == QUADS) {
             handCards.addAll(getMultipleHighestCards(allCards, FULL_HAND - QUADS));
-            pokerHand = new PokerHand(HAND_RANK.FOUR_OF_A_KIND, handCards);
+            pokerHand = new PokerHand(HandRank.FOUR_OF_A_KIND, handCards);
             return true;
         }
         return false;
@@ -122,7 +126,7 @@ public class HandRanker {
         handCards.addAll(getHighestCards(allCards, PAIR));
 
         if(handCards.size() == FULL_HOUSE) {
-            pokerHand = new PokerHand(HAND_RANK.FULL_HOUSE, handCards);
+            pokerHand = new PokerHand(HandRank.FULL_HOUSE, handCards);
             return true;
         }
         return false;
@@ -133,7 +137,7 @@ public class HandRanker {
 
         if(handCards.size() == SET) {
             handCards.addAll(getMultipleHighestCards(allCards, FULL_HAND - SET));
-            pokerHand = new PokerHand(HAND_RANK.THREE_OF_A_KIND, handCards);
+            pokerHand = new PokerHand(HandRank.THREE_OF_A_KIND, handCards);
             return true;
         }
         return false;
@@ -146,7 +150,7 @@ public class HandRanker {
 
         if(handCards.size() == PAIR + PAIR) {
             handCards.addAll(getMultipleHighestCards(allCards, FULL_HAND - PAIR - PAIR));
-            pokerHand = new PokerHand(HAND_RANK.TWO_PAIR, handCards);
+            pokerHand = new PokerHand(HandRank.TWO_PAIR, handCards);
             return true;
         }
         return false;
@@ -157,7 +161,7 @@ public class HandRanker {
 
         if(handCards.size() == PAIR) {
             handCards.addAll(getMultipleHighestCards(allCards, FULL_HAND - PAIR));
-            pokerHand = new PokerHand(HAND_RANK.PAIR, handCards);
+            pokerHand = new PokerHand(HandRank.PAIR, handCards);
             return true;
         }
         return false;
@@ -165,15 +169,15 @@ public class HandRanker {
 
     private boolean isHighCard(List<Card> allCards) {
         handCards = getHighestCards(allCards, FULL_HAND);
-        pokerHand = new PokerHand(HAND_RANK.HIGH_CARD, handCards);
+        pokerHand = new PokerHand(HandRank.HIGH_CARD, handCards);
         return true;
     }
 
     private List<Card> getHighestCards(List<Card> allCards, int count) {
-        EnumMap<RANK, Long> ranks = getRankMap(allCards);
+        EnumMap<Rank, Long> ranks = getRankMap(allCards);
 
         try {
-            RANK cardsRank = ranks.entrySet().stream()
+            Rank cardsRank = ranks.entrySet().stream()
                     .filter(entry -> entry.getValue() == count)
                     .reduce((previous, current) -> current)
                     .get().getKey(); //throws exception if there is not same rank cards with specified count
@@ -197,26 +201,26 @@ public class HandRanker {
         return highestCards;
     }
 
-    private SUIT getMostPopularSuit(Map<SUIT, Long> suits) {
+    private Suit getMostPopularSuit(Map<Suit, Long> suits) {
         return suits.entrySet().stream()
                 .max((lhs, rhs) -> lhs.getValue() > rhs.getValue() ? 1 : -1)
                 .get().getKey();
     }
 
-    private EnumMap<SUIT, Long> getSuitMap(List<Card> allCards) {
+    private EnumMap<Suit, Long> getSuitMap(List<Card> allCards) {
         return allCards.stream()
                 .collect(groupingBy(
                         Card::getSuit,
-                        () -> new EnumMap<>(SUIT.class),
+                        () -> new EnumMap<>(Suit.class),
                         counting()
                 ));
     }
 
-    private EnumMap<RANK, Long> getRankMap(List<Card> allCards) {
+    private EnumMap<Rank, Long> getRankMap(List<Card> allCards) {
         return allCards.stream()
                 .collect(groupingBy(
                         Card::getRank,
-                        () -> new EnumMap<>(RANK.class),
+                        () -> new EnumMap<>(Rank.class),
                         counting()
                 ));
     }

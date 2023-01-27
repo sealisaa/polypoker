@@ -3,26 +3,26 @@ package com.beathuntercode.polypokerserver.logic;
 import java.util.Objects;
 
 public class Card implements Comparable {
-    private SUIT suit;
-    private RANK rank;
+    private Suit suit;
+    private Rank rank;
 
-    public SUIT getSuit() {
+    public Suit getSuit() {
         return suit;
     }
 
-    public void setSuit(SUIT SUIT) {
+    public void setSuit(Suit SUIT) {
         this.suit = SUIT;
     }
 
-    public RANK getRank() {
+    public Rank getRank() {
         return rank;
     }
 
-    public void setRank(RANK RANK) {
+    public void setRank(Rank RANK) {
         this.rank = RANK;
     }
 
-    public Card(SUIT suit, RANK rank) {
+    public Card(Suit suit, Rank rank) {
         this.suit = suit;
         this.rank = rank;
     }
