@@ -65,6 +65,7 @@ class GameContent extends React.Component {
         this.makeBet = this.makeBet.bind(this);
         this.submitBet = this.submitBet.bind(this);
         this.state = {
+            bank: 0,
             maxBet: 0,
             lastMessage: "",
             gameState: "",
@@ -592,11 +593,11 @@ class GameContent extends React.Component {
                                 <div className="game__active-user-cards">
                                     {activePlayer.card1 ?
                                         <img className="game__user-card" src={require("../img/cards/" + activePlayer.card1.cardSuit + "_" + activePlayer.card1.cardNumber + ".png")} />
-                                        : <img className="game__user-card" src={require("../img/back.png")}/>
+                                        : <div className="game__user-card"></div>
                                     }
                                     {activePlayer.card2 ?
                                         <img className="game__user-card" src={require("../img/cards/" + activePlayer.card2.cardSuit + "_" + activePlayer.card2.cardNumber + ".png")} />
-                                        : <img className="game__user-card" src={require("../img/back.png")}/>
+                                        : <div className="game__user-card"></div>
                                     }
                                 </div>
                             </div>
@@ -745,7 +746,7 @@ class GameContent extends React.Component {
                             }
                             <div className="game__bank">
                                 <div className="game__bank-chip"></div>
-                                <span className="game__bank-value">BANK: $ 1.000.000</span>
+                                <span className="game__bank-value">BANK: $ {this.state.bank}</span>
                             </div>
                         </div>
                     </div>
