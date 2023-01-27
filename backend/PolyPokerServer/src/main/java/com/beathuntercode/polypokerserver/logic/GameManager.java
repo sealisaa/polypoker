@@ -20,6 +20,7 @@ public class GameManager {
         deck = Utilities.cardList;
         faceUp = new ArrayList<Card>();
         timesPlayerAskedForFaceUps = new HashMap<>();
+        bank = 0;
         playersMap.entrySet().forEach(player -> timesPlayerAskedForFaceUps.put(player.getKey(), 0));
     }
 
@@ -34,9 +35,11 @@ public class GameManager {
             }
             case FLOP -> {
                 gameState = GameState.TERN;
+                startTern();
             }
             case TERN -> {
                 gameState = GameState.RIVER;
+                startRiver();
             }
             case RIVER -> {
                 gameState = GameState.SHOWDOWN;
@@ -59,6 +62,14 @@ public class GameManager {
     private void startFlop() {
         faceUp.add(dealRandomCard());
         faceUp.add(dealRandomCard());
+        faceUp.add(dealRandomCard());
+    }
+
+    private void startTern() {
+        faceUp.add(dealRandomCard());
+    }
+
+    private void startRiver() {
         faceUp.add(dealRandomCard());
     }
 
@@ -94,11 +105,60 @@ public class GameManager {
         this.faceUp = faceUp;
     }
 
-    public Integer getTimesPlayerAskedForFaceUps(String player) {
+    public Integer getTimesPlayerAskedForFaceUpsPlayer(String player) {
         return timesPlayerAskedForFaceUps.get(player);
+    }
+
+    public Map<String, Integer> getTimesPlayerAskedForFaceUps() {
+        return timesPlayerAskedForFaceUps;
     }
 
     public void incrementTimesPlayerAskedForFaceUps(String player) {
         timesPlayerAskedForFaceUps.put(player, timesPlayerAskedForFaceUps.get(player) + 1);
+    }
+
+    public void defineCardCombination() {
+        for (Player player : playersMap.values().stream().toList()) {
+            if (player.getCard1().getRank() == player.getCard2().getRank()) {
+
+            }
+            else {
+                player.setCardCombination(HAND_RANK.HIGH_CARD);
+            }
+        }
+    }
+
+    private boolean isOnePair(Player player) {
+        if (    player.getCard1().getRank() == player.getCard2().getRank() ||
+                player.getCard1().getRank() == faceUp.get(0).getRank() ||
+                player.getCard1().getRank() == faceUp.get(1).getRank() ||
+                player.getCard1().getRank() == faceUp.get(2).getRank() ||
+                player.getCard1().getRank() == faceUp.get(3).getRank() ||
+                player.getCard1().getRank() == faceUp.get(4).getRank()
+        ) {
+            return true;
+        }
+        else if (
+                player.getCard2().getRank() == player.getCard1().getRank() ||
+                player.getCard2().getRank() == faceUp.get(0).getRank() ||
+                player.getCard2().getRank() == faceUp.get(1).getRank() ||
+                player.getCard2().getRank() == faceUp.get(2).getRank() ||
+                player.getCard2().getRank() == faceUp.get(3).getRank() ||
+                player.getCard2().getRank() == faceUp.get(4).getRank()
+        ) {
+           return true;
+        }
+        else if (
+                faceUp.get(0).getRank() == player.getCard1().getRank() ||
+                faceUp.get(0).getRank() == player.getCard2().getRank() ||
+                faceUp.get(0).getRank() == faceUp.get(1).getRank() ||
+                faceUp.get(0).getRank() == faceUp.get(2).getRank() ||
+                faceUp.get(0).getRank() == faceUp.get(3).getRank() ||
+                faceUp.get(0).getRank() == faceUp.get(4).getRank()
+        )
+        {
+            return true;
+        }
+        else return false;
     }
 }
