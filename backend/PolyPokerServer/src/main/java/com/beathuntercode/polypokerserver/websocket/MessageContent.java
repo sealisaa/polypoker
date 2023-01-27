@@ -14,6 +14,7 @@ public class MessageContent {
     private Integer roomCode;
     private String userLogin;
     private String userName;
+    private BetType betType;
     private int moneyValue;
 
     private CardSuit cardSuit;
@@ -76,13 +77,24 @@ public class MessageContent {
 
     /**
      * For MessageType.
-     *      PLAYER_MAKE_BET,
      *      PLAYER_MAKE_RAISE,
      *      PAYMENT_TO_PLAYER
      */
     public MessageContent(Integer roomCode, String userLogin, int moneyValue) {
         this.roomCode = roomCode;
         this.userLogin = userLogin;
+        this.moneyValue = moneyValue;
+    }
+
+    /**
+     * For MessageType.
+     *      PLAYER_MAKE_BET
+     *
+     */
+    public MessageContent(Integer roomCode, String userLogin, BetType betType, int moneyValue) {
+        this.roomCode = roomCode;
+        this.userLogin = userLogin;
+        this.betType = betType;
         this.moneyValue = moneyValue;
     }
 
@@ -152,6 +164,14 @@ public class MessageContent {
 
     public CardSuit getCardSuit() {
         return cardSuit;
+    }
+
+    public BetType getBetType() {
+        return betType;
+    }
+
+    public void setBetType(BetType betType) {
+        this.betType = betType;
     }
 
     public void setCardSuit(CardSuit cardSuit) {
