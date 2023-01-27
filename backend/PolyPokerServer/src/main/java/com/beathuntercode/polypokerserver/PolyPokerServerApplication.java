@@ -26,6 +26,7 @@ public class PolyPokerServerApplication {
 //
 //		testHandEvaluation(room, room.getPlayersMap().get("a"));
 
+		Utilities.roomsController.createRoom(1, 10, 20);
 		SpringApplication.run(PolyPokerServerApplication.class, args);
 
 	}
