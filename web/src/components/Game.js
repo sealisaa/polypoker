@@ -138,7 +138,7 @@ class GameContent extends React.Component {
             this.setSmallBlind();
         }
         if (messageJSON.messageType === 'PLAYER_MAKE_BET') {
-            this.showPlayersBet(messageJSON.content.userLogin, messageJSON.content.moneyValue);
+            this.showPlayersBet(messageJSON.content.userLogin, messageJSON.content.moneyValue, messageJSON.content.betType);
         }
         if (messageJSON.messageType === 'WHO_IS_BIG_BLIND' && messageJSON.content.userLogin === this.state.activePlayerLogin) {
             this.setBigBlind();
@@ -351,7 +351,8 @@ class GameContent extends React.Component {
                 {
                     roomCode: this.state.roomCode,
                     userLogin: this.state.activePlayerLogin,
-                    moneyValue: bet
+                    moneyValue: bet,
+                    betType: ""
                 },
             author: this.state.activePlayerLogin,
             datetime: currentDate,
@@ -492,7 +493,7 @@ class GameContent extends React.Component {
         this.setState({isModal: true});
     }
 
-    showPlayersBet(userLogin, moneyValue) {
+    showPlayersBet(userLogin, moneyValue, betType) {
         if (userLogin === this.state.activePlayerLogin) {
             this.state.activePlayer.newStake = moneyValue;
             this.state.activePlayer.currentStake += moneyValue;
@@ -500,6 +501,11 @@ class GameContent extends React.Component {
                 this.setState({maxBet: this.state.activePlayer.currentStake});
             }
             this.setState({change: true});
+            if (betType === "BET") {
+                let oldBank = this.state.bank;
+                this.setState({bank: oldBank + moneyValue});
+                this.playerMustMakeBet();
+            }
             return;
         }
         for (let i = 0; i < 5; i++) {
