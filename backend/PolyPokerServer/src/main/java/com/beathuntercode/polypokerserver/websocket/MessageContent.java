@@ -35,6 +35,15 @@ public class MessageContent {
         this.roomPlayersList = roomPlayersList;
     }
 
+    /**
+     * For MessageType.
+     *      NEXT_STEP_OF_ROUND
+     */
+    public MessageContent(Integer roomCode, int bankValue) {
+        this.roomCode = roomCode;
+        this.moneyValue = bankValue;
+    }
+
 
     /**
      * For MessageType.

@@ -62,6 +62,14 @@ public class GameManager {
         faceUp.add(dealRandomCard());
     }
 
+    public int getBank() {
+        return bank;
+    }
+
+    public void setBank(int bank) {
+        this.bank = bank;
+    }
+
     public GameState getGameState() {
         return gameState;
     }

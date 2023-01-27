@@ -149,7 +149,8 @@ public class MessageHandler {
         return new SocketMessage(
                 MessageType.NEXT_STEP_OF_ROUND,
                 new MessageContent(
-                        message.getContent().getRoomCode()
+                        message.getContent().getRoomCode(),
+                        room.getGameManager().getBank()
                 ),
                 message.getReceiver(),
                 LocalDateTime.now(),
