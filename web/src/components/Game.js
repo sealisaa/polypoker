@@ -61,6 +61,7 @@ class GameContent extends React.Component {
         this.flop = this.flop.bind(this);
         this.tern = this.tern.bind(this);
         this.river = this.river.bind(this);
+        this.showdown = this.showdown.bind(this);
         this.drawCard = this.drawCard.bind(this);
         this.handleTabClose = this.handleTabClose.bind(this);
         this.addNewPlayer = this.addNewPlayer.bind(this);
@@ -279,8 +280,8 @@ class GameContent extends React.Component {
                     userLogin: null,
                     userName: null,
                     moneyValue: 0,
-                    cardSuit: null,
-                    cardNumber: null,
+                    suit: null,
+                    rank: null,
                     roomPlayersList: null
                 },
             author: this.state.activePlayerLogin,
@@ -300,9 +301,9 @@ class GameContent extends React.Component {
         let card1 = document.getElementById("game__card1");
         let card2 = document.getElementById("game__card2");
         let card3 = document.getElementById("game__card3");
-        card1.classList.add('is-flipped');
-        card2.classList.add('is-flipped');
-        card3.classList.add('is-flipped');
+        // card1.classList.add('is-flipped');
+        // card2.classList.add('is-flipped');
+        // card3.classList.add('is-flipped');
     }
 
     makeBet(moneyValue) {
@@ -379,8 +380,8 @@ class GameContent extends React.Component {
                     userLogin: null,
                     userName: null,
                     moneyValue: 0,
-                    cardSuit: null,
-                    cardNumber: null,
+                    suit: null,
+                    rank: null,
                     roomPlayersList: null
                 },
             author: this.state.activePlayerLogin,
@@ -456,6 +457,10 @@ class GameContent extends React.Component {
             case "RIVER":
                 this.setState({gameState: "RIVER", bank: moneyValue});
                 this.river();
+                break;
+            case "SHOWDOWN":
+                this.setState({gameState: "SHOWDOWN", bank: moneyValue});
+                this.showdown();
                 break;
         }
     }
@@ -545,21 +550,43 @@ class GameContent extends React.Component {
         sendMessage(message);
     }
 
+    showdown() {
+        this.state.maxBet = 0;
+        this.state.activePlayer.currentStake = 0;
+        this.state.activePlayer.newStake = 0;
+        for (let i = 0; i < this.state.players.length; i++) {
+            this.state.players[i].currentStake = 0;
+            this.state.players[i].newStake = 0;
+        }
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "WINNER_PLAYER",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "receiver"
+        }
+        sendMessage(message);
+    }
+
     drawCard(userLogin, cardsList, receiver) {
         if (userLogin) {
             let card1 = cardsList[0];
             let card2 = cardsList[1];
             if (userLogin === this.state.activePlayerLogin) {
-                this.state.activePlayer.card1 = { cardSuit: card1.cardSuit, cardNumber: card1.cardNumber};
-                this.state.activePlayer.card2 = { cardSuit: card2.cardSuit, cardNumber: card2.cardNumber};
+                this.state.activePlayer.card1 = { suit: card1.suit, rank: card1.rank};
+                this.state.activePlayer.card2 = { suit: card2.suit, rank: card2.rank};
                 this.setState({change: true});
                 return;
             }
             for (let i = 0; i < this.state.players.length; i++) {
                 if (this.state.players[i]) {
                     if (this.state.players[i].login === userLogin) {
-                        this.state.players[i].card1 = { cardSuit: card1.cardSuit, cardNumber: card1.cardNumber};
-                        this.state.players[i].card2 = { cardSuit: card2.cardSuit, cardNumber: card2.cardNumber};
+                        this.state.players[i].card1 = { suit: card1.suit, rank: card1.rank};
+                        this.state.players[i].card2 = { suit: card2.suit, rank: card2.rank};
                         this.setState({change: true});
                         if (i === this.state.players.length - 1) {
                             this.playerMustMakeBet();
@@ -575,15 +602,14 @@ class GameContent extends React.Component {
             let card1 = cardsList[0];
             let card2 = cardsList[1];
             let card3 = cardsList[2];
-            this.state.card1 = { cardSuit: card1.cardSuit, cardNumber: card1.cardNumber};
-            this.state.card2 = { cardSuit: card2.cardSuit, cardNumber: card2.cardNumber};
-            this.state.card3 = { cardSuit: card3.cardSuit, cardNumber: card3.cardNumber};
-            this.flipCards();
+            this.state.card1 = { suit: card1.suit, rank: card1.rank};
+            this.state.card2 = { suit: card2.suit, rank: card2.rank};
+            this.state.card3 = { suit: card3.suit, rank: card3.rank};
             if (cardsList[3]) {
-                this.state.card4 = { cardSuit: cardsList[3].cardSuit, cardNumber: cardsList[3].cardNumber};
+                this.state.card4 = { suit: cardsList[3].suit, rank: cardsList[3].rank};
             }
             if (cardsList[4]) {
-                this.state.card5 = { cardSuit: cardsList[4].cardSuit, cardNumber: cardsList[4].cardNumber};
+                this.state.card5 = { suit: cardsList[4].suit, rank: cardsList[4].rank};
             }
             this.setState({change: true});
             this.playerMustMakeBet();
@@ -660,9 +686,63 @@ class GameContent extends React.Component {
         let player3 = this.state.players[2];
         let player4 = this.state.players[3];
         let player5 = this.state.players[4];
+        let player1card1;
+        let player1card2;
+        let player2card1;
+        let player2card2;
+        let player3card1;
+        let player3card2;
+        let player4card1;
+        let player4card2;
+        let player5card1;
+        let player5card2;
         if (this.state.exit) {
             const login = this.state.activePlayerLogin;
             return <Navigate to="/lobby" state={login} />
+        }
+        if (this.state.gameState === "SHOWDOWN") {
+            if (player1) {
+                player1card1 = <img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} />;
+                player1card2 = <img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} />;
+            }
+            if (player2) {
+                player2card1 = <img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} />;
+                player2card2 = <img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} />;
+            }
+            if (player3) {
+                player3card1 = <img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} />;
+                player3card2 = <img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} />;
+            }
+            if (player4) {
+                player4card1 = <img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card4.rank + ".png")} />;
+                player4card2 = <img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card4.rank + ".png")} />;
+            }
+            if (player5) {
+                player5card1 = <img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} />;
+                player5card2 = <img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} />;
+            }
+        } else if (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") {
+            player1card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player1card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player2card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player2card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player3card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player3card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player4card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player4card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player5card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            player5card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+        } else {
+            player1card1 = <div className="game__user-card"></div>;
+            player1card2 = <div className="game__user-card"></div>;
+            player2card1 = <div className="game__user-card"></div>;
+            player2card2 = <div className="game__user-card"></div>;
+            player3card1 = <div className="game__user-card"></div>;
+            player3card2 = <div className="game__user-card"></div>;
+            player4card1 = <div className="game__user-card"></div>;
+            player4card2 = <div className="game__user-card"></div>;
+            player5card1 = <div className="game__user-card"></div>;
+            player5card2 = <div className="game__user-card"></div>;
         }
         return (
             <div className="game-container">
@@ -697,11 +777,11 @@ class GameContent extends React.Component {
                                 </div>
                                 <div className="game__active-user-cards">
                                     {activePlayer.card1 ?
-                                        <img className="game__user-card" src={require("../img/cards/" + activePlayer.card1.cardSuit + "_" + activePlayer.card1.cardNumber + ".png")} />
+                                        <img className="game__user-card" src={require("../img/cards/" + activePlayer.card1.suit + "_" + activePlayer.card1.rank + ".png")} />
                                         : <div className="game__user-card"></div>
                                     }
                                     {activePlayer.card2 ?
-                                        <img className="game__user-card" src={require("../img/cards/" + activePlayer.card2.cardSuit + "_" + activePlayer.card2.cardNumber + ".png")} />
+                                        <img className="game__user-card" src={require("../img/cards/" + activePlayer.card2.suit + "_" + activePlayer.card2.rank + ".png")} />
                                         : <div className="game__user-card"></div>
                                     }
                                 </div>
@@ -725,14 +805,8 @@ class GameContent extends React.Component {
                                     <span className="game__user-balance">$ {player1.cash}</span>
                                 </div>
                                 <div className="game__user1-cards">
-                                    {player1.card1 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
-                                    {player1.card2 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
+                                    {player1card1}
+                                    {player1card2}
                                 </div>
                             </div> : null}
 
@@ -754,27 +828,15 @@ class GameContent extends React.Component {
                                     <span className="game__user-balance">$ {player3.cash}</span>
                                 </div>
                                 <div className="game__user3-cards">
-                                    {player3.card1 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
-                                    {player3.card2 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
+                                    {player3card1}
+                                    {player3card2}
                                 </div>
                             </div> : null}
 
                             {player2 ? <div className="game__user2">
                                 <div className="game__user2-cards">
-                                    {player2.card1 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
-                                    {player2.card2 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
+                                    {player2card1}
+                                    {player2card2}
                                 </div>
                                 <div className="game__user-stake-right">
                                     <div className="game__user-current-stake">
@@ -812,27 +874,15 @@ class GameContent extends React.Component {
                                     <span className="game__user-balance">$ {player4.cash}</span>
                                 </div>
                                 <div className="game__user4-cards">
-                                    {player4.card1 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
-                                    {player4.card2 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
+                                    {player4card1}
+                                    {player4card2}
                                 </div>
                             </div> : null}
 
                             { player5 ? <div className="game__user6">
                                 <div className="game__user6-cards">
-                                    {player5.card1 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
-                                    {player5.card2 ?
-                                        <img className="game__user-card" src={require("../img/back.png")}/>
-                                        : <div className="game__user-card"></div>
-                                    }
+                                    {player5card1}
+                                    {player5card2}
                                 </div>
                                 <div className="game__user-stake">
                                     <div className="game__user-current-stake">
@@ -853,28 +903,24 @@ class GameContent extends React.Component {
                             </div> : null}
 
                             <div className="game__cards">
-
                                 {this.state.card1 ?
-                                    <div id="game__card1" className="game__card1 flip-card card">
-                                        <img className="game__card-back back card__face" src={require("../img/cards/" + this.state.card1.cardSuit + "_" + this.state.card1.cardNumber + ".png")}></img>
-                                        <img className="game__card1-front front card__face" src={require("../img/back.png")}></img>
-                                    </div>
+                                    <img className="game__card1" src={require("../img/cards/" + this.state.card1.suit + "_" + this.state.card1.rank + ".png")} />
                                     : <div className="game__card1"></div>
                                 }
                                 {this.state.card2 ?
-                                    <img className="game__card2" src={require("../img/cards/" + this.state.card2.cardSuit + "_" + this.state.card2.cardNumber + ".png")} />
+                                    <img className="game__card2" src={require("../img/cards/" + this.state.card2.suit + "_" + this.state.card2.rank + ".png")} />
                                     : <div className="game__card2"></div>
                                 }
                                 {this.state.card3 ?
-                                    <img className="game__card3" src={require("../img/cards/" + this.state.card3.cardSuit + "_" + this.state.card3.cardNumber + ".png")} />
+                                    <img className="game__card3" src={require("../img/cards/" + this.state.card3.suit + "_" + this.state.card3.rank + ".png")} />
                                     : <div className="game__card3"></div>
                                 }
                                 {this.state.card4 ?
-                                    <img className="game__card4" src={require("../img/cards/" + this.state.card4.cardSuit + "_" + this.state.card4.cardNumber + ".png")} />
+                                    <img className="game__card4" src={require("../img/cards/" + this.state.card4.suit + "_" + this.state.card4.rank + ".png")} />
                                     : <div className="game__card4"></div>
                                 }
                                 {this.state.card5 ?
-                                    <img className="game__card5" src={require("../img/cards/" + this.state.card5.cardSuit + "_" + this.state.card5.cardNumber + ".png")} />
+                                    <img className="game__card5" src={require("../img/cards/" + this.state.card5.suit + "_" + this.state.card5.rank + ".png")} />
                                     : <div className="game__card5"></div>
                                 }
                             </div>
