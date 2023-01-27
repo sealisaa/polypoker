@@ -254,6 +254,7 @@ public class MessageHandler {
                 new MessageContent(
                         incomingMessage.getContent().getRoomCode(),
                         incomingMessage.getContent().getUserLogin(),
+                        incomingMessage.getContent().getBetType(),
                         incomingMessage.getContent().getMoneyValue()
                 ),
                 incomingMessage.getReceiver(),
