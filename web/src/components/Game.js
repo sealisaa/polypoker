@@ -776,7 +776,7 @@ class GameContent extends React.Component {
                                         : <div className="game__user-card"></div>
                                     }
                                 </div>
-                                <div className="game__user-stake">
+                                <div className="game__user-stake-right">
                                     <div className="game__user-current-stake">
                                         $ {player2.currentStake}
                                     </div>
@@ -795,7 +795,7 @@ class GameContent extends React.Component {
                             </div> : null}
 
                             { player4 ? <div className="game__user4">
-                                <div className="game__user-stake">
+                                <div className="game__user-stake-right">
                                     <div className="game__user-current-stake">
                                         $ {player4.currentStake}
                                     </div>
