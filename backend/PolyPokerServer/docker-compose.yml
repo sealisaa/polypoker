@@ -9,19 +9,34 @@ services:
       - spring.datasource.username=root
       - spring.datasource.password=polypoker
     networks:
-      - springmysql-net
+      - backendNet
+      - frontendNet
     depends_on:
       - mysqldb
 
   mysqldb:
     image: mysql:8.0
     networks:
-      - springmysql-net
+      - backendNet
     environment:
       - MYSQL_ROOT_PASSWORD=polypoker
       - MYSQL_DATABASE=polypokerdb
-      - MYSQL_USER=root
       - MYSQL_PASSWORD=polypoker
 
+  frontend:
+    build:
+      context: ../../web
+      dockerfile: ./Dockerfile
+      args:
+        REACT_APP_API_BASE_URL: http://127.0.0.1:8080/api
+    ports:
+      - "9090:80"
+    restart: always
+    depends_on:
+      - server
+    networks:
+      - frontendNet
+
 networks:
-  springmysql-net:
+  backendNet:
+  frontendNet:
