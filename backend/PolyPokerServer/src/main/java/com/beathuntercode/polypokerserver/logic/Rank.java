@@ -1,6 +1,6 @@
 package com.beathuntercode.polypokerserver.logic;
 
-public enum RANK {
+public enum Rank {
 
     TWO(2),
     THREE(3),
@@ -18,7 +18,7 @@ public enum RANK {
 
     public final int value;
 
-    RANK(int value) {
+    Rank(int value) {
         this.value = value;
     }
 

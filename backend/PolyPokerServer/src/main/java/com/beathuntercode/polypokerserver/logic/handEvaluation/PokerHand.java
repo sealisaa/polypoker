@@ -4,15 +4,15 @@ import com.beathuntercode.polypokerserver.logic.Card;
 import java.util.Collections;
 import java.util.List;
 
-import com.beathuntercode.polypokerserver.logic.HAND_RANK;
+import com.beathuntercode.polypokerserver.logic.HandRank;
 
 public class PokerHand implements Comparable {
 
-    private final HAND_RANK handRank;
+    private final HandRank handRank;
     private final List<Card> cards;
 
-    public PokerHand(HAND_RANK handRank, List<Card> cards) {
-        if(cards.size() != HandRanker.FULL_HAND) throw new IllegalArgumentException("You have to pass five cards");
+    public PokerHand(HandRank handRank, List<Card> cards) {
+//        if(cards.size() != HandRanker.FULL_HAND) throw new IllegalArgumentException("You have to pass five cards");
         this.handRank = handRank;
         this.cards = cards;
         Collections.sort(this.cards); //sorts for compareTo method

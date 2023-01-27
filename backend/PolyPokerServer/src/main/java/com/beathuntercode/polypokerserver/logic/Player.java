@@ -1,5 +1,6 @@
 package com.beathuntercode.polypokerserver.logic;
 
+import com.beathuntercode.polypokerserver.logic.handEvaluation.PokerHand;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude
@@ -11,7 +12,7 @@ public class Player {
     private int cash;
     private Card card1;
     private Card card2;
-    private HAND_RANK HANDRANK;
+    private PokerHand hand;
     private boolean isReady;
     private boolean isCheck;
     private boolean isFold;
@@ -76,12 +77,12 @@ public class Player {
         this.card2 = card2;
     }
 
-    public HAND_RANK getCardCombination() {
-        return HANDRANK;
+    public PokerHand getHand() {
+        return hand;
     }
 
-    public void setCardCombination(HAND_RANK HANDRANK) {
-        this.HANDRANK = HANDRANK;
+    public void setHand(PokerHand hand) {
+        this.hand = hand;
     }
 
     public boolean isCheck() {
@@ -144,14 +145,4 @@ public class Player {
         isBigBlind = false;
         mustMakeBet = true;
     }
-
-    public void defineCardCombination() {
-        if (card1.getRank() == card2.getRank()) {
-
-        }
-        else {
-            HANDRANK = HAND_RANK.HIGH_CARD;
-        }
-    }
-
 }

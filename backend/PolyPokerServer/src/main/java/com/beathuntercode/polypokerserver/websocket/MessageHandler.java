@@ -74,8 +74,9 @@ public class MessageHandler {
                     PLAYER_MAKE_RAISE -> {
                 return playerMakeBet(message, room);
             }
-            case PAYMENT_TO_PLAYER -> {
+            case WINNER_PLAYER -> {
                 paymentToPlayer(message, userDao, userStatisticDao);
+                return winnerPlayer(message, room);
             }
             case IS_NEXT_STEP_OF_ROUND -> {
                 return isNextStepOfRound(message, room);
@@ -100,6 +101,21 @@ public class MessageHandler {
             }
         }
         return null;
+    }
+
+    private SocketMessage winnerPlayer(SocketMessage message, Room room) {
+        room.getGameManager().definePlayersHands();
+        Player player = room.getGameManager().defineWinner();
+        return new SocketMessage(
+                message.getMessageType(),
+                new MessageContent(
+                        message.getContent().getRoomCode(),
+                        player.getLogin()
+                ),
+                message.getReceiver(),
+                LocalDateTime.now(),
+                message.getAuthor()
+        );
     }
 
     private SocketMessage isNextStepOfRound(SocketMessage message, Room room) {

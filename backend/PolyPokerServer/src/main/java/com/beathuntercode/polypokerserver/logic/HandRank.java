@@ -1,6 +1,6 @@
 package com.beathuntercode.polypokerserver.logic;
 
-public enum HAND_RANK {
+public enum HandRank {
     HIGH_CARD(1),
     PAIR(2),
     TWO_PAIR(3),
@@ -14,7 +14,7 @@ public enum HAND_RANK {
 
     private int value;
 
-    HAND_RANK(int value) {
+    HandRank(int value) {
         this.value = value;
     }
 
