@@ -20,6 +20,8 @@ public class GameManager {
     private GameState gameState;
     private Map<String, Integer> timesPlayerAskedForFaceUps;
 
+    private Player winnerPlayer;
+
     public GameManager(Map<String, Player> playersMap) {
         this.playersMap = playersMap;
         deck = Utilities.cardList;
@@ -48,6 +50,7 @@ public class GameManager {
             }
             case RIVER -> {
                 gameState = GameState.SHOWDOWN;
+                startShowdown();
             }
             case SHOWDOWN -> {
                 break;
@@ -73,9 +76,13 @@ public class GameManager {
     private void startTern() {
         faceUp.add(dealRandomCard());
     }
-
     private void startRiver() {
         faceUp.add(dealRandomCard());
+    }
+    private void startShowdown() {
+        definePlayersHands();
+        winnerPlayer = defineWinner();
+        System.out.println("------------- WINNER PLAYER: " + winnerPlayer.getLogin() + "; " + winnerPlayer.getHand());
     }
 
     public void definePlayersHands() {
@@ -142,5 +149,13 @@ public class GameManager {
 
     public void incrementTimesPlayerAskedForFaceUps(String player) {
         timesPlayerAskedForFaceUps.put(player, timesPlayerAskedForFaceUps.get(player) + 1);
+    }
+
+    public Player getWinnerPlayer() {
+        return winnerPlayer;
+    }
+
+    public void setWinnerPlayer(Player winnerPlayer) {
+        this.winnerPlayer = winnerPlayer;
     }
 }

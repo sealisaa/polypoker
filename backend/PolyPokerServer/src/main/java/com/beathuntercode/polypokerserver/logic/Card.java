@@ -30,8 +30,8 @@ public class Card implements Comparable {
     @Override
     public String toString() {
         return "Card{" +
-                "cardSuit=" + suit +
-                ", cardNumber=" + rank +
+                "suit=" + suit +
+                ", rank=" + rank +
                 '}';
     }
 
