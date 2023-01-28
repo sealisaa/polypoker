@@ -34,6 +34,7 @@ public class GameManager {
     }
 
     public void changeGameStateToNext() {
+        resetChecks();
         switch (gameState) {
             case BLINDS -> {
                 gameState = GameState.PREFLOP;
@@ -67,6 +68,12 @@ public class GameManager {
         Card card = deck.get(Utilities.getRndIntInRange(0, deck.size() - 1));
         deck.remove(card);
         return card;
+    }
+
+    private void resetChecks() {
+        for (Player player : playersMap.values()) {
+            player.setCheck(false);
+        }
     }
 
     private void startFlop() {
@@ -106,12 +113,19 @@ public class GameManager {
             playersCards.add(getFaceUp().get(4));
             player.setHand(HandRanker.getInstance().getRank(playersCards));
         }
+
+        System.out.println("------------- Players Hands:\n");
+        for (Map.Entry<String, Player> entry : playersMap.entrySet()) {
+            System.out.println("\t" + entry.getKey() + ": " + entry.getValue().getHand().toString());
+        }
     }
 
     public Player defineWinner() {
         Map<String, PokerHand> playersHandsMap = new LinkedHashMap<>();
         for (Player player : playersMap.values()) {
-            playersHandsMap.put(player.getLogin(), player.getHand());
+            if (!player.isFold()) {
+                playersHandsMap.put(player.getLogin(), player.getHand());
+            }
         }
 
         List<Map.Entry<String, PokerHand>> playersHandsList = new ArrayList<>(playersHandsMap.entrySet());
