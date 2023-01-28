@@ -20,4 +20,18 @@ public class UserStatisticDao {
     public void delete(UserStatistic userStatistic) {
         repository.delete(userStatistic);
     }
+
+    public void updateUserStatistic(String login, int totalGamesPlayed, int winGames, int currentCoinsCount, int totalEarn) {
+        repository.updateTotalGamesPlayedAndWinGamesAndCurrentCoinsCountAndTotalEarnBy(
+                login,
+                totalGamesPlayed,
+                winGames,
+                currentCoinsCount,
+                totalEarn
+        );
+    }
+
+    public void updateUserCurrentCoinsCount(String login, int currentCoinsCount) {
+        repository.updateCurrentCoinsCountBy(login, currentCoinsCount);
+    }
 }

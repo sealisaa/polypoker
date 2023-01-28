@@ -225,8 +225,13 @@ public class MessageHandler {
         newUserStatistic.setWinGames(oldUserStatistic.getWinGames() + 1);
         newUserStatistic.setTotalGamesPlayed(oldUserStatistic.getTotalGamesPlayed() + 1);
 
-        userStatisticDao.delete(oldUserStatistic);
-        userStatisticDao.saveUserStatistic(newUserStatistic);
+        userStatisticDao.updateUserStatistic(
+                newUserStatistic.getLogin(),
+                newUserStatistic.getTotalGamesPlayed(),
+                newUserStatistic.getWinGames(),
+                newUserStatistic.getCurrentCoinsCount(),
+                newUserStatistic.getTotalEarn()
+        );
     }
 
     private SocketMessage nextStepOfRound(SocketMessage incomingMessage, Room room) {
@@ -307,8 +312,11 @@ public class MessageHandler {
         newUserStatistic.setWinGames(oldUserStatistic.getWinGames());
         newUserStatistic.setTotalGamesPlayed(oldUserStatistic.getTotalGamesPlayed());
 
-        userStatisticDao.delete(oldUserStatistic);
-        userStatisticDao.saveUserStatistic(newUserStatistic);
+        userStatisticDao.updateUserCurrentCoinsCount(
+                newUserStatistic.getLogin(),
+                newUserStatistic.getCurrentCoinsCount()
+
+        );
     }
 
     private SocketMessage whoIsBigBlind(SocketMessage incomingMessage, Room room) {

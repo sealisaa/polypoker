@@ -42,4 +42,12 @@ public class PokerHand implements Comparable {
         }
         return 0;
     }
+
+    public List<Card> getCards() {
+        return cards;
+    }
+
+    public HandRank getHandRank() {
+        return handRank;
+    }
 }

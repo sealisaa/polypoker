@@ -43,7 +43,8 @@ public class HandRanker {
     public PokerHand getRank(List<Card> allCards) {
         if(allCards.size() != 7) throw new IllegalArgumentException("You have to pass 7 cards");
 
-        if(     isStraightFlush(allCards) ||
+        if(
+                isStraightFlush(allCards) ||
                 isFourOfAKind(allCards) ||
                 isFullHouse(allCards) ||
                 isFlush(allCards, true) ||
@@ -61,7 +62,8 @@ public class HandRanker {
 
 
     private boolean isStraightFlush(List<Card> allCards) {
-        if(isFlush(allCards, false) && isStraight(handCards)) {
+        List<Card> workList = new ArrayList<>(allCards);
+        if(isFlush(workList, false) && isStraight(handCards)) {
             pokerHand = new PokerHand(HandRank.STRAIGHT_FLUSH, handCards);
             return true;
         }
@@ -69,13 +71,14 @@ public class HandRanker {
     }
 
     private boolean isFlush(List<Card> allCards, boolean finalResult) {
-        Map<Suit, Long> suitsMap = getSuitMap(allCards);
+        List<Card> workList = new ArrayList<>(allCards);
+        Map<Suit, Long> suitsMap = getSuitMap(workList);
         Suit popularSuit = getMostPopularSuit(suitsMap);
 
         if(suitsMap.get(popularSuit) >= FLUSH) {
 
             if(finalResult) {
-                handCards = allCards.stream()
+                handCards = workList.stream()
                         .filter(c -> c.getSuit() == popularSuit)
                         .sorted()
                         .limit(FULL_HAND)
@@ -83,7 +86,7 @@ public class HandRanker {
 
                 pokerHand = new PokerHand(HandRank.FLUSH, handCards);
             } else {
-                handCards = allCards.stream()
+                handCards = workList.stream()
                         .filter(c -> c.getSuit() == popularSuit)
                         .collect(Collectors.toList());
             }
@@ -93,13 +96,14 @@ public class HandRanker {
     }
 
     private boolean isStraight(List<Card> allCards) {
-        EnumSet<Rank> ranks = allCards.stream()
+        List<Card> workList = new ArrayList<>(allCards);
+        EnumSet<Rank> ranks = workList.stream()
                 .map(Card::getRank)
                 .collect(toCollection(() -> EnumSet.noneOf(Rank.class)));
 
         for(Set<Rank> straight : STRAIGHTS) {
             if(ranks.containsAll(straight))  {
-                handCards = allCards.stream()
+                handCards = workList.stream()
                         .filter(c -> straight.contains(c.getRank()))
                         .collect(toList());
 
@@ -111,10 +115,11 @@ public class HandRanker {
     }
 
     private boolean isFourOfAKind(List<Card> allCards) {
-        handCards = getHighestCards(allCards, QUADS);
+        List<Card> workList = new ArrayList<>(allCards);
+        handCards = getHighestCards(workList, QUADS);
 
         if(handCards.size() == QUADS) {
-            handCards.addAll(getMultipleHighestCards(allCards, FULL_HAND - QUADS));
+//            handCards.addAll(getMultipleHighestCards(workList, FULL_HAND - QUADS));
             pokerHand = new PokerHand(HandRank.FOUR_OF_A_KIND, handCards);
             return true;
         }
@@ -122,8 +127,9 @@ public class HandRanker {
     }
 
     private boolean isFullHouse(List<Card> allCards) {
-        handCards = getHighestCards(allCards, SET);
-        handCards.addAll(getHighestCards(allCards, PAIR));
+        List<Card> workList = new ArrayList<>(allCards);
+        handCards = getHighestCards(workList, SET);
+        handCards.addAll(getHighestCards(workList, PAIR));
 
         if(handCards.size() == FULL_HOUSE) {
             pokerHand = new PokerHand(HandRank.FULL_HOUSE, handCards);
@@ -133,10 +139,11 @@ public class HandRanker {
     }
 
     private boolean isSet(List<Card> allCards) {
-        handCards = getHighestCards(allCards, SET);
+        List<Card> workList = new ArrayList<>(allCards);
+        handCards = getHighestCards(workList, SET);
 
         if(handCards.size() == SET) {
-            handCards.addAll(getMultipleHighestCards(allCards, FULL_HAND - SET));
+//            handCards.addAll(getMultipleHighestCards(workList, FULL_HAND - SET));
             pokerHand = new PokerHand(HandRank.THREE_OF_A_KIND, handCards);
             return true;
         }
@@ -144,12 +151,13 @@ public class HandRanker {
     }
 
     private boolean isTwoPair(List<Card> allCards) {
-        handCards= getHighestCards(allCards, PAIR);
-        allCards.removeAll(handCards);
-        handCards.addAll(getHighestCards(allCards, PAIR));
+        List<Card> workList = new ArrayList<>(allCards);
+        handCards= getHighestCards(workList, PAIR);
+        workList.removeAll(handCards);
+        handCards.addAll(getHighestCards(workList, PAIR));
 
         if(handCards.size() == PAIR + PAIR) {
-            handCards.addAll(getMultipleHighestCards(allCards, FULL_HAND - PAIR - PAIR));
+//            handCards.addAll(getMultipleHighestCards(workList, FULL_HAND - PAIR - PAIR));
             pokerHand = new PokerHand(HandRank.TWO_PAIR, handCards);
             return true;
         }
@@ -157,10 +165,11 @@ public class HandRanker {
     }
 
     private boolean isPair(List<Card> allCards) {
-        handCards = getHighestCards(allCards, PAIR);
+        List<Card> workList = new ArrayList<>(allCards);
+        handCards = getHighestCards(workList, PAIR);
 
         if(handCards.size() == PAIR) {
-            handCards.addAll(getMultipleHighestCards(allCards, FULL_HAND - PAIR));
+//            handCards.addAll(getMultipleHighestCards(workList, FULL_HAND - PAIR));
             pokerHand = new PokerHand(HandRank.PAIR, handCards);
             return true;
         }
@@ -173,7 +182,7 @@ public class HandRanker {
         return true;
     }
 
-    private List<Card> getHighestCards(List<Card> allCards, int count) {
+    public List<Card> getHighestCards(List<Card> allCards, int count) {
         EnumMap<Rank, Long> ranks = getRankMap(allCards);
 
         try {

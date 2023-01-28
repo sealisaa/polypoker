@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 public interface UserStatisticRepository extends CrudRepository<UserStatistic, String> {
     @Transactional
     @Modifying
-    @Query("update UserStatistic u set u.totalGamesPlayed = ?1, u.winGames = ?2, u.currentCoinsCount = ?3, u.totalEarn = ?4")
-    void updateTotalGamesPlayedAndWinGamesAndCurrentCoinsCountAndTotalEarnBy(int totalGamesPlayed, int winGames, int currentCoinsCount, int totalEarn);
+    @Query("update UserStatistic u set u.totalGamesPlayed = ?2, u.winGames = ?3, u.currentCoinsCount = ?4, u.totalEarn = ?5 where u.login = ?1")
+    void updateTotalGamesPlayedAndWinGamesAndCurrentCoinsCountAndTotalEarnBy(String login, int totalGamesPlayed, int winGames, int currentCoinsCount, int totalEarn);
     @Transactional
     @Modifying
-    @Query("update UserStatistic u set u.currentCoinsCount = ?1")
-    void updateCurrentCoinsCountBy(int currentCoinsCount);
+    @Query("update UserStatistic u set u.currentCoinsCount = ?2 where u.login = ?1")
+    void updateCurrentCoinsCountBy(String login, int currentCoinsCount);
     UserStatistic findOneUserStatisticByLogin(String login);
 }
