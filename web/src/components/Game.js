@@ -20,6 +20,26 @@ const Modal = ({visible = false, btn, text}) => {
     )
 }
 
+const WinnerModal = ({visible = false, btn, login, money}) => {
+    if (!visible) {
+        return null
+    }
+    return (
+        <div className='modal'>
+            <div className='winner-modal'>
+                <div className="game__modal-dialog">
+                    <div className="winner-pic"></div>
+                    <h3 className="winner-header">
+                        Победил игрок {login}<br />
+                        Сумма выигрыша: {money}
+                    </h3>
+                    {btn}
+                </div>
+            </div>
+        </div>
+    )
+}
+
 const Game = props => {
     const location = useLocation();
     const roomInfo = location.state.roomInfo;
@@ -53,6 +73,8 @@ class GameContent extends React.Component {
         this.setBigBlind = this.setBigBlind.bind(this);
         this.submitBigBlind = this.submitBigBlind.bind(this);
         this.openModal = this.openModal.bind(this);
+        this.openWinnerModal = this.openWinnerModal.bind(this);
+        this.closeWinnerModal = this.closeWinnerModal.bind(this);
         this.confirmBet = this.confirmBet.bind(this);
         this.exitRoom = this.exitRoom.bind(this);
         this.isNextStepOfRound = this.isNextStepOfRound.bind(this);
@@ -69,6 +91,9 @@ class GameContent extends React.Component {
         this.makeBet = this.makeBet.bind(this);
         this.submitBet = this.submitBet.bind(this);
         this.state = {
+            winner: "",
+            winMoney: 0,
+            winnerModal: false,
             mustMakeBet: false,
             card1: null,
             card2: null,
@@ -301,9 +326,9 @@ class GameContent extends React.Component {
         let card1 = document.getElementById("game__card1");
         let card2 = document.getElementById("game__card2");
         let card3 = document.getElementById("game__card3");
-        // card1.classList.add('is-flipped');
-        // card2.classList.add('is-flipped');
-        // card3.classList.add('is-flipped');
+        card1.classList.toggle('is-flipped');
+        card2.classList.toggle('is-flipped');
+        card3.classList.toggle('is-flipped');
     }
 
     makeBet(moneyValue) {
@@ -617,7 +642,16 @@ class GameContent extends React.Component {
     }
 
     openModal() {
-        this.setState({isModal: true});
+        this.setState({isModal: true, });
+    }
+
+    openWinnerModal() {
+        this.setState({winner: "sealisaa", winMoney: 1000});
+        this.setState({winnerModal: true});
+    }
+
+    closeWinnerModal() {
+        this.setState({winnerModal: false, exit: true});
     }
 
     showPlayersBet(userLogin, moneyValue, betType) {
@@ -751,6 +785,12 @@ class GameContent extends React.Component {
                         visible={this.state.isModal}
                         btn={<button className="game__modal-button" onClick={this.confirmBet}>Ок</button>}
                         text={this.state.modalText}
+                    />
+                    <WinnerModal
+                        visible={this.state.winnerModal}
+                        btn={<button className="game__modal-button" onClick={this.closeWinnerModal}>Ок</button>}
+                        login={this.state.winner}
+                        money={this.state.winMoney}
                     />
                     <div className="game__header">
                         <button className="game__home-button" onClick={this.exitRoom}></button>
@@ -927,7 +967,7 @@ class GameContent extends React.Component {
                         </div>
                     </div>
                     <div className="game__actions">
-                        <button className="game__fold">FOLD</button>
+                        <button className="game__fold" onClick={this.openWinnerModal}>FOLD</button>
                         {this.state.mustMakeBet ?
                             <button className="game__bet-active" onClick={this.openModal}>BET</button>
                             : <button className="game__bet">BET</button>

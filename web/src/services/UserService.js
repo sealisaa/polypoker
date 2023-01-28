@@ -1,6 +1,7 @@
 import axios from 'axios'
+import ip from '../ipConfig';
 
-const URL = 'http://26.118.51.73:8080/';
+const URL = "http://" + ip + ":8080/";
 const SAVE_USER_URL = URL + 'user/save';
 const USER_URL = URL + 'user/';
 const AUTH_USER_URL = URL + 'user/auth';
