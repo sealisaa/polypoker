@@ -1,7 +1,9 @@
 package com.beathuntercode.polypokerserver.logic;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -19,6 +21,8 @@ public class GameManager {
     private ArrayList<Card> faceUp;
     private GameState gameState;
     private Map<String, Integer> timesPlayerAskedForFaceUps;
+
+    private Player winnerPlayer;
 
     public GameManager(Map<String, Player> playersMap) {
         this.playersMap = playersMap;
@@ -48,6 +52,7 @@ public class GameManager {
             }
             case RIVER -> {
                 gameState = GameState.SHOWDOWN;
+                startShowdown();
             }
             case SHOWDOWN -> {
                 break;
@@ -73,9 +78,20 @@ public class GameManager {
     private void startTern() {
         faceUp.add(dealRandomCard());
     }
-
     private void startRiver() {
         faceUp.add(dealRandomCard());
+    }
+    private void startShowdown() {
+        definePlayersHands();
+        winnerPlayer = defineWinner();
+        System.out.println();
+        System.out.println("------------- GAME RESULTS:\n" +
+                "\tWinner - " + winnerPlayer.getLogin() + "; " + winnerPlayer.getHand() + "\n" +
+                "\tPlayers Hands:");
+        for (Map.Entry<String, Player> entry : playersMap.entrySet()) {
+            System.out.println("\t\t" + entry.getKey() + ": " + entry.getValue().getHand().toString());
+        }
+        System.out.println();
     }
 
     public void definePlayersHands() {
@@ -93,11 +109,39 @@ public class GameManager {
     }
 
     public Player defineWinner() {
-        Map<String, PokerHand> playersHands = new TreeMap<>();
+        Map<String, PokerHand> playersHandsMap = new LinkedHashMap<>();
         for (Player player : playersMap.values()) {
-            playersHands.put(player.getLogin(), player.getHand());
+            playersHandsMap.put(player.getLogin(), player.getHand());
         }
-        return playersMap.get(playersHands.entrySet().stream().toList().get(0).getKey());
+
+        List<Map.Entry<String, PokerHand>> playersHandsList = new ArrayList<>(playersHandsMap.entrySet());
+        playersHandsList.sort(Map.Entry.comparingByValue());
+        Collections.reverse(playersHandsList);
+
+        Player winner = playersMap.get(playersHandsList.stream().toList().get(0).getKey());
+        Player winnerForLambda = winner;
+        long equalsHandsCount =
+                playersHandsList.stream().filter(entry ->
+                        entry.getValue().getHandRank().equals(winnerForLambda.getHand().getHandRank())).count();
+        if (equalsHandsCount > 1) {
+            Map<String, PokerHand> highestCardsHands = new TreeMap<>();
+            for (Map.Entry<String, PokerHand> entry : playersHandsMap.entrySet()) {
+                highestCardsHands.put(
+                        entry.getKey(),
+                        new PokerHand(
+                                HandRank.HIGH_CARD,
+                                HandRanker.getInstance().getHighestCards(entry.getValue().getCards(), 1))
+                );
+            }
+            for (Map.Entry<String, PokerHand> entry : playersHandsMap.entrySet()) {
+                if (entry.getKey().equals(highestCardsHands.entrySet().stream().toList().get(0).getKey())) {
+                    winner = playersMap.get(entry.getKey());
+                    break;
+                }
+            }
+        }
+        return winner;
+
     }
 
     public int getBank() {
@@ -142,5 +186,13 @@ public class GameManager {
 
     public void incrementTimesPlayerAskedForFaceUps(String player) {
         timesPlayerAskedForFaceUps.put(player, timesPlayerAskedForFaceUps.get(player) + 1);
+    }
+
+    public Player getWinnerPlayer() {
+        return winnerPlayer;
+    }
+
+    public void setWinnerPlayer(Player winnerPlayer) {
+        this.winnerPlayer = winnerPlayer;
     }
 }

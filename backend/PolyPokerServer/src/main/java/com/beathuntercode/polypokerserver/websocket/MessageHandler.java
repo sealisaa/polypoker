@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.beathuntercode.polypokerserver.database.model.user.User;
@@ -72,11 +71,10 @@ public class MessageHandler {
             }
             case    PLAYER_MAKE_BET,
                     PLAYER_MAKE_RAISE -> {
-                return playerMakeBet(message, room);
+                return playerMakeBet(message, room, userDao, userStatisticDao);
             }
             case WINNER_PLAYER -> {
-                paymentToPlayer(message, userDao, userStatisticDao);
-                return winnerPlayer(message, room);
+                return winnerPlayer(message, room, userDao, userStatisticDao);
             }
             case IS_NEXT_STEP_OF_ROUND -> {
                 return isNextStepOfRound(message, room);
@@ -103,14 +101,13 @@ public class MessageHandler {
         return null;
     }
 
-    private SocketMessage winnerPlayer(SocketMessage message, Room room) {
-        room.getGameManager().definePlayersHands();
-        Player player = room.getGameManager().defineWinner();
+    private SocketMessage winnerPlayer(SocketMessage message, Room room, UserDao userDao, UserStatisticDao userStatisticDao) {
+        updateStatsForWinner(room.getGameManager().getWinnerPlayer(), room.getGameManager().getBank(), userDao, userStatisticDao);
         return new SocketMessage(
                 message.getMessageType(),
                 new MessageContent(
                         message.getContent().getRoomCode(),
-                        player.getLogin()
+                        room.getGameManager().getWinnerPlayer().getLogin()
                 ),
                 message.getReceiver(),
                 LocalDateTime.now(),
@@ -217,18 +214,24 @@ public class MessageHandler {
         );
     }
 
-    private void paymentToPlayer(SocketMessage message, UserDao userDao, UserStatisticDao userStatisticDao) {
-        User user = userDao.getUserByLogin(message.getContent().getUserLogin());
+    private void updateStatsForWinner(Player player, int moneyValue, UserDao userDao, UserStatisticDao userStatisticDao) {
+        User user = userDao.getUserByLogin(player.getLogin());
         UserStatistic oldUserStatistic = userStatisticDao.getUserStatistic(user.getLogin());
 
         UserStatistic newUserStatistic = new UserStatistic();
         newUserStatistic.setLogin(user.getLogin());
-        newUserStatistic.setCurrentCoinsCount(oldUserStatistic.getCurrentCoinsCount() + message.getContent().getMoneyValue());
-        newUserStatistic.setTotalEarn(oldUserStatistic.getTotalEarn() + message.getContent().getMoneyValue());
+        newUserStatistic.setCurrentCoinsCount(oldUserStatistic.getCurrentCoinsCount() + moneyValue);
+        newUserStatistic.setTotalEarn(oldUserStatistic.getTotalEarn() + moneyValue);
         newUserStatistic.setWinGames(oldUserStatistic.getWinGames() + 1);
         newUserStatistic.setTotalGamesPlayed(oldUserStatistic.getTotalGamesPlayed() + 1);
 
-        userStatisticDao.saveUserStatistic(newUserStatistic);
+        userStatisticDao.updateUserStatistic(
+                newUserStatistic.getLogin(),
+                newUserStatistic.getTotalGamesPlayed(),
+                newUserStatistic.getWinGames(),
+                newUserStatistic.getCurrentCoinsCount(),
+                newUserStatistic.getTotalEarn()
+        );
     }
 
     private SocketMessage nextStepOfRound(SocketMessage incomingMessage, Room room) {
@@ -273,9 +276,14 @@ public class MessageHandler {
         );
     }
 
-    private SocketMessage playerMakeBet(SocketMessage incomingMessage, Room room) {
+    private SocketMessage playerMakeBet(SocketMessage incomingMessage, Room room, UserDao userDao, UserStatisticDao userStatisticDao) {
         room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).increaseStake(
                 incomingMessage.getContent().getMoneyValue()
+        );
+        decreaseUsersCurrentCoinsCount(
+                userDao.getUserByLogin(incomingMessage.getContent().getUserLogin()),
+                incomingMessage.getContent().getMoneyValue(),
+                userStatisticDao
         );
         room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).setMustMakeBet(true);
         return new SocketMessage(
@@ -292,6 +300,23 @@ public class MessageHandler {
 
         );
 
+    }
+
+    private void decreaseUsersCurrentCoinsCount(User user, int moneyValue, UserStatisticDao userStatisticDao) {
+        UserStatistic oldUserStatistic = userStatisticDao.getUserStatistic(user.getLogin());
+
+        UserStatistic newUserStatistic = new UserStatistic();
+        newUserStatistic.setLogin(user.getLogin());
+        newUserStatistic.setCurrentCoinsCount(oldUserStatistic.getCurrentCoinsCount() - moneyValue);
+        newUserStatistic.setTotalEarn(oldUserStatistic.getTotalEarn());
+        newUserStatistic.setWinGames(oldUserStatistic.getWinGames());
+        newUserStatistic.setTotalGamesPlayed(oldUserStatistic.getTotalGamesPlayed());
+
+        userStatisticDao.updateUserCurrentCoinsCount(
+                newUserStatistic.getLogin(),
+                newUserStatistic.getCurrentCoinsCount()
+
+        );
     }
 
     private SocketMessage whoIsBigBlind(SocketMessage incomingMessage, Room room) {
