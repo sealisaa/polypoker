@@ -179,14 +179,14 @@ class GameContent extends React.Component {
         if (messageJSON.messageType === 'ROUND_BEGIN') {
             this.beginRound();
         }
-        if (messageJSON.messageType === 'WHO_IS_SMALL_BLIND' && messageJSON.content.userLogin === this.state.activePlayerLogin) {
-            this.setSmallBlind();
+        if (messageJSON.messageType === 'WHO_IS_SMALL_BLIND') {
+            this.setSmallBlind(messageJSON.content.userLogin);
         }
         if (messageJSON.messageType === 'PLAYER_MAKE_BET') {
             this.showPlayersBet(messageJSON.content.userLogin, messageJSON.content.moneyValue, messageJSON.content.betType);
         }
-        if (messageJSON.messageType === 'WHO_IS_BIG_BLIND' && messageJSON.content.userLogin === this.state.activePlayerLogin) {
-            this.setBigBlind();
+        if (messageJSON.messageType === 'WHO_IS_BIG_BLIND') {
+            this.setBigBlind(messageJSON.content.userLogin);
         }
         if (messageJSON.messageType === 'PLAYER_ROOM_EXIT') {
             this.checkRoomPlayers();
@@ -316,7 +316,6 @@ class GameContent extends React.Component {
     }
 
     beginRound() {
-        this.setState({gameState: "roundBegin"});
         this.getSmallBlind();
     }
 
@@ -344,9 +343,18 @@ class GameContent extends React.Component {
         this.setState({lastMessage: "WHO_IS_SMALL_BLIND"});
     }
 
-    setSmallBlind() {
-        this.state.activePlayer.smallBlind = true;
-        this.setState({mustMakeBet: true, modalData: 1, modalText: "Поставьте малый блайнд"});
+    setSmallBlind(login) {
+        if (login === this.state.activePlayerLogin) {
+            this.state.activePlayer.smallBlind = true;
+            this.setState({mustMakeBet: true, modalData: 1, modalText: "Поставьте малый блайнд"});
+        } else {
+            for (let i = 0; i < this.state.players.length; i++) {
+                if (this.state.players[i].login === login) {
+                    this.state.players[i].smallBlind = true;
+                    this.setState({change: true});
+                }
+            }
+        }
     }
 
     flipCards() {
@@ -508,9 +516,18 @@ class GameContent extends React.Component {
         this.setState({lastMessage: "WHO_IS_BIG_BLIND"});
     }
 
-    setBigBlind() {
-        this.state.activePlayer.bigBlind = true;
-        this.setState({mustMakeBet: true, modalData: 2, modalText: "Поставьте большой блайнд"});
+    setBigBlind(login) {
+        if (login === this.state.activePlayerLogin) {
+            this.state.activePlayer.bigBlind = true;
+            this.setState({mustMakeBet: true, modalData: 2, modalText: "Поставьте большой блайнд"});
+        } else {
+            for (let i = 0; i < this.state.players.length; i++) {
+                if (this.state.players[i].login === login) {
+                    this.state.players[i].bigBlind = true;
+                    this.setState({change: true});
+                }
+            }
+        }
     }
 
     submitBigBlind(bet) {
@@ -733,11 +750,11 @@ class GameContent extends React.Component {
     }
 
     openModal() {
-        this.setState({isModal: true, });
+        this.setState({isModal: true});
     }
 
     closeModal() {
-
+        this.setState({isModal: false});
     }
 
     openWinnerModal(login, money) {
@@ -760,6 +777,7 @@ class GameContent extends React.Component {
         if (userLogin === this.state.activePlayerLogin) {
             this.state.activePlayer.newStake = moneyValue;
             this.state.activePlayer.currentStake += moneyValue;
+            this.state.activePlayer.cash -= moneyValue;
             if (this.state.maxBet < this.state.activePlayer.currentStake) {
                 this.setState({maxBet: this.state.activePlayer.currentStake});
             }
@@ -774,6 +792,7 @@ class GameContent extends React.Component {
             if (this.state.players[i].login === userLogin) {
                 this.state.players[i].newStake = moneyValue;
                 this.state.players[i].currentStake += moneyValue;
+                this.state.players[i].cash -= moneyValue;
                 if (this.state.maxBet < this.state.players[i].currentStake) {
                     this.setState({maxBet: this.state.players[i].currentStake});
                 }
