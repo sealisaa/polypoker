@@ -1,6 +1,7 @@
 package com.beathuntercode.polypokerserver.logic;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,7 @@ public class Room {
     }
 
     public void initRoom() {
-        playersMap = new HashMap<>();
+        playersMap = new LinkedHashMap<>();
         gameManager = new GameManager(playersMap);
         isSmallBlindSet = false;
         isBigBlindSet = false;

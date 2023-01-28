@@ -21,14 +21,13 @@ public class GameManager {
     private ArrayList<Card> faceUp;
     private GameState gameState;
     private Map<String, Integer> timesPlayerAskedForFaceUps;
-
     private Player winnerPlayer;
 
     public GameManager(Map<String, Player> playersMap) {
         this.playersMap = playersMap;
         deck = Utilities.cardList;
         faceUp = new ArrayList<Card>();
-        timesPlayerAskedForFaceUps = new HashMap<>();
+        timesPlayerAskedForFaceUps = new LinkedHashMap<>();
         bank = 0;
         playersMap.entrySet().forEach(player -> timesPlayerAskedForFaceUps.put(player.getKey(), 0));
     }

@@ -102,7 +102,9 @@ public class MessageHandler {
     }
 
     private SocketMessage winnerPlayer(SocketMessage message, Room room, UserDao userDao, UserStatisticDao userStatisticDao) {
-        updateStatsForWinner(room.getGameManager().getWinnerPlayer(), room.getGameManager().getBank(), userDao, userStatisticDao);
+        if (message.getAuthor().equals(room.getGameManager().getWinnerPlayer().getLogin())) {
+            updateStatsForWinner(room.getGameManager().getWinnerPlayer(), room.getGameManager().getBank(), userDao, userStatisticDao);
+        }
         return new SocketMessage(
                 message.getMessageType(),
                 new MessageContent(
@@ -146,22 +148,17 @@ public class MessageHandler {
         if (playersWithoutCheckAndFoldList.size() != 0) {
             int maxCurrentStake = playersStakesList.stream().max(Comparator.naturalOrder()).get();
             if (maxCurrentStake == 0) { // если нужна ставка в начале этапа игры
-                if (playersWithoutCheckAndFoldList.size() == 1) {
-                    nextStepOfRound(message, room);
-                }
-                else {
-                    return new SocketMessage(
-                            message.getMessageType(),
-                            new MessageContent(
-                                    message.getContent().getRoomCode(),
-                                    playersWithoutCheckAndFoldList.get(0).getLogin(),
-                                    maxCurrentStake - playersWithoutCheckAndFoldList.get(0).getCurrentStake()
-                            ),
-                            message.getReceiver(),
-                            LocalDateTime.now(),
-                            message.getAuthor()
-                    );
-                }
+                return new SocketMessage(
+                        message.getMessageType(),
+                        new MessageContent(
+                                message.getContent().getRoomCode(),
+                                playersWithoutCheckAndFoldList.get(0).getLogin(),
+                                maxCurrentStake - playersWithoutCheckAndFoldList.get(0).getCurrentStake()
+                        ),
+                        message.getReceiver(),
+                        LocalDateTime.now(),
+                        message.getAuthor()
+                );
             } else { // если нужна ставка в процессе этапа игры
                 for (Player player : playersWithoutCheckAndFoldList) {
                     if (player.getCurrentStake() < maxCurrentStake) {
