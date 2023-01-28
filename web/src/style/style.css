@@ -781,6 +781,15 @@ input:hover {
     font-weight: 700;
 }
 
+.game__user-check {
+    margin-top: 10px;
+    white-space: nowrap;
+    color: #F1B779;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+}
+
 .game__user-current-stake {
     border-radius: 10px;
     padding: 10px 15px;
@@ -853,7 +862,7 @@ input:hover {
     align-items: center;
 }
 
-.game__fold, .game__call, .game__bet {
+.game__fold, .game__check, .game__bet {
     border: none;
     width: 125px;
     height: 70px;
@@ -901,11 +910,6 @@ input:hover {
     font-weight: 700;
     color: #8D92C7;
     margin-right: 25px;
-}
-
-.game__fold:hover, .game__call:hover {
-    background-color: #F1B779;
-    color: #212544;
 }
 
 .game__bank {
@@ -1253,7 +1257,7 @@ p {
     color: #212544;
 }
 
-.game__bet-active {
+.game__bet-active, .game__check-active, .game__fold-active {
     border: none;
     width: 125px;
     height: 70px;
@@ -1266,7 +1270,7 @@ p {
     color: #212544;
 }
 
-.game__bet-active:hover {
+.game__bet-active:hover, .game__check-active:hover, .game__fold-active:hover {
     cursor: pointer;
 }
 
@@ -1303,4 +1307,28 @@ p {
     -webkit-animation-duration: 0.4s;
     animation-name: slide-in;
     animation-duration: 0.5s;
+}
+
+.modal-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.cancel-button {
+    border: none;
+    background-color: #212544;
+    font-family: 'Roboto', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 21px;
+    letter-spacing: -0.6px;
+    height: 40px;
+    padding-left: 25px;
+    padding-right: 25px;
+    border-radius: 20px;
+    color: #8D92C7;
+    margin-bottom: 15px;
+    margin-right: 10px;
 }

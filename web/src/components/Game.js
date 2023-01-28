@@ -3,7 +3,7 @@ import '../style/style.css';
 import {Navigate, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
 
-const Modal = ({visible = false, btn, text}) => {
+const Modal = ({visible = false, btn, cancel, text}) => {
     if (!visible) {
         return null
     }
@@ -13,7 +13,10 @@ const Modal = ({visible = false, btn, text}) => {
                 <div className="game__modal-dialog">
                     <h3 className="game__modal-header">{text}</h3>
                     <input className="modal-input" type="text" id="bet" placeholder="Размер ставки"/>
-                    {btn}
+                    <div className="modal-buttons">
+                        {cancel}
+                        {btn}
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,6 +76,7 @@ class GameContent extends React.Component {
         this.setBigBlind = this.setBigBlind.bind(this);
         this.submitBigBlind = this.submitBigBlind.bind(this);
         this.openModal = this.openModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
         this.openWinnerModal = this.openWinnerModal.bind(this);
         this.closeWinnerModal = this.closeWinnerModal.bind(this);
         this.confirmBet = this.confirmBet.bind(this);
@@ -90,6 +94,10 @@ class GameContent extends React.Component {
         this.playerMustMakeBet = this.playerMustMakeBet.bind(this);
         this.makeBet = this.makeBet.bind(this);
         this.submitBet = this.submitBet.bind(this);
+        this.makeCheck = this.makeCheck.bind(this);
+        this.showCheck = this.showCheck.bind(this);
+        this.makeFold = this.makeFold.bind(this);
+        this.showFold = this.showFold.bind(this);
         this.state = {
             winner: "",
             winMoney: 0,
@@ -113,6 +121,8 @@ class GameContent extends React.Component {
             roomCode: this.props.roomInfo.content.roomCode,
             activePlayerLogin: this.props.roomInfo.content.userLogin,
             activePlayer: {
+                fold: false,
+                check: false,
                 login: "",
                 name: "",
                 currentStake: 0,
@@ -187,8 +197,21 @@ class GameContent extends React.Component {
         if (messageJSON.messageType === 'DRAW_CARD') {
             this.drawCard(messageJSON.content.userLogin, messageJSON.content.cardsList, messageJSON.receiver);
         }
-        if (messageJSON.messageType === 'PLAYER_MUST_MAKE_BET' && messageJSON.content.userLogin === this.state.activePlayerLogin) {
-            this.makeBet(messageJSON.content.moneyValue);
+        if (messageJSON.messageType === 'PLAYER_MUST_MAKE_BET') {
+            if (messageJSON.content.userLogin === this.state.activePlayerLogin) {
+                this.makeBet(messageJSON.content.moneyValue);
+            } else {
+                this.setState({mustMakeBet: false});
+            }
+        }
+        if (messageJSON.messageType === 'PLAYER_MAKE_CHECK') {
+            this.showCheck(messageJSON.content.userLogin);
+        }
+        if (messageJSON.messageType === 'PLAYER_MAKE_FOLD') {
+            this.showFold(messageJSON.content.userLogin);
+        }
+        if (messageJSON.messageType === 'WINNER_PLAYER' && messageJSON.receiver === this.state.activePlayerLogin) {
+            this.openWinnerModal(messageJSON.content.userLogin, messageJSON.content.moneyValue);
         }
     }
 
@@ -199,6 +222,8 @@ class GameContent extends React.Component {
                 let player = players[i];
                 if (player.login !== this.state.activePlayerLogin) {
                     let newPlayer = {
+                        fold: false,
+                        check: false,
                         present: true,
                         login: player.login,
                         name: player.name,
@@ -235,6 +260,8 @@ class GameContent extends React.Component {
 
     addNewPlayer(player) {
         let newPlayer = {
+            fold: false,
+            check: false,
             present: true,
             login: player.login,
             name: player.name,
@@ -333,6 +360,70 @@ class GameContent extends React.Component {
 
     makeBet(moneyValue) {
         this.setState({mustMakeBet: true, modalData: 3, modalText: "Сделайте ставку (минимум: " + moneyValue + ")"});
+    }
+
+    makeCheck() {
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "PLAYER_MAKE_CHECK",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                    userLogin: this.state.activePlayerLogin
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "receiver"
+        }
+        sendMessage(message);
+    }
+
+    showCheck(login) {
+        if (login === this.state.activePlayerLogin) {
+            this.state.activePlayer.check = true;
+            this.setState({change: true});
+            this.playerMustMakeBet();
+            return;
+        }
+        for (let i = 0; i < 5; i++) {
+            if (this.state.players[i].login === login) {
+                this.state.players[i].check = true;
+                this.setState({change: true});
+                return;
+            }
+        }
+    }
+
+    makeFold() {
+        let currentDate = getCurrentDate();
+        let message = {
+            messageType: "PLAYER_MAKE_FOLD",
+            content:
+                {
+                    roomCode: this.state.roomCode,
+                    userLogin: this.state.activePlayerLogin
+                },
+            author: this.state.activePlayerLogin,
+            datetime: currentDate,
+            receiver: "receiver"
+        }
+        sendMessage(message);
+    }
+
+    showFold(login) {
+        if (login === this.state.activePlayerLogin) {
+            this.state.activePlayer.fold = true;
+            this.setState({change: true});
+            this.playerMustMakeBet();
+            return;
+        }
+        for (let i = 0; i < 5; i++) {
+            if (this.state.players[i].login === login) {
+                this.state.players[i].fold = true;
+                this.setState({change: true});
+                return;
+            }
+        }
     }
 
     submitBet(bet) {
@@ -645,16 +736,27 @@ class GameContent extends React.Component {
         this.setState({isModal: true, });
     }
 
-    openWinnerModal() {
-        this.setState({winner: "sealisaa", winMoney: 1000});
+    closeModal() {
+
+    }
+
+    openWinnerModal(login, money) {
+        this.setState({winner: login, winMoney: money});
         this.setState({winnerModal: true});
     }
 
     closeWinnerModal() {
-        this.setState({winnerModal: false, exit: true});
+        this.setState({winnerModal: false});
     }
 
     showPlayersBet(userLogin, moneyValue, betType) {
+        this.state.activePlayer.check = false;
+        for (let i = 0; i < 5; i++) {
+            if (this.state.players[i]) {
+                this.state.players[i].check = false;
+            }
+        }
+        this.setState({change: true});
         if (userLogin === this.state.activePlayerLogin) {
             this.state.activePlayer.newStake = moneyValue;
             this.state.activePlayer.currentStake += moneyValue;
@@ -756,16 +858,41 @@ class GameContent extends React.Component {
                 player5card2 = <img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} />;
             }
         } else if (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") {
-            player1card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player1card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player2card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player2card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player3card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player3card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player4card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player4card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player5card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-            player5card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            if (player1 && player1.fold) {
+                player1card1 = <img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} />;
+                player1card2 = <img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} />;
+            } else {
+                player1card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player1card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            }
+            if (player2 && player2.fold) {
+                player2card1 = <img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} />;
+                player2card2 = <img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} />;
+            } else {
+                player2card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player2card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            }
+            if (player3 && player3.fold) {
+                player3card1 = <img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} />;
+                player3card2 = <img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} />;
+            } else {
+                player3card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player3card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            }
+            if (player4 && player4.fold) {
+                player4card1 = <img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card4.rank + ".png")} />;
+                player4card2 = <img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card4.rank + ".png")} />;
+            } else {
+                player4card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player4card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            }
+            if (player5 && player5.fold) {
+                player5card1 = <img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} />;
+                player5card2 = <img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} />;
+            } else {
+                player5card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player5card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+            }
         } else {
             player1card1 = <div className="game__user-card"></div>;
             player1card2 = <div className="game__user-card"></div>;
@@ -784,6 +911,7 @@ class GameContent extends React.Component {
                     <Modal
                         visible={this.state.isModal}
                         btn={<button className="game__modal-button" onClick={this.confirmBet}>Ок</button>}
+                        cancel={<button className="cancel-button" onClick={this.closeModal}>Отмена</button>}
                         text={this.state.modalText}
                     />
                     <WinnerModal
@@ -803,6 +931,18 @@ class GameContent extends React.Component {
                                     <div className="game__user-current-stake">
                                         $ {activePlayer.currentStake}
                                     </div>
+                                    { !activePlayer.fold && activePlayer.check ?
+                                        <div className="game__user-check">
+                                            CHECK
+                                        </div>
+                                        : null
+                                    }
+                                    {activePlayer.fold ?
+                                        <div className="game__user-check">
+                                            FOLD
+                                        </div>
+                                        : null
+                                    }
                                     {activePlayer.newStake !== 0 ?
                                         <div className="game__user-new-stake">
                                             + {activePlayer.newStake}
@@ -838,6 +978,18 @@ class GameContent extends React.Component {
                                         </div>
                                         : null
                                     }
+                                    {!player1.fold && player1.check ?
+                                        <div className="game__user-check">
+                                            CHECK
+                                        </div>
+                                        : null
+                                    }
+                                    {player1.fold ?
+                                        <div className="game__user-check">
+                                            FOLD
+                                        </div>
+                                        : null
+                                    }
                                 </div>
                                 <div className="game__user-info">
                                     <div className="game__user-avatar game__user-avatar1"></div>
@@ -858,6 +1010,18 @@ class GameContent extends React.Component {
                                     {player3.newStake !== 0 ?
                                         <div className="game__user-new-stake">
                                             + {player3.newStake}
+                                        </div>
+                                        : null
+                                    }
+                                    {!player3.fold && player3.check ?
+                                        <div className="game__user-check">
+                                            CHECK
+                                        </div>
+                                        : null
+                                    }
+                                    {player3.fold ?
+                                        <div className="game__user-check">
+                                            FOLD
                                         </div>
                                         : null
                                     }
@@ -888,6 +1052,18 @@ class GameContent extends React.Component {
                                         </div>
                                         : null
                                     }
+                                    {!player2.fold && player2.check ?
+                                        <div className="game__user-check">
+                                            CHECK
+                                        </div>
+                                        : null
+                                    }
+                                    {player2.fold ?
+                                        <div className="game__user-check">
+                                            FOLD
+                                        </div>
+                                        : null
+                                    }
                                 </div>
                                 <div className="game__user-info">
                                     <div className="game__user-avatar game__user-avatar2"></div>
@@ -904,6 +1080,18 @@ class GameContent extends React.Component {
                                     {player4.newStake !== 0 ?
                                         <div className="game__user-new-stake">
                                             + {player4.newStake}
+                                        </div>
+                                        : null
+                                    }
+                                    {!player4.fold && player4.check ?
+                                        <div className="game__user-check">
+                                            CHECK
+                                        </div>
+                                        : null
+                                    }
+                                    {player4.fold ?
+                                        <div className="game__user-check">
+                                            FOLD
                                         </div>
                                         : null
                                     }
@@ -931,6 +1119,18 @@ class GameContent extends React.Component {
                                     {player5.newStake !== 0 ?
                                         <div className="game__user-new-stake">
                                             + {player5.newStake}
+                                        </div>
+                                        : null
+                                    }
+                                    {!player5.fold && player5.check ?
+                                        <div className="game__user-check">
+                                            CHECK
+                                        </div>
+                                        : null
+                                    }
+                                    {player5.fold ?
+                                        <div className="game__user-check">
+                                            FOLD
                                         </div>
                                         : null
                                     }
@@ -967,12 +1167,22 @@ class GameContent extends React.Component {
                         </div>
                     </div>
                     <div className="game__actions">
-                        <button className="game__fold" onClick={this.openWinnerModal}>FOLD</button>
-                        {this.state.mustMakeBet ?
+                        {!this.state.activePlayer.fold && this.state.mustMakeBet &&
+                        (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" ||
+                            this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                            <button className="game__fold-active" onClick={this.makeFold}>FOLD</button>
+                            : <button className="game__fold">FOLD</button>
+                        }
+                        {!this.state.activePlayer.fold && this.state.mustMakeBet &&
+                        this.state.gameState !== "SHOWDOWN" ?
                             <button className="game__bet-active" onClick={this.openModal}>BET</button>
                             : <button className="game__bet">BET</button>
                         }
-                        <button className="game__call">CALL</button>
+                        {!this.state.activePlayer.fold && this.state.mustMakeBet
+                        && this.state.maxBet === 0 && (this.state.gameState === "FLOP" ||
+                            this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                            <button className="game__check-active" onClick={this.makeCheck}>CHECK</button>
+                        : <button className="game__check">CHECK</button>}
                         <div className="game__right-nav">
                             { this.state.gameState === "" ?
                                 <button id="readyBtn" className="game__ready" onClick={this.getReady}>ГОТОВ</button>
