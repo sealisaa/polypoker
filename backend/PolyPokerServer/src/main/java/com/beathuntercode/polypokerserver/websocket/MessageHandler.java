@@ -102,12 +102,15 @@ public class MessageHandler {
     }
 
     private SocketMessage winnerPlayer(SocketMessage message, Room room, UserDao userDao, UserStatisticDao userStatisticDao) {
-        updateStatsForWinner(room.getGameManager().getWinnerPlayer(), room.getGameManager().getBank(), userDao, userStatisticDao);
+        if (message.getAuthor().equals(room.getGameManager().getWinnerPlayer().getLogin())) {
+            updateStatsForWinner(room.getGameManager().getWinnerPlayer(), room.getGameManager().getBank(), userDao, userStatisticDao);
+        }
         return new SocketMessage(
                 message.getMessageType(),
                 new MessageContent(
                         message.getContent().getRoomCode(),
-                        room.getGameManager().getWinnerPlayer().getLogin()
+                        room.getGameManager().getWinnerPlayer().getLogin(),
+                        room.getGameManager().getBank()
                 ),
                 message.getReceiver(),
                 LocalDateTime.now(),
@@ -133,26 +136,31 @@ public class MessageHandler {
     private SocketMessage playerMustMakeBet(SocketMessage message, Room room) {
         List<Player> playersList = room.getPlayersMap().values().stream().toList();
         List<Integer> playersStakesList = new ArrayList<>();
+        List<Player> playersWithoutCheckAndFoldList = new ArrayList<>();
         for (Player player : playersList) {
-            playersStakesList.add(player.getCurrentStake());
+            if (!player.isFold()) {
+                if (!player.isCheck()) {
+                    playersStakesList.add(player.getCurrentStake());
+                    playersWithoutCheckAndFoldList.add(player);
+                }
+            }
         }
-        int maxCurrentStake = playersStakesList.stream().max(Comparator.naturalOrder()).get();
-        if (maxCurrentStake == 0) { // если нужна ставка в начале этапа игры
-            return new SocketMessage(
-                    message.getMessageType(),
-                    new MessageContent(
-                            message.getContent().getRoomCode(),
-                            playersList.get(0).getLogin(),
-                            maxCurrentStake - playersList.get(0).getCurrentStake()
-                    ),
-                    message.getReceiver(),
-                    LocalDateTime.now(),
-                    message.getAuthor()
-            );
-        }
-        else { // если нужна ставка в процессе этапа игры
-            for (Player player : playersList) {
-                if (!player.isCheck() && !player.isFold()) {
+        if (playersWithoutCheckAndFoldList.size() != 0) {
+            int maxCurrentStake = playersStakesList.stream().max(Comparator.naturalOrder()).get();
+            if (maxCurrentStake == 0) { // если нужна ставка в начале этапа игры
+                return new SocketMessage(
+                        message.getMessageType(),
+                        new MessageContent(
+                                message.getContent().getRoomCode(),
+                                playersWithoutCheckAndFoldList.get(0).getLogin(),
+                                maxCurrentStake - playersWithoutCheckAndFoldList.get(0).getCurrentStake()
+                        ),
+                        message.getReceiver(),
+                        LocalDateTime.now(),
+                        message.getAuthor()
+                );
+            } else { // если нужна ставка в процессе этапа игры
+                for (Player player : playersWithoutCheckAndFoldList) {
                     if (player.getCurrentStake() < maxCurrentStake) {
                         if (player.isMustMakeBet()) {
                             player.setMustMakeBet(false);
@@ -277,6 +285,9 @@ public class MessageHandler {
     }
 
     private SocketMessage playerMakeBet(SocketMessage incomingMessage, Room room, UserDao userDao, UserStatisticDao userStatisticDao) {
+        for (Player player : room.getPlayersMap().values()) {
+            player.setCheck(false);
+        }
         room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).increaseStake(
                 incomingMessage.getContent().getMoneyValue()
         );
