@@ -45,7 +45,7 @@ public class MessageHandler {
                 return playerReadySet(message, room);
             }
             case PLAYER_ROOM_EXIT -> {
-                return playerRoomExit(message, room);
+                return playerRoomExit(message, room, userStatisticDao);
             }
             case CHECK_ROOM_PLAYERS -> {
                 return checkRoomPlayer(message);
@@ -501,8 +501,17 @@ public class MessageHandler {
     }
 
 
-    private SocketMessage playerRoomExit(SocketMessage message, Room room) {
+    private SocketMessage playerRoomExit(SocketMessage message, Room room, UserStatisticDao userStatisticDao) {
         room.removePlayerFromRoom(message.getAuthor());
+
+        if (    room.getGameManager().getGameState() == GameState.SHOWDOWN &&
+                !message.getAuthor().equals(room.getGameManager().getWinnerPlayer().getLogin())
+            ) {
+            userStatisticDao.updateUserTotalGamesPlayed(
+                    message.getAuthor(),
+                    userStatisticDao.getUserStatistic(message.getAuthor()).getTotalGamesPlayed() + 1);
+        }
+
         return new SocketMessage(
                 MessageType.PLAYER_ROOM_EXIT,
                 new MessageContent(message.getContent().getRoomCode(), message.getContent().getUserLogin()),

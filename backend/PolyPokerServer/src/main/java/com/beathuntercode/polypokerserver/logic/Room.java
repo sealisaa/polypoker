@@ -99,6 +99,8 @@ public class Room {
     }
 
     public void removePlayerFromRoom(String playerLogin) {
+        Player player = playersMap.get(playerLogin);
+        playerAvatarsNumbersList.add(player.getPlayerAvatarNumber());
         playersMap.remove(playerLogin);
         gameManager.getTimesPlayerAskedForFaceUps().remove(playerLogin);
         if (playersMap.size() == 0) {

@@ -34,4 +34,8 @@ public class UserStatisticDao {
     public void updateUserCurrentCoinsCount(String login, int currentCoinsCount) {
         repository.updateCurrentCoinsCountBy(login, currentCoinsCount);
     }
+
+    public void updateUserTotalGamesPlayed(String login, int totalGamesPlayed) {
+        repository.updateTotalGamesPlayedBy(login, totalGamesPlayed);
+    }
 }

@@ -14,5 +14,9 @@ public interface UserStatisticRepository extends CrudRepository<UserStatistic, S
     @Modifying
     @Query("update UserStatistic u set u.currentCoinsCount = ?2 where u.login = ?1")
     void updateCurrentCoinsCountBy(String login, int currentCoinsCount);
+    @Transactional
+    @Modifying
+    @Query("update UserStatistic u set u.totalGamesPlayed = ?2 where u.login = ?1")
+    void updateTotalGamesPlayedBy(String login, int totalGamesPlayed);
     UserStatistic findOneUserStatisticByLogin(String login);
 }
