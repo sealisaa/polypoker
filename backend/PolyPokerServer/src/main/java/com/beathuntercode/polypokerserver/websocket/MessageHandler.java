@@ -113,7 +113,6 @@ public class MessageHandler {
                         room.getGameManager().getBank()
                 ),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }
@@ -128,7 +127,6 @@ public class MessageHandler {
                         room.getGameManager().getBank()
                 ),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }
@@ -156,7 +154,6 @@ public class MessageHandler {
                                 maxCurrentStake - playersWithoutCheckAndFoldList.get(0).getCurrentStake()
                         ),
                         message.getReceiver(),
-                        LocalDateTime.now(),
                         message.getAuthor()
                 );
             } else { // если нужна ставка в процессе этапа игры
@@ -172,7 +169,6 @@ public class MessageHandler {
                                             maxCurrentStake - player.getCurrentStake()
                                     ),
                                     message.getReceiver(),
-                                    LocalDateTime.now(),
                                     message.getAuthor()
                             );
                         } else {
@@ -182,7 +178,6 @@ public class MessageHandler {
                                             message.getContent().getRoomCode()
                                     ),
                                     message.getReceiver(),
-                                    LocalDateTime.now(),
                                     message.getAuthor()
                             );
                         }
@@ -203,7 +198,6 @@ public class MessageHandler {
                         message.getContent().getUserLogin()
                 ),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }
@@ -217,7 +211,6 @@ public class MessageHandler {
                         message.getContent().getUserLogin()
                 ),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }
@@ -259,7 +252,6 @@ public class MessageHandler {
                                 room.getGameManager().getBank()
                         ),
                         incomingMessage.getReceiver(),
-                        LocalDateTime.now(),
                         incomingMessage.getAuthor()
                 );
             }
@@ -279,7 +271,6 @@ public class MessageHandler {
                         room.getGameManager().getFaceUp()
                 ),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }
@@ -306,7 +297,6 @@ public class MessageHandler {
                         incomingMessage.getContent().getMoneyValue()
                 ),
                 incomingMessage.getReceiver(),
-                LocalDateTime.now(),
                 incomingMessage.getAuthor()
 
         );
@@ -352,7 +342,6 @@ public class MessageHandler {
                                     roomPlayersList.get(i).getLogin()
                             ),
                             incomingMessage.getReceiver(),
-                            LocalDateTime.now(),
                             incomingMessage.getAuthor()
                     );
                     break;
@@ -367,7 +356,6 @@ public class MessageHandler {
                             room.getBigBlindPlayer().getLogin()
                     ),
                     incomingMessage.getReceiver(),
-                    LocalDateTime.now(),
                     incomingMessage.getAuthor()
             );
         }
@@ -395,7 +383,6 @@ public class MessageHandler {
                                     roomPlayersList.get(i).getLogin()
                             ),
                             incomingMessage.getReceiver(),
-                            LocalDateTime.now(),
                             incomingMessage.getAuthor()
                     );
                     break;
@@ -409,7 +396,6 @@ public class MessageHandler {
                             incomingMessage.getContent().getRoomCode()
                     ),
                     incomingMessage.getReceiver(),
-                    LocalDateTime.now(),
                     incomingMessage.getAuthor()
             );
         }
@@ -426,7 +412,6 @@ public class MessageHandler {
                         roomPlayersList
                 ),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }
@@ -454,7 +439,6 @@ public class MessageHandler {
 
                     ),
                     message.getReceiver(),
-                    LocalDateTime.now(),
                     message.getAuthor()
 
             );
@@ -475,14 +459,12 @@ public class MessageHandler {
                     MessageType.ROUND_BEGIN,
                     new MessageContent(message.getContent().getRoomCode()),
                     message.getReceiver(),
-                    LocalDateTime.now(),
                     message.getAuthor());
         } else {
             return new SocketMessage(
                     MessageType.OK,
                     new MessageContent(message.getContent().getRoomCode()),
                     message.getReceiver(),
-                    LocalDateTime.now(),
                     message.getAuthor()
             );
         }
@@ -509,7 +491,6 @@ public class MessageHandler {
                             )
                     ),
                     message.getReceiver(),
-                    LocalDateTime.now(),
                     message.getAuthor()
             );
         } else {
@@ -524,7 +505,6 @@ public class MessageHandler {
                 MessageType.PLAYER_ROOM_EXIT,
                 new MessageContent(message.getContent().getRoomCode(), message.getContent().getUserLogin()),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }
@@ -534,7 +514,6 @@ public class MessageHandler {
                 MessageType.OK,
                 new MessageContent(message.getContent().getRoomCode()),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }
@@ -544,7 +523,6 @@ public class MessageHandler {
                 MessageType.FAIL,
                 new MessageContent(message.getContent().getRoomCode()),
                 message.getReceiver(),
-                LocalDateTime.now(),
                 message.getAuthor()
         );
     }

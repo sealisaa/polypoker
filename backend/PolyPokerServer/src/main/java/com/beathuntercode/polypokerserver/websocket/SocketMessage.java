@@ -15,16 +15,12 @@ public class SocketMessage {
     private MessageType messageType;
     private MessageContent content;
     private String author;
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime dateTime;
     private String receiver;
 
-    public SocketMessage(MessageType messageType, MessageContent content, String author, LocalDateTime dateTime, String receiver) {
+    public SocketMessage(MessageType messageType, MessageContent content, String author, String receiver) {
         this.messageType = messageType;
         this.content = content;
         this.author = author;
-        this.dateTime = dateTime;
         this.receiver = receiver;
     }
 
@@ -52,14 +48,6 @@ public class SocketMessage {
         this.author = author;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
     public String getReceiver() {
         return receiver;
     }
@@ -74,7 +62,6 @@ public class SocketMessage {
                 "messageType=" + messageType +
                 ", content=" + content +
                 ", author='" + author + '\'' +
-                ", dateTime=" + dateTime +
                 ", receiver='" + receiver + '\'' +
                 '}';
     }
