@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -132,18 +133,16 @@ public class MessageHandler {
 
     private SocketMessage playerMustMakeBet(SocketMessage message, Room room) {
         List<Player> playersList = room.getPlayersMap().values().stream().toList();
-        List<Integer> playersStakesList = new ArrayList<>();
         List<Player> playersWithoutCheckAndFoldList = new ArrayList<>();
         for (Player player : playersList) {
             if (!player.isFold()) {
-                if (!player.isCheck()) {
-                    playersStakesList.add(player.getCurrentStake());
+                if (!player.isCheck() && !player.isBet()) {
                     playersWithoutCheckAndFoldList.add(player);
                 }
             }
         }
         if (playersWithoutCheckAndFoldList.size() != 0) {
-            int maxCurrentStake = playersStakesList.stream().max(Comparator.naturalOrder()).get();
+            int maxCurrentStake = room.getGameManager().getCurrentMaxBet();
             if (maxCurrentStake == 0) { // если нужна ставка в начале этапа игры
                 return new SocketMessage(
                         message.getMessageType(),
@@ -239,6 +238,9 @@ public class MessageHandler {
         for (Player player : roomPlayersList) {
             room.getGameManager().increaseBank(player.getCurrentStake());
             player.setCurrentStake(0);
+            if (room.getGameManager().getGameState() != GameState.BLINDS) {
+                player.setBet(false);
+            }
         }
         room.getGameManager().changeGameStateToNext();
         switch (room.getGameManager().getGameState()) {
@@ -278,15 +280,27 @@ public class MessageHandler {
         for (Player player : room.getPlayersMap().values()) {
             player.setCheck(false);
         }
-        room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).increaseStake(
-                incomingMessage.getContent().getMoneyValue()
-        );
+        Player bettingPlayer = room.getPlayersMap().get(incomingMessage.getContent().getUserLogin());
+        bettingPlayer.increaseStake(incomingMessage.getContent().getMoneyValue());
+        if (    bettingPlayer.getCurrentStake() >= room.getGameManager().getCurrentMaxBet() ||
+                (bettingPlayer.isSmallBlind() && room.getGameManager().getGameState() == GameState.BLINDS)
+            ) {
+            room.getGameManager().setCurrentMaxBet(bettingPlayer.getCurrentStake());
+            bettingPlayer.setBet(true);
+        }
+        if (bettingPlayer.getPlayerNumberInRoom() == room.getPlayersMap().size()) {
+            if (bettingPlayer.getCurrentStake() >= room.getGameManager().getCurrentMaxBet()) {
+                for (Player player : room.getPlayersMap().values()) {
+                    player.setBet(false);
+                }
+            }
+        }
         decreaseUsersCurrentCoinsCount(
                 userDao.getUserByLogin(incomingMessage.getContent().getUserLogin()),
                 incomingMessage.getContent().getMoneyValue(),
                 userStatisticDao
         );
-        room.getPlayersMap().get(incomingMessage.getContent().getUserLogin()).setMustMakeBet(true);
+        bettingPlayer.setMustMakeBet(true);
         return new SocketMessage(
                 incomingMessage.getMessageType(),
                 new MessageContent(
@@ -425,7 +439,8 @@ public class MessageHandler {
                 user.getName() + " " + user.getSurname(),
                 0,
                 userStatistic.getCurrentCoinsCount(),
-                getAvatarNumber(room)
+                getAvatarNumber(room),
+                room.getPlayersMap().size() + 1
         );
         if (Utilities.roomsController.roomsMap.containsKey(message.getContent().getRoomCode())) {
             Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode()).getPlayersMap().put(user.getLogin(), player);
@@ -510,6 +525,12 @@ public class MessageHandler {
             userStatisticDao.updateUserTotalGamesPlayed(
                     message.getAuthor(),
                     userStatisticDao.getUserStatistic(message.getAuthor()).getTotalGamesPlayed() + 1);
+        }
+
+        int i = 0;
+        for (Player player : room.getPlayersMap().values()) {
+            player.setPlayerNumberInRoom(i + 1);
+            i++;
         }
 
         return new SocketMessage(

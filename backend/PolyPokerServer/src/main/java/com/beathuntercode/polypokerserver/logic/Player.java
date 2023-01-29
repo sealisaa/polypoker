@@ -16,11 +16,13 @@ public class Player {
     private boolean isReady;
     private boolean isCheck;
     private boolean isFold;
+    private boolean isBet;
     private boolean isSmallBlind;
     private boolean isBigBlind;
     private int playerAvatarNumber;
 
     private boolean mustMakeBet;
+    private int playerNumberInRoom;
 
     public String getLogin() {
         return login;
@@ -102,6 +104,14 @@ public class Player {
         isFold = fold;
     }
 
+    public boolean isBet() {
+        return isBet;
+    }
+
+    public void setBet(boolean bet) {
+        isBet = bet;
+    }
+
     public boolean isReady() {
         return isReady;
     }
@@ -138,16 +148,25 @@ public class Player {
         return playerAvatarNumber;
     }
 
+    public int getPlayerNumberInRoom() {
+        return playerNumberInRoom;
+    }
+
+    public void setPlayerNumberInRoom(int playerNumberInRoom) {
+        this.playerNumberInRoom = playerNumberInRoom;
+    }
+
     public void setPlayerAvatarNumber(int playersAvatarNumber) {
         this.playerAvatarNumber = playersAvatarNumber;
     }
 
-    public Player(String login, String name, int currentStake, int cash, int playersAvatarNumber) {
+    public Player(String login, String name, int currentStake, int cash, int playersAvatarNumber, int playerNumberInRoom) {
         this.login = login;
         this.name = name;
         this.currentStake = currentStake;
         this.cash = cash;
         this.playerAvatarNumber = playersAvatarNumber;
+        this.playerNumberInRoom = playerNumberInRoom;
         isReady = false;
         isCheck = false;
         isFold = false;

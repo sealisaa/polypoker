@@ -17,6 +17,7 @@ public class GameManager {
     private Map<String, Player> playersMap;
     private int bank;
 
+    private int currentMaxBet;
     private ArrayList<Card> deck;
     private ArrayList<Card> faceUp;
     private GameState gameState;
@@ -33,6 +34,9 @@ public class GameManager {
     }
 
     public void changeGameStateToNext() {
+        if (gameState != GameState.BLINDS) {
+            currentMaxBet = 0;
+        }
         resetChecks();
         switch (gameState) {
             case BLINDS -> {
@@ -207,5 +211,13 @@ public class GameManager {
 
     public void setWinnerPlayer(Player winnerPlayer) {
         this.winnerPlayer = winnerPlayer;
+    }
+
+    public int getCurrentMaxBet() {
+        return currentMaxBet;
+    }
+
+    public void setCurrentMaxBet(int currentMaxBet) {
+        this.currentMaxBet = currentMaxBet;
     }
 }

@@ -62,7 +62,7 @@ public class PolyPokerServerApplication {
 	}
 
 	private static void addPlayer(Room room, String login, String name, int currentStake, int cash, int playerAvatarNumber) {
-		Player player = new Player(login, name, currentStake, cash, playerAvatarNumber);
+		Player player = new Player(login, name, currentStake, cash, playerAvatarNumber, 1);
 		player.setCard1(room.getGameManager().dealRandomCard());
 		player.setCard2(room.getGameManager().dealRandomCard());
 		room.getPlayersMap().put(player.getLogin(), player);
