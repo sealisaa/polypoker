@@ -202,6 +202,7 @@ public class MessageHandler {
 
     private SocketMessage playerMakeCheck(SocketMessage message, Room room) {
         room.getPlayersMap().get(message.getContent().getUserLogin()).setCheck(true);
+        room.getPlayersMap().get(message.getContent().getUserLogin()).setBet(true);
         return new SocketMessage(
                 message.getMessageType(),
                 new MessageContent(
