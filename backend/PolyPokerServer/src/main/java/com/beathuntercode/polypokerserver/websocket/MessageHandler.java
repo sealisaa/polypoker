@@ -1,6 +1,5 @@
 package com.beathuntercode.polypokerserver.websocket;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -40,7 +39,7 @@ public class MessageHandler {
                 return playerMakeFold(message, room);
             }
             case PLAYER_ROOM_JOIN -> {
-                return playerRoomJoin(message, userDao, userStatisticDao);
+                return playerRoomJoin(message, room, userDao, userStatisticDao);
             }
             case PLAYER_READY_SET -> {
                 return playerReadySet(message, room);
@@ -416,14 +415,17 @@ public class MessageHandler {
         );
     }
 
-    private SocketMessage playerRoomJoin(SocketMessage message, UserDao userDao, UserStatisticDao userStatisticDao) {
+    private SocketMessage playerRoomJoin(SocketMessage message, Room room, UserDao userDao, UserStatisticDao userStatisticDao) {
         UserStatistic userStatistic = userStatisticDao.getUserStatistic(message.getContent().getUserLogin());
         User user = userDao.getUserByLogin(message.getContent().getUserLogin());
+        int playerAvatarNumber = Utilities.getRndIntInRange(1, Utilities.NUMBER_OF_AVATARS);
+
         Player player = new Player(
                 message.getContent().getUserLogin(),
                 user.getName() + " " + user.getSurname(),
                 0,
-                userStatistic.getCurrentCoinsCount()
+                userStatistic.getCurrentCoinsCount(),
+                getAvatarNumber(room)
         );
         if (Utilities.roomsController.roomsMap.containsKey(message.getContent().getRoomCode())) {
             Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode()).getPlayersMap().put(user.getLogin(), player);
@@ -435,8 +437,8 @@ public class MessageHandler {
                             message.getContent().getRoomCode(),
                             user.getLogin(),
                             user.getName() + " " + user.getSurname(),
-                            userStatistic.getCurrentCoinsCount()
-
+                            userStatistic.getCurrentCoinsCount(),
+                            playerAvatarNumber
                     ),
                     message.getReceiver(),
                     message.getAuthor()
@@ -525,6 +527,18 @@ public class MessageHandler {
                 message.getReceiver(),
                 message.getAuthor()
         );
+    }
+
+    private int getAvatarNumber(Room room) {
+        if (!room.getPlayerAvatarsNumbersList().isEmpty()) {
+            int avatarNumberIndex = Utilities.getRndIntInRange(0, room.getPlayerAvatarsNumbersList().size() - 1);
+            int avatarNumber = room.getPlayerAvatarsNumbersList().get(avatarNumberIndex);
+            room.getPlayerAvatarsNumbersList().remove(avatarNumberIndex);
+            return avatarNumber;
+        }
+        else {
+            return Utilities.getRndIntInRange(1, Utilities.NUMBER_OF_AVATARS);
+        }
     }
 
 }

@@ -18,6 +18,7 @@ public class Player {
     private boolean isFold;
     private boolean isSmallBlind;
     private boolean isBigBlind;
+    private int playerAvatarNumber;
 
     private boolean mustMakeBet;
 
@@ -133,16 +134,45 @@ public class Player {
         this.mustMakeBet = mustMakeBet;
     }
 
-    public Player(String login, String name, int currentStake, int cash) {
+    public int getPlayerAvatarNumber() {
+        return playerAvatarNumber;
+    }
+
+    public void setPlayerAvatarNumber(int playersAvatarNumber) {
+        this.playerAvatarNumber = playersAvatarNumber;
+    }
+
+    public Player(String login, String name, int currentStake, int cash, int playersAvatarNumber) {
         this.login = login;
         this.name = name;
         this.currentStake = currentStake;
         this.cash = cash;
+        this.playerAvatarNumber = playersAvatarNumber;
         isReady = false;
         isCheck = false;
         isFold = false;
         isSmallBlind = false;
         isBigBlind = false;
         mustMakeBet = true;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "login='" + login + '\'' +
+                ", name='" + name + '\'' +
+                ", currentStake=" + currentStake +
+                ", cash=" + cash +
+                ", card1=" + card1 +
+                ", card2=" + card2 +
+                ", hand=" + hand +
+                ", isReady=" + isReady +
+                ", isCheck=" + isCheck +
+                ", isFold=" + isFold +
+                ", isSmallBlind=" + isSmallBlind +
+                ", isBigBlind=" + isBigBlind +
+                ", playerAvatarNumber=" + playerAvatarNumber +
+                ", mustMakeBet=" + mustMakeBet +
+                '}';
     }
 }

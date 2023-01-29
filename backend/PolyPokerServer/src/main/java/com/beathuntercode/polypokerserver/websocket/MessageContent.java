@@ -19,6 +19,7 @@ public class MessageContent {
     private int moneyValue;
     private List<Player> roomPlayersList;
     private List<Card> cardsList;
+    private int playerAvatarNumber;
 
     public MessageContent() {
     }
@@ -50,11 +51,12 @@ public class MessageContent {
      *
      * Client uses this constructor to send Card request to server
      */
-    public MessageContent(Integer roomCode, String userLogin, String userName, Integer moneyValue) {
+    public MessageContent(Integer roomCode, String userLogin, String userName, Integer moneyValue, Integer playerAvatarNumber) {
         this.roomCode = roomCode;
         this.userLogin = userLogin;
         this.userName = userName;
         this.moneyValue = moneyValue;
+        this.playerAvatarNumber = playerAvatarNumber;
     }
 
     /**
@@ -207,6 +209,14 @@ public class MessageContent {
         this.cardsList = cardsList;
     }
 
+    public int getPlayerAvatarNumber() {
+        return playerAvatarNumber;
+    }
+
+    public void setPlayerAvatarNumber(int playerAvatarNumber) {
+        this.playerAvatarNumber = playerAvatarNumber;
+    }
+
     @Override
     public String toString() {
         return "MessageContent{" +
@@ -218,6 +228,7 @@ public class MessageContent {
                 ", moneyValue=" + moneyValue +
                 ", roomPlayersList=" + roomPlayersList +
                 ", cardsList=" + cardsList +
+                ", playerAvatarNumber=" + playerAvatarNumber +
                 '}';
     }
 }

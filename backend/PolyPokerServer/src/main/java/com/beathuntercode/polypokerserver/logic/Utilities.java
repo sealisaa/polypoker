@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Utilities {
 
+    public static final int NUMBER_OF_AVATARS = 6;
     public static RoomsController roomsController = new RoomsController();
 
     public static ArrayList<Card> cardList = new ArrayList<>(List.of(

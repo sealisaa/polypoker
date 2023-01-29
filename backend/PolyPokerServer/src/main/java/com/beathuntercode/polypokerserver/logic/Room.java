@@ -1,12 +1,15 @@
 package com.beathuntercode.polypokerserver.logic;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+
 public class Room {
 
+    private List<Integer> playerAvatarsNumbersList = new ArrayList<>();
     private int roomCode;
     private int minBlind;
     private int minRaise;
@@ -91,6 +94,10 @@ public class Room {
         this.bigBlindPlayer = bigBlindPlayer;
     }
 
+    public List<Integer> getPlayerAvatarsNumbersList() {
+        return playerAvatarsNumbersList;
+    }
+
     public void removePlayerFromRoom(String playerLogin) {
         playersMap.remove(playerLogin);
         gameManager.getTimesPlayerAskedForFaceUps().remove(playerLogin);
@@ -107,6 +114,9 @@ public class Room {
         isBigBlindSet = false;
         smallBlindPlayer = null;
         bigBlindPlayer = null;
+        for (int i = 0; i < Utilities.NUMBER_OF_AVATARS; i++) {
+            playerAvatarsNumbersList.add(i + 1);
+        }
     }
 
     public Room(int roomCode, int minBlind, int minRaise) {
