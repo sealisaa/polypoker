@@ -34,7 +34,7 @@ const WinnerModal = ({visible = false, btn, login, money}) => {
                     <div className="winner-pic"></div>
                     <h3 className="winner-header">
                         Победил игрок {login}<br />
-                        Сумма выигрыша: {money}
+                        Сумма выигрыша: $ {money}
                     </h3>
                     {btn}
                 </div>
@@ -307,6 +307,7 @@ class GameContent extends React.Component {
     }
 
     beginRound() {
+        this.setState({gameState: "ROUND_BEGIN"});
         this.getSmallBlind();
     }
 
@@ -549,6 +550,12 @@ class GameContent extends React.Component {
     }
 
     nextStepOfRound(gameState, moneyValue) {
+        this.state.activePlayer.check = false;
+        for (let i = 0; i < 5; i++) {
+            if (this.state.players[i]) {
+                this.state.players[i].check = false;
+            }
+        }
         switch(gameState) {
             case "PREFLOP":
                 this.setState({gameState: "PREFLOP", bank: moneyValue});
