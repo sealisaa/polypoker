@@ -830,8 +830,8 @@ class GameContent extends React.Component {
                 player3card2 = <img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} />;
             }
             if (player4) {
-                player4card1 = <img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card4.rank + ".png")} />;
-                player4card2 = <img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card4.rank + ".png")} />;
+                player4card1 = <img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card1.rank + ".png")} />;
+                player4card2 = <img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card2.rank + ".png")} />;
             }
             if (player5) {
                 player5card1 = <img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} />;
