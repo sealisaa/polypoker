@@ -2,6 +2,13 @@ import React from 'react';
 import '../style/style.css';
 import {Navigate, useLocation} from "react-router-dom";
 import stompClient from "../websocket/websocketConfig";
+import styled, { keyframes } from 'styled-components';
+import {flip} from 'react-animations';
+const flipAnimation = keyframes`${flip}`;
+
+const FlipCard = styled.div`
+  animation: 1s ${flipAnimation};
+`;
 
 const Modal = ({visible = false, btn, cancel, text}) => {
     if (!visible) {
@@ -116,6 +123,7 @@ class GameContent extends React.Component {
             roomCode: this.props.roomInfo.content.roomCode,
             activePlayerLogin: this.props.roomInfo.content.userLogin,
             activePlayer: {
+                avatar: 0,
                 fold: false,
                 check: false,
                 login: "",
@@ -168,7 +176,7 @@ class GameContent extends React.Component {
         if (messageJSON.messageType === 'CHECK_ROOM_PLAYERS') {
             this.updateRoomPlayers(roomPlayers);
         }
-        if (messageJSON.messageType === 'PLAYER_ROOM_JOIN' && messageJSON.content.userLogin !== this.state.activePlayerLogin) {
+        if (messageJSON.messageType === 'PLAYER_ROOM_JOIN') {
             this.addNewPlayer(messageJSON.content);
         }
         if (messageJSON.messageType === 'ROUND_BEGIN') {
@@ -217,6 +225,7 @@ class GameContent extends React.Component {
                 let player = players[i];
                 if (player.login !== this.state.activePlayerLogin) {
                     let newPlayer = {
+                        avatar: player.playerAvatarNumber,
                         fold: false,
                         check: false,
                         present: true,
@@ -235,6 +244,7 @@ class GameContent extends React.Component {
                 } else {
                     this.setState({
                         activePlayer: {
+                            avatar: player.playerAvatarNumber,
                             login: player.login,
                             name: player.name,
                             currentStake: player.currentStake,
@@ -254,22 +264,27 @@ class GameContent extends React.Component {
     }
 
     addNewPlayer(player) {
-        let newPlayer = {
-            fold: false,
-            check: false,
-            present: true,
-            login: player.login,
-            name: player.name,
-            currentStake: 0,
-            newStake: 0,
-            cash: player.moneyValue,
-            card1: null,
-            card2: null,
-            smallBlind: false,
-            bigBlind: false,
-            ready: false
-        };
-        this.state.players.push(newPlayer);
+        if (player.userLogin !== this.state.activePlayerLogin) {
+            this.state.activePlayer.avatar = player.playerAvatarNumber;
+        } else {
+            let newPlayer = {
+                avatar: player.playerAvatarNumber,
+                fold: false,
+                check: false,
+                present: true,
+                login: player.login,
+                name: player.name,
+                currentStake: 0,
+                newStake: 0,
+                cash: player.moneyValue,
+                card1: null,
+                card2: null,
+                smallBlind: false,
+                bigBlind: false,
+                ready: false
+            };
+            this.state.players.push(newPlayer);
+        }
         this.setState({change: true});
     }
 
@@ -825,60 +840,60 @@ class GameContent extends React.Component {
         }
         if (this.state.gameState === "SHOWDOWN") {
             if (player1) {
-                player1card1 = <img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} />;
-                player1card2 = <img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} />;
+                player1card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} /></FlipCard>;
+                player1card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} /></FlipCard>;
             }
             if (player2) {
-                player2card1 = <img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} />;
-                player2card2 = <img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} />;
+                player2card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} /></FlipCard>;
+                player2card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} /></FlipCard>;
             }
             if (player3) {
-                player3card1 = <img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} />;
-                player3card2 = <img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} />;
+                player3card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} /></FlipCard>;
+                player3card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} /></FlipCard>;
             }
             if (player4) {
-                player4card1 = <img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card1.rank + ".png")} />;
-                player4card2 = <img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card2.rank + ".png")} />;
+                player4card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card1.rank + ".png")} /></FlipCard>;
+                player4card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card2.rank + ".png")} /></FlipCard>;
             }
             if (player5) {
-                player5card1 = <img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} />;
-                player5card2 = <img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} />;
+                player5card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} /></FlipCard>;
+                player5card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} /></FlipCard>;
             }
         } else if (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") {
             if (player1 && player1.fold) {
-                player1card1 = <img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} />;
-                player1card2 = <img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} />;
+                player1card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} /></FlipCard>;
+                player1card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} /></FlipCard>;
             } else {
-                player1card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-                player1card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player1card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
+                player1card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
             }
             if (player2 && player2.fold) {
-                player2card1 = <img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} />;
-                player2card2 = <img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} />;
+                player2card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} /></FlipCard>;
+                player2card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} /></FlipCard>;
             } else {
-                player2card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-                player2card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player2card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
+                player2card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
             }
             if (player3 && player3.fold) {
-                player3card1 = <img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} />;
-                player3card2 = <img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} />;
+                player3card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} /></FlipCard>;
+                player3card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} /></FlipCard>;
             } else {
-                player3card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-                player3card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player3card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
+                player3card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
             }
             if (player4 && player4.fold) {
-                player4card1 = <img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card4.rank + ".png")} />;
-                player4card2 = <img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card4.rank + ".png")} />;
+                player4card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card4.rank + ".png")} /></FlipCard>;
+                player4card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card4.rank + ".png")} /></FlipCard>;
             } else {
-                player4card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-                player4card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player4card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
+                player4card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
             }
             if (player5 && player5.fold) {
-                player5card1 = <img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} />;
-                player5card2 = <img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} />;
+                player5card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} /></FlipCard>;
+                player5card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} /></FlipCard>;
             } else {
-                player5card1 = <img className="game__user-card" src={require("../img/back.png")}/>;
-                player5card2 = <img className="game__user-card" src={require("../img/back.png")}/>;
+                player5card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
+                player5card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
             }
         } else {
             player1card1 = <div className="game__user-card"></div>;
@@ -938,17 +953,22 @@ class GameContent extends React.Component {
                                     }
                                 </div>
                                 <div className="game__user-info">
-                                    <div className="game__active-user-avatar"></div>
+                                    <div className="game__active-user-avatar">
+                                        {activePlayer.avatar ?
+                                            <img src={require('../img/cat' + activePlayer.avatar + '.png')} className="avatar-pic"></img>
+                                            : <img src={require('../img/cat0.png')} className="avatar-pic"></img>
+                                        }
+                                    </div>
                                     <span className="game__user-login">You</span>
                                     <span className="game__user-balance">$ {activePlayer.cash}</span>
                                 </div>
                                 <div className="game__active-user-cards">
                                     {activePlayer.card1 ?
-                                        <img className="game__user-card" src={require("../img/cards/" + activePlayer.card1.suit + "_" + activePlayer.card1.rank + ".png")} />
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + activePlayer.card1.suit + "_" + activePlayer.card1.rank + ".png")} /></FlipCard>
                                         : <div className="game__user-card"></div>
                                     }
                                     {activePlayer.card2 ?
-                                        <img className="game__user-card" src={require("../img/cards/" + activePlayer.card2.suit + "_" + activePlayer.card2.rank + ".png")} />
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + activePlayer.card2.suit + "_" + activePlayer.card2.rank + ".png")} /></FlipCard>
                                         : <div className="game__user-card"></div>
                                     }
                                 </div>
@@ -979,7 +999,12 @@ class GameContent extends React.Component {
                                     }
                                 </div>
                                 <div className="game__user-info">
-                                    <div className="game__user-avatar game__user-avatar1"></div>
+                                    <div className="game__user-avatar game__user-avatar1">
+                                        {player1.avatar ?
+                                            <img src={require('../img/cat' + player1.avatar + '.png')} className="avatar-pic"></img>
+                                            : <img src={require('../img/cat0.png')} className="avatar-pic"></img>
+                                        }
+                                    </div>
                                     <span className="game__user-login">{player1.login}</span>
                                     <span className="game__user-balance">$ {player1.cash}</span>
                                 </div>
@@ -1014,7 +1039,12 @@ class GameContent extends React.Component {
                                     }
                                 </div>
                                 <div className="game__user-info">
-                                    <div className="game__user-avatar game__user-avatar3"></div>
+                                    <div className="game__user-avatar game__user-avatar3">
+                                        {player3.avatar ?
+                                            <img src={require('../img/cat' + player3.avatar + '.png')} className="avatar-pic"></img>
+                                            : <img src={require('../img/cat0.png')} className="avatar-pic"></img>
+                                        }
+                                    </div>
                                     <span className="game__user-login">{player3.login}</span>
                                     <span className="game__user-balance">$ {player3.cash}</span>
                                 </div>
@@ -1053,7 +1083,12 @@ class GameContent extends React.Component {
                                     }
                                 </div>
                                 <div className="game__user-info">
-                                    <div className="game__user-avatar game__user-avatar2"></div>
+                                    <div className="game__user-avatar game__user-avatar2">
+                                        {player2.avatar ?
+                                            <img src={require('../img/cat' + player2.avatar + '.png')} className="avatar-pic"></img>
+                                            : <img src={require('../img/cat0.png')} className="avatar-pic"></img>
+                                        }
+                                    </div>
                                     <span className="game__user-login">{player2.login}</span>
                                     <span className="game__user-balance">$ {player2.cash}</span>
                                 </div>
@@ -1084,7 +1119,12 @@ class GameContent extends React.Component {
                                     }
                                 </div>
                                 <div className="game__user-info">
-                                    <div className="game__user-avatar game__user-avatar4"></div>
+                                    <div className="game__user-avatar game__user-avatar4">
+                                        {player4.avatar ?
+                                            <img src={require('../img/cat' + player4.avatar + '.png')} className="avatar-pic"></img>
+                                            : <img src={require('../img/cat0.png')} className="avatar-pic"></img>
+                                        }
+                                    </div>
                                     <span className="game__user-login">{player4.login}</span>
                                     <span className="game__user-balance">$ {player4.cash}</span>
                                 </div>
@@ -1123,7 +1163,12 @@ class GameContent extends React.Component {
                                     }
                                 </div>
                                 <div className="game__user-info">
-                                    <div className="game__user-avatar game__user-avatar6"></div>
+                                    <div className="game__user-avatar game__user-avatar6">
+                                        {player5.avatar ?
+                                            <img src={require('../img/cat' + player5.avatar + '.png')} className="avatar-pic"></img>
+                                            : <img src={require('../img/cat0.png')} className="avatar-pic"></img>
+                                        }
+                                    </div>
                                     <span className="game__user-login">{player5.login}</span>
                                     <span className="game__user-balance">$ {player5.cash}</span>
                                 </div>
@@ -1131,23 +1176,23 @@ class GameContent extends React.Component {
 
                             <div className="game__cards">
                                 {this.state.card1 ?
-                                    <img className="game__card1" src={require("../img/cards/" + this.state.card1.suit + "_" + this.state.card1.rank + ".png")} />
+                                    <FlipCard><img className="game__card1" src={require("../img/cards/" + this.state.card1.suit + "_" + this.state.card1.rank + ".png")} /></FlipCard>
                                     : <div className="game__card1"></div>
                                 }
                                 {this.state.card2 ?
-                                    <img className="game__card2" src={require("../img/cards/" + this.state.card2.suit + "_" + this.state.card2.rank + ".png")} />
+                                    <FlipCard><img className="game__card2" src={require("../img/cards/" + this.state.card2.suit + "_" + this.state.card2.rank + ".png")} /></FlipCard>
                                     : <div className="game__card2"></div>
                                 }
                                 {this.state.card3 ?
-                                    <img className="game__card3" src={require("../img/cards/" + this.state.card3.suit + "_" + this.state.card3.rank + ".png")} />
+                                    <FlipCard><img className="game__card3" src={require("../img/cards/" + this.state.card3.suit + "_" + this.state.card3.rank + ".png")} /></FlipCard>
                                     : <div className="game__card3"></div>
                                 }
                                 {this.state.card4 ?
-                                    <img className="game__card4" src={require("../img/cards/" + this.state.card4.suit + "_" + this.state.card4.rank + ".png")} />
+                                    <FlipCard><img className="game__card4" src={require("../img/cards/" + this.state.card4.suit + "_" + this.state.card4.rank + ".png")} /></FlipCard>
                                     : <div className="game__card4"></div>
                                 }
                                 {this.state.card5 ?
-                                    <img className="game__card5" src={require("../img/cards/" + this.state.card5.suit + "_" + this.state.card5.rank + ".png")} />
+                                    <FlipCard><img className="game__card5" src={require("../img/cards/" + this.state.card5.suit + "_" + this.state.card5.rank + ".png")} /></FlipCard>
                                     : <div className="game__card5"></div>
                                 }
                             </div>

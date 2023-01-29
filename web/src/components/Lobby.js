@@ -38,7 +38,9 @@ class LobbyContent extends React.Component {
             <div className="lobby-container">
                 <div className="lobby">
                     <div className="lobby__header">
-                        <div className="lobby__avatar" />
+                        <div className="lobby__avatar">
+                            <img src={require('../img/cat1.png')} className="avatar-pic"></img>
+                        </div>
                         <span className="lobby__username">{this.state.login}</span>
                         <div className="lobby__balance">
                             <div className="lobby__balance-chip" />

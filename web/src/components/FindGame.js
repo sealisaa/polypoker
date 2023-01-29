@@ -10,7 +10,6 @@ const FindGame = props => {
 }
 
 const sendMessage = (login, game) => {
-    let currentDate = getCurrentDate();
     let ip = '26.118.51.73:8080';
     const message = {
         author: login,
@@ -20,16 +19,10 @@ const sendMessage = (login, game) => {
                 userLogin: login
             },
         messageType: "PLAYER_ROOM_JOIN",
-        datetime: currentDate,
         receiver: "ws://" + ip + "/room/websocket"
     };
     stompClient.send("/room/api/socket", {}, JSON.stringify(message));
 };
-
-const getCurrentDate = () => {
-    let date = new Date();
-    return date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-' + ("0" + date.getDay()).slice(-2) + 'T' + ("0" + date.getHours()).slice(-2) + ':' + ("0" + date.getMinutes()).slice(-2) + ':' + ("0" + date.getSeconds()).slice(-2) + '.' + ("0" + date.getMilliseconds()).slice(-2);
-}
 
 class FindGameContent extends React.Component {
     constructor(props) {
