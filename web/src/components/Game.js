@@ -53,11 +53,6 @@ const sendMessage = (message) => {
     stompClient.send("/room/api/socket", {}, JSON.stringify(message));
 };
 
-const getCurrentDate = () => {
-    let date = new Date();
-    return date.getFullYear() + '-' + ("0" + (date.getMonth() + 1)).slice(-2) + '-' + ("0" + date.getDay()).slice(-2) + 'T' + ("0" + date.getHours()).slice(-2) + ':' + ("0" + date.getMinutes()).slice(-2) + ':' + ("0" + date.getSeconds()).slice(-2) + '.' + ("0" + date.getMilliseconds()).slice(-2);
-}
-
 class GameContent extends React.Component {
     constructor(props) {
         super(props);
@@ -279,7 +274,6 @@ class GameContent extends React.Component {
     }
 
     checkRoomPlayers() {
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "CHECK_ROOM_PLAYERS",
             content:
@@ -287,7 +281,6 @@ class GameContent extends React.Component {
                     roomCode: this.state.roomCode
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -297,7 +290,6 @@ class GameContent extends React.Component {
         if (this.state.lastMessage === "PLAYER_READY_SET") {
             return;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_READY_SET",
             content:
@@ -305,7 +297,6 @@ class GameContent extends React.Component {
                     roomCode: this.state.roomCode
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -323,7 +314,6 @@ class GameContent extends React.Component {
         if (this.state.lastMessage === "WHO_IS_SMALL_BLIND") {
             return;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "WHO_IS_SMALL_BLIND",
             content:
@@ -336,7 +326,6 @@ class GameContent extends React.Component {
                     roomPlayersList: null
                 },
             author: this.state.activePlayerLogin,
-            dateTime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -371,7 +360,6 @@ class GameContent extends React.Component {
     }
 
     makeCheck() {
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_CHECK",
             content:
@@ -380,7 +368,6 @@ class GameContent extends React.Component {
                     userLogin: this.state.activePlayerLogin
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -403,7 +390,6 @@ class GameContent extends React.Component {
     }
 
     makeFold() {
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_FOLD",
             content:
@@ -412,7 +398,6 @@ class GameContent extends React.Component {
                     userLogin: this.state.activePlayerLogin
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -435,7 +420,6 @@ class GameContent extends React.Component {
     }
 
     submitBet(bet) {
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_BET",
             content:
@@ -446,7 +430,6 @@ class GameContent extends React.Component {
                     moneyValue: bet
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         this.setState({mustMakeBet: false, isModal: false});
@@ -472,7 +455,6 @@ class GameContent extends React.Component {
         if (this.state.lastMessage === "PLAYER_MAKE_BET") {
             return;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_BET",
             content:
@@ -483,7 +465,6 @@ class GameContent extends React.Component {
                     moneyValue: bet
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         this.setState({mustMakeBet: false, isModal: false});
@@ -496,7 +477,6 @@ class GameContent extends React.Component {
         if (this.state.lastMessage === "WHO_IS_BIG_BLIND") {
             return;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "WHO_IS_BIG_BLIND",
             content:
@@ -509,7 +489,6 @@ class GameContent extends React.Component {
                     roomPlayersList: null
                 },
             author: this.state.activePlayerLogin,
-            dateTime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -534,7 +513,6 @@ class GameContent extends React.Component {
         if (this.state.lastMessage === "PLAYER_MAKE_BET") {
             return;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MAKE_BET",
             content:
@@ -545,7 +523,6 @@ class GameContent extends React.Component {
                     moneyValue: bet
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         this.setState({mustMakeBet: false, isModal: false});
@@ -558,7 +535,6 @@ class GameContent extends React.Component {
         if (this.state.lastMessage === "IS_NEXT_STEP_OF_ROUND") {
             return;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "IS_NEXT_STEP_OF_ROUND",
             content:
@@ -566,7 +542,6 @@ class GameContent extends React.Component {
                     roomCode: this.state.roomCode
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -599,7 +574,6 @@ class GameContent extends React.Component {
     }
 
     preflop() {
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "DRAW_CARD",
             content:
@@ -608,7 +582,6 @@ class GameContent extends React.Component {
                     userLogin: this.state.activePlayerLogin
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -622,7 +595,6 @@ class GameContent extends React.Component {
             this.state.players[i].currentStake = 0;
             this.state.players[i].newStake = 0;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "DRAW_CARD",
             content:
@@ -631,7 +603,6 @@ class GameContent extends React.Component {
                     userLogin: null
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -645,7 +616,6 @@ class GameContent extends React.Component {
             this.state.players[i].currentStake = 0;
             this.state.players[i].newStake = 0;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "DRAW_CARD",
             content:
@@ -654,7 +624,6 @@ class GameContent extends React.Component {
                     userLogin: null
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -668,7 +637,6 @@ class GameContent extends React.Component {
             this.state.players[i].currentStake = 0;
             this.state.players[i].newStake = 0;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "DRAW_CARD",
             content:
@@ -677,7 +645,6 @@ class GameContent extends React.Component {
                     userLogin: null
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -691,7 +658,6 @@ class GameContent extends React.Component {
             this.state.players[i].currentStake = 0;
             this.state.players[i].newStake = 0;
         }
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "WINNER_PLAYER",
             content:
@@ -699,7 +665,6 @@ class GameContent extends React.Component {
                     roomCode: this.state.roomCode,
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
@@ -803,7 +768,6 @@ class GameContent extends React.Component {
     }
 
     playerMustMakeBet() {
-        let currentDate = getCurrentDate();
         let message = {
             messageType: "PLAYER_MUST_MAKE_BET",
             content:
@@ -811,14 +775,12 @@ class GameContent extends React.Component {
                     roomCode: this.state.roomCode
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         }
         sendMessage(message);
     }
 
     exitRoom() {
-        let currentDate = getCurrentDate();
         let message = {
             messageType:"PLAYER_ROOM_EXIT",
             content:
@@ -827,7 +789,6 @@ class GameContent extends React.Component {
                     userLogin: this.state.activePlayerLogin
                 },
             author: this.state.activePlayerLogin,
-            datetime: currentDate,
             receiver: "receiver"
         };
         sendMessage(message);
@@ -1092,7 +1053,7 @@ class GameContent extends React.Component {
                             </div> : null}
 
                             { player4 ? <div className="game__user4">
-                                <div className="game__user-stake-right">
+                                <div className="game__user-stake">
                                     <div className="game__user-current-stake">
                                         $ {player4.currentStake}
                                     </div>
@@ -1131,7 +1092,7 @@ class GameContent extends React.Component {
                                     {player5card1}
                                     {player5card2}
                                 </div>
-                                <div className="game__user-stake">
+                                <div className="game__user-stake-right">
                                     <div className="game__user-current-stake">
                                         $ {player5.currentStake}
                                     </div>
