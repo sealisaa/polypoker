@@ -831,88 +831,9 @@ class GameContent extends React.Component {
         let player3 = this.state.players[2];
         let player4 = this.state.players[3];
         let player5 = this.state.players[4];
-        let player1card1;
-        let player1card2;
-        let player2card1;
-        let player2card2;
-        let player3card1;
-        let player3card2;
-        let player4card1;
-        let player4card2;
-        let player5card1;
-        let player5card2;
         if (this.state.exit) {
             const login = this.state.activePlayerLogin;
             return <Navigate to="/lobby" state={login} />
-        }
-        if (this.state.gameState === "SHOWDOWN") {
-            if (player1) {
-                player1card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} /></FlipCard>;
-                player1card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} /></FlipCard>;
-            }
-            if (player2) {
-                player2card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} /></FlipCard>;
-                player2card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} /></FlipCard>;
-            }
-            if (player3) {
-                player3card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} /></FlipCard>;
-                player3card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} /></FlipCard>;
-            }
-            if (player4) {
-                player4card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card1.rank + ".png")} /></FlipCard>;
-                player4card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card2.rank + ".png")} /></FlipCard>;
-            }
-            if (player5) {
-                player5card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} /></FlipCard>;
-                player5card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} /></FlipCard>;
-            }
-        } else if (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") {
-            if (player1 && player1.fold) {
-                player1card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} /></FlipCard>;
-                player1card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} /></FlipCard>;
-            } else {
-                player1card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-                player1card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-            }
-            if (player2 && player2.fold) {
-                player2card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} /></FlipCard>;
-                player2card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} /></FlipCard>;
-            } else {
-                player2card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-                player2card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-            }
-            if (player3 && player3.fold) {
-                player3card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} /></FlipCard>;
-                player3card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} /></FlipCard>;
-            } else {
-                player3card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-                player3card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-            }
-            if (player4 && player4.fold) {
-                player4card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card4.rank + ".png")} /></FlipCard>;
-                player4card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card4.rank + ".png")} /></FlipCard>;
-            } else {
-                player4card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-                player4card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-            }
-            if (player5 && player5.fold) {
-                player5card1 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} /></FlipCard>;
-                player5card2 = <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} /></FlipCard>;
-            } else {
-                player5card1 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-                player5card2 = <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>;
-            }
-        } else {
-            player1card1 = <div className="game__user-card"></div>;
-            player1card2 = <div className="game__user-card"></div>;
-            player2card1 = <div className="game__user-card"></div>;
-            player2card2 = <div className="game__user-card"></div>;
-            player3card1 = <div className="game__user-card"></div>;
-            player3card2 = <div className="game__user-card"></div>;
-            player4card1 = <div className="game__user-card"></div>;
-            player4card2 = <div className="game__user-card"></div>;
-            player5card1 = <div className="game__user-card"></div>;
-            player5card2 = <div className="game__user-card"></div>;
         }
         return (
             <div className="game-container">
@@ -1016,8 +937,30 @@ class GameContent extends React.Component {
                                     <span className="game__user-balance">$ {player1.cash}</span>
                                 </div>
                                 <div className="game__user1-cards">
-                                    {player1card1}
-                                    {player1card2}
+                                    {player1.card1 && (this.state.gameState === "SHOWDOWN" || player1.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card1.suit + "_" + player1.card1.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player1.card1 && !player1.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player1.card1 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
+                                    {player1.card2 && (this.state.gameState === "SHOWDOWN" || player1.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player1.card2.suit + "_" + player1.card2.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player1.card2 && !player1.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player1.card2 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
                                 </div>
                             </div> : null}
 
@@ -1056,15 +999,59 @@ class GameContent extends React.Component {
                                     <span className="game__user-balance">$ {player3.cash}</span>
                                 </div>
                                 <div className="game__user3-cards">
-                                    {player3card1}
-                                    {player3card2}
+                                    {player3.card1 && (this.state.gameState === "SHOWDOWN" || player3.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card1.suit + "_" + player3.card1.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player3.card1 && !player3.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player3.card1 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
+                                    {player3.card2 && (this.state.gameState === "SHOWDOWN" || player3.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player3.card2.suit + "_" + player3.card2.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player3.card2 && !player3.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player3.card2 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
                                 </div>
                             </div> : null}
 
                             {player2 ? <div className="game__user2">
                                 <div className="game__user2-cards">
-                                    {player2card1}
-                                    {player2card2}
+                                    {player2.card1 && (this.state.gameState === "SHOWDOWN" || player2.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card1.suit + "_" + player2.card1.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player2.card1 && !player2.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player2.card1 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
+                                    {player2.card2 && (this.state.gameState === "SHOWDOWN" || player2.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player2.card2.suit + "_" + player2.card2.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player2.card2 && !player2.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player2.card2 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
                                 </div>
                                 <div className="game__user-stake-right">
                                     <div className="game__user-current-stake">
@@ -1136,15 +1123,59 @@ class GameContent extends React.Component {
                                     <span className="game__user-balance">$ {player4.cash}</span>
                                 </div>
                                 <div className="game__user4-cards">
-                                    {player4card1}
-                                    {player4card2}
+                                    {player4.card1 && (this.state.gameState === "SHOWDOWN" || player4.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card1.suit + "_" + player4.card1.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player4.card1 && !player4.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player4.card1 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
+                                    {player4.card2 && (this.state.gameState === "SHOWDOWN" || player4.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player4.card2.suit + "_" + player4.card2.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player4.card2 && !player4.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player4.card2 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
                                 </div>
                             </div> : null}
 
                             { player5 ? <div className="game__user6">
                                 <div className="game__user6-cards">
-                                    {player5card1}
-                                    {player5card2}
+                                    {player5.card1 && (this.state.gameState === "SHOWDOWN" || player5.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card1.suit + "_" + player5.card1.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player5.card1 && !player5.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player5.card1 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
+                                    {player5.card2 && (this.state.gameState === "SHOWDOWN" || player5.fold) ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/cards/" + player5.card2.suit + "_" + player5.card2.rank + ".png")} /></FlipCard>
+                                        : null
+                                    }
+                                    {player5.card2 && !player5.fold && (this.state.gameState === "PREFLOP" || this.state.gameState === "FLOP" || this.state.gameState === "TERN" || this.state.gameState === "RIVER") ?
+                                        <FlipCard><img className="game__user-card" src={require("../img/back.png")}/></FlipCard>
+                                        : null
+                                    }
+                                    {!player5.card2 ?
+                                        <div className="game__user-card"></div>
+                                        : null
+                                    }
                                 </div>
                                 <div className="game__user-stake-right">
                                     <div className="game__user-current-stake">
