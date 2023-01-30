@@ -101,6 +101,7 @@ class GameContent extends React.Component {
         this.makeFold = this.makeFold.bind(this);
         this.showFold = this.showFold.bind(this);
         this.state = {
+            minBlind: this.props.roomInfo.content.roomMinBlind,
             winner: "",
             winMoney: 0,
             winnerModal: false,
@@ -351,7 +352,7 @@ class GameContent extends React.Component {
     setSmallBlind(login) {
         if (login === this.state.activePlayerLogin) {
             this.state.activePlayer.smallBlind = true;
-            this.setState({mustMakeBet: true, modalData: 1, modalText: "Поставьте малый блайнд"});
+            this.setState({mustMakeBet: true, modalData: 1, modalText: "Поставьте малый блайнд (минимум: " + this.state.minBlind + ")"});
         } else {
             for (let i = 0; i < this.state.players.length; i++) {
                 if (this.state.players[i].login === login) {
@@ -471,6 +472,9 @@ class GameContent extends React.Component {
         if (this.state.lastMessage === "PLAYER_MAKE_BET") {
             return;
         }
+        if (bet < this.state.minBlind) {
+            return;
+        }
         let message = {
             messageType: "PLAYER_MAKE_BET",
             content:
@@ -514,7 +518,7 @@ class GameContent extends React.Component {
     setBigBlind(login) {
         if (login === this.state.activePlayerLogin) {
             this.state.activePlayer.bigBlind = true;
-            this.setState({mustMakeBet: true, modalData: 2, modalText: "Поставьте большой блайнд"});
+            this.setState({mustMakeBet: true, modalData: 2, modalText: "Поставьте большой блайнд (минимум: " + this.state.minBlind * 2 + ")"});
         } else {
             for (let i = 0; i < this.state.players.length; i++) {
                 if (this.state.players[i].login === login) {
@@ -527,6 +531,9 @@ class GameContent extends React.Component {
 
     submitBigBlind(bet) {
         if (this.state.lastMessage === "PLAYER_MAKE_BET") {
+            return;
+        }
+        if (bet < this.state.minBlind * 2) {
             return;
         }
         let message = {

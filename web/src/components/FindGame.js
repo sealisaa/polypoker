@@ -61,9 +61,7 @@ class FindGameContent extends React.Component {
     findGame() {
         if (this.state.connected) {
             let game = document.getElementById("game").value;
-            if (game === '1') {
-                sendMessage(this.state.login, game);
-            }
+            sendMessage(this.state.login, game);
         }
     }
 

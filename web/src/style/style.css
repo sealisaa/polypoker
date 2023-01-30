@@ -1256,8 +1256,26 @@ p {
 }
 
 .game__modal {
-    width: 450px;
+    width: 475px;
     height: 200px;
+    background-color: #8D92C7;
+    border-radius: 50px;
+    position: relative;
+    margin: 0 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: slide-in;
+    animation-duration: 0.5s;
+}
+
+.lobby__modal {
+    width: 475px;
+    height: 300px;
     background-color: #8D92C7;
     border-radius: 50px;
     position: relative;
