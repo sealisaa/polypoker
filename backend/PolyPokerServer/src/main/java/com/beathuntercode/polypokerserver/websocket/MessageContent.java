@@ -17,6 +17,7 @@ public class MessageContent {
     private String userName;
     private BetType betType;
     private int moneyValue;
+    private int roomMinBlind;
     private List<Player> roomPlayersList;
     private List<Card> cardsList;
     private int playerAvatarNumber;
@@ -51,12 +52,13 @@ public class MessageContent {
      *
      * Client uses this constructor to send Card request to server
      */
-    public MessageContent(Integer roomCode, String userLogin, String userName, Integer moneyValue, Integer playerAvatarNumber) {
+    public MessageContent(Integer roomCode, String userLogin, String userName, Integer moneyValue, Integer playerAvatarNumber, Integer roomMinBlind) {
         this.roomCode = roomCode;
         this.userLogin = userLogin;
         this.userName = userName;
         this.moneyValue = moneyValue;
         this.playerAvatarNumber = playerAvatarNumber;
+        this.roomMinBlind = roomMinBlind;
     }
 
     /**
@@ -217,6 +219,14 @@ public class MessageContent {
         this.playerAvatarNumber = playerAvatarNumber;
     }
 
+    public int getRoomMinBlind() {
+        return roomMinBlind;
+    }
+
+    public void setRoomMinBlind(int roomMinBlind) {
+        this.roomMinBlind = roomMinBlind;
+    }
+
     @Override
     public String toString() {
         return "MessageContent{" +
@@ -226,6 +236,7 @@ public class MessageContent {
                 ", userName='" + userName + '\'' +
                 ", betType=" + betType +
                 ", moneyValue=" + moneyValue +
+                ", roomMinBlind=" + roomMinBlind +
                 ", roomPlayersList=" + roomPlayersList +
                 ", cardsList=" + cardsList +
                 ", playerAvatarNumber=" + playerAvatarNumber +

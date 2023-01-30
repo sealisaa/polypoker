@@ -5,6 +5,7 @@ public enum MessageType {
     PLAYER_READY_SET(5),
     PLAYER_ROOM_EXIT(6),
     CHECK_ROOM_PLAYERS(7),
+    ROOM_CREATE(8),
     ROUND_BEGIN(10),
     WHO_IS_SMALL_BLIND(11),
     WHO_IS_BIG_BLIND(12),

@@ -16,6 +16,7 @@ import com.beathuntercode.polypokerserver.logic.Card;
 import com.beathuntercode.polypokerserver.logic.GameState;
 import com.beathuntercode.polypokerserver.logic.Player;
 import com.beathuntercode.polypokerserver.logic.Room;
+import com.beathuntercode.polypokerserver.logic.RoomsController;
 import com.beathuntercode.polypokerserver.logic.Utilities;
 
 @RestController
@@ -50,6 +51,9 @@ public class MessageHandler {
             }
             case CHECK_ROOM_PLAYERS -> {
                 return checkRoomPlayer(message);
+            }
+            case ROOM_CREATE -> {
+                return roomCreate(message);
             }
             case ROUND_BEGIN -> {
                 //TODO()
@@ -99,6 +103,19 @@ public class MessageHandler {
             }
         }
         return null;
+    }
+
+    private SocketMessage roomCreate(SocketMessage message) {
+        if (Utilities.roomsController.roomsMap.containsKey(message.getContent().getRoomCode())) {
+            return failMessage(message);
+        }
+        else {
+            Utilities.roomsController.createRoom(
+                    message.getContent().getRoomCode(),
+                    message.getContent().getMoneyValue(),
+                    message.getContent().getMoneyValue() * 2);
+            return okMessage(message);
+        }
     }
 
     private SocketMessage winnerPlayer(SocketMessage message, Room room, UserDao userDao, UserStatisticDao userStatisticDao) {
@@ -278,10 +295,17 @@ public class MessageHandler {
     }
 
     private SocketMessage playerMakeBet(SocketMessage incomingMessage, Room room, UserDao userDao, UserStatisticDao userStatisticDao) {
+        Player bettingPlayer = room.getPlayersMap().get(incomingMessage.getContent().getUserLogin());
+        if (room.getGameManager().getGameState() == GameState.BLINDS) {
+            if (    (bettingPlayer.isSmallBlind() && incomingMessage.getContent().getMoneyValue() != room.getMinBlind()) ||
+                    (bettingPlayer.isBigBlind() && incomingMessage.getContent().getMoneyValue() != (room.getMinBlind() * 2))
+            ) {
+                return failMessage(incomingMessage);
+            }
+        }
         for (Player player : room.getPlayersMap().values()) {
             player.setCheck(false);
         }
-        Player bettingPlayer = room.getPlayersMap().get(incomingMessage.getContent().getUserLogin());
         bettingPlayer.increaseStake(incomingMessage.getContent().getMoneyValue());
         if (    bettingPlayer.getCurrentStake() >= room.getGameManager().getCurrentMaxBet() ||
                 (bettingPlayer.isSmallBlind() && room.getGameManager().getGameState() == GameState.BLINDS)
@@ -314,7 +338,6 @@ public class MessageHandler {
                 incomingMessage.getAuthor()
 
         );
-
     }
 
     private void decreaseUsersCurrentCoinsCount(User user, int moneyValue, UserStatisticDao userStatisticDao) {
@@ -454,11 +477,11 @@ public class MessageHandler {
                             user.getLogin(),
                             user.getName() + " " + user.getSurname(),
                             userStatistic.getCurrentCoinsCount(),
-                            playerAvatarNumber
+                            playerAvatarNumber,
+                            Utilities.roomsController.roomsMap.get(message.getContent().getRoomCode()).getMinBlind()
                     ),
                     message.getReceiver(),
                     message.getAuthor()
-
             );
 
         } else return failMessage(message);
