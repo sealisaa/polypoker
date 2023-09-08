@@ -1,6 +1,6 @@
 ## Покер
 Клиент-серверная игра в покер (Пятикарточный техасский холдем)<br>
-Контракт взаимодействия клиента с сервером описан [тут](https://github.com/sealisaa/polypoker/blob/staging/API.md)
+Протокол взаимодействия клиента с сервером описан [тут](https://github.com/sealisaa/polypoker/blob/staging/API.md)
 
 ### Регистрация
 
